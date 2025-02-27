@@ -173,7 +173,8 @@
     <span class="hljs-keyword">private</span> String age;
 }
 </code></pre>
-<h2 id="age实例化的age1age2age3都是不同的而name实例化的name1name2name3都是相同的"><strong>age实例化的age1，age2，age3都是不同的，而name实例化的name1，name2，name3都是相同的</strong>。</h2>
+<p><strong>age实例化的age1，age2，age3都是不同的，而name实例化的name1，name2，name3都是相同的</strong>。</p>
+<hr>
 <h1 id="一些方法及一些必要的基本概念">一些方法及一些必要的基本概念</h1>
 <h2 id="newstring">newString():</h2>
 <p>new String(byte[] bytes, int offset, int length, String charsetName)</p>
@@ -336,16 +337,20 @@ timer.schedule(参数);}
 <ul>
 <li>节点流
 FileInputStream 和 FileOutputStream：用于文件的读取和写入操作，可实现文件复制等功能。在开发中，文件的上传、下载等操作常使用这两个节点流，通常会与装饰后的处理流配合使用。</li>
-<li>处理流:ByteArrayInputStream 和 ByteArrayOutputStream：用于在内存中临时存储和操作字节数据，可将数据存储在字节数组中进行读写。</li>
-<li>缓冲流：BufferedInputStream 和 BufferedOutputStream 是字节流的缓冲流，通过设置缓冲区，减少与数据源的交互次数，提高数据传输效率。</li>
+<li>处理流:ByteArrayInputStream 和 ByteArrayOutputStream：用于在内存中临时存储和操作字节数据，可将数据存储在字节数组中进行读写。
+还能将字节数组转化为字节流，如<code>ByteArrayInputStream bais = new ByteArrayInputStream(byteArray, offset, length)</code></li>
+<li>缓冲流：BufferedInputStream 和 BufferedOutputStream 是字节流的缓冲流，通过设置缓冲区，减少与数据源的交互次数，提高数据传输效率。(<strong>节点流每次只能读一个字节，而缓冲流可以一次读多个字节即字节数组</strong>)</li>
 </ul>
 <h2 id="字符流">字符流</h2>
 <p>字符流以字符为单位进行数据的读写操作，主要用于处理纯文本文件。在进行纯文本文件的 I/O 操作时，通常会配合处理流一起使用。</p>
 <ul>
 <li>节点流
-FileReader 和 FileWriter：用于纯文本文件的读取和写入操作，针对文本数据的处理更加方便。
-StringReader 和 StringWriter：用于在内存中临时存储和操作字符数据，可将数据存储在字符串中进行读写。</li>
-<li>缓冲流：BufferedReader 和 BufferedWriter 是字符流的缓冲流，同样通过设置缓冲区，提高文本数据的读写效率，并且 BufferedReader 提供了按行读取的便捷方法。</li>
+FileReader 和 FileWriter：用于纯文本文件的读取和写入操作，针对文本数据的处理更加方便。</li>
+<li>处理流:
+StringReader 和 StringWriter：用于在内存中临时存储和操作字符数据，可将数据存储在字符串中进行读写。
+还能将字符数组转化为字符流，如<code>StringReader sr = new StringReader(str)</code>
+可以为为一个字符串插入字符串<code>stringBuilder.insert(position, toInsert);</code></li>
+<li>缓冲流：BufferedReader 和 BufferedWriter 是字符流的缓冲流，同样通过设置缓冲区，提高文本数据的读写效率，并且 BufferedReader 提供了按行读取的便捷方法。(<strong>节点流每次只能读一个字符，而缓冲流可以自动识别换行符读一行</strong>)</li>
 <li>转换流：InputStreamReader 和 OutputStreamWriter 用于在字节流和字符流之间进行转换，可指定字符编码，默认编码为 UTF - 8。在处理不同编码的文本文件时非常有用。</li>
 </ul>
 <h1 id="socket网络编程">Socket网络编程：</h1>
@@ -359,9 +364,9 @@ StringReader 和 StringWriter：用于在内存中临时存储和操作字符数
 <span class="hljs-type">Socket</span> <span class="hljs-variable">clientSocket</span> <span class="hljs-operator">=</span> serverSocket.accept();
 类似clientScoket.getInputStream获取对应输入输出字节流
 - 客户端:
-<span class="hljs-type">Socket</span> <span class="hljs-variable">socket</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">Socket</span>(客户端地址及占用的端口);
+<span class="hljs-type">Socket</span> <span class="hljs-variable">socket</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">Socket</span>(服务端地址和端口);
 类似socket.getInputStream获取对应输入输出字节流
-这里客户端的socket被正确创建（设定的端口无误）服务端才会accept
+这里客户端的socket被正确创建（连接的端口无误，连接的地址有效）服务端才会accept
 </code></pre>
 <ol start="2">
 <li>UDP:</li>
@@ -370,25 +375,40 @@ StringReader 和 StringWriter：用于在内存中临时存储和操作字符数
 <span class="hljs-type">DatagramSocket</span> <span class="hljs-variable">socket</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">DatagramSocket</span>();
 <span class="hljs-keyword">while</span>(<span class="hljs-literal">true</span>){
     <span class="hljs-type">byte</span>[] buffer = <span class="hljs-keyword">new</span> <span class="hljs-title class_">byte</span>[<span class="hljs-number">1024</span>];
-    <span class="hljs-type">DatagramPacket</span> <span class="hljs-variable">recivePacket</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">DatagramPacket</span>(buffer, buffer.length, 客户端地址及占用的端口);
+    <span class="hljs-type">DatagramPacket</span> <span class="hljs-variable">recivePacket</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">DatagramPacket</span>(buffer, buffer.length, 客户端地址及监控的端口);
     socket.receive(recivePacket);
 
-    <span class="hljs-type">DatagramPacket</span> <span class="hljs-variable">sendPacket</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">DatagramPacket</span>(buffer, buffer.length, 客户端地址及占用的端口);
+    <span class="hljs-type">DatagramPacket</span> <span class="hljs-variable">sendPacket</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">DatagramPacket</span>(buffer, buffer.length, 客户端地址及监控的端口);
     socket.send(sendPacket);
+    用getData()获取数据
 }
 客户端:
-<span class="hljs-type">DatagramSocket</span> <span class="hljs-variable">socket</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">DatagramSocket</span>();
+<span class="hljs-type">DatagramSocket</span> <span class="hljs-variable">socket</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">DatagramSocket</span>(使用的端口);
 <span class="hljs-keyword">while</span>(<span class="hljs-literal">true</span>){
     <span class="hljs-type">byte</span>[] buffer = <span class="hljs-keyword">new</span> <span class="hljs-title class_">byte</span>[<span class="hljs-number">1024</span>];
-    <span class="hljs-type">DatagramPacket</span> <span class="hljs-variable">sendPacket</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">DatagramPacket</span>(buffer, buffer.length, 服务端地址及占用的端口);
+    <span class="hljs-type">DatagramPacket</span> <span class="hljs-variable">sendPacket</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">DatagramPacket</span>(buffer, buffer.length, 服务端地址及连接的端口);
     socket.send(sendPacket);	
 
-    <span class="hljs-type">DatagramPacket</span> <span class="hljs-variable">recivePacket</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">DatagramPacket</span>(buffer, buffer.length, 服务端地址及占用的端口);
+    <span class="hljs-type">DatagramPacket</span> <span class="hljs-variable">recivePacket</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">DatagramPacket</span>(buffer, buffer.length, 服务端地址及连接的端口);
     socket.receive(recivePacket);
+    用getData()获取数据
 }
 </code></pre>
 <h1 id="多线程">多线程</h1>
 <p>参考博客：(Thread)[<a href="https://blog.csdn.net/Justw320/article/details/131848634">https://blog.csdn.net/Justw320/article/details/131848634</a>]</p>
+<h1 id="字符串">字符串：</h1>
+<h2 id="常用类">常用类：</h2>
+<ul>
+<li>StringBuffer：可变的字符序列，线程安全，效率低。</li>
+<li>StringBuilder：可变的字符序列，线程不安全，效率高。</li>
+<li>String：不可变的字符序列，线程安全，效率低。</li>
+</ul>
+<h2 id="常用方法">常用方法：</h2>
+<ul>
+<li>StringBuffer：append()、delete()、insert()、replace()（替换特殊字符用replaceAll）、reverse()、substring()、length()、charAt()、indexOf()</li>
+<li>StringBuilder：append()、delete()、insert()、replace()（替换特殊字符用replaceAll）、reverse()、substring()、length()、charAt()、indexOf()</li>
+<li>String：length()、charAt()、indexOf()、substring()、equals()、concat()、toLowerCase()（小写变大写）、toUpperCase()（小变大）、trim()（去两端空格）、startsWith()（是否以某某开头）、endsWith()（是否以某某结尾）、contains()（是否包含某个字符串）、replace()（替换特殊字符用replaceAll）、split()、getBytes()、toCharArray()、valueOf()。</li>
+</ul>
 
             
             

@@ -1,0 +1,314 @@
+using UnityEngine;
+
+public class control : MonoBehaviour
+{
+    public float speed = 8.0f;
+    public float jumpForce = 30.0f;
+    public float rayDistance = 0.8f;
+    public LayerMask lm;
+    private bool isGround;
+    private bool isRight;
+    private bool isLeft;
+    private Rigidbody2D rb;
+
+    void Start()
+    {
+        rb = GetComponent<Rigidbody2D>();
+    }
+
+    void Update()
+    {
+        Move();
+        Jump();
+    }
+
+    void Move()
+    {
+        bool isMovingLeft = Input.GetKey(KeyCode.A);
+        bool isMovingRight = Input.GetKey(KeyCode.D);
+
+        if (isMovingLeft)
+        {
+            // 检查左边是否有障碍物
+            isLeft = Physics2D.Raycast(transform.position, Vector2.left, rayDistance, lm);
+            if (!isLeft)
+            {
+                rb.velocity = new Vector2(-speed, rb.velocity.y);
+            }
+        }
+        else if (isMovingRight)
+        {
+            // 检查右边是否有障碍物
+            isRight = Physics2D.Raycast(transform.position, Vector2.right, rayDistance, lm);
+            if (!isRight)
+            {
+                rb.velocity = new Vector2(speed, rb.velocity.y);
+            }
+        }
+        else
+        {
+            rb.velocity = new Vector2(0, rb.velocity.y);
+        }
+    }
+
+    void Jump()
+    {
+        // 射线投射，检查是否在地面上
+        isGround = Physics2D.Raycast(transform.position, Vector2.down, rayDistance, lm);
+
+        if ((Input.GetKeyDown(KeyCode.Space) || Input.GetKeyDown(KeyCode.W)) && isGround)
+        {
+            rb.AddForce(new Vector2(0, jumpForce), ForceMode2D.Impulse);
+        }
+    }
+}
+
+
+多条射线检测以更精确：
+using UnityEngine;
+
+public class control : MonoBehaviour
+{
+    public float speed = 8.0f;
+    public float jumpForce = 30.0f;
+    public float rayDistance = 0.8f;
+    public float rayObstcleDistance = 0.48f;
+    public LayerMask lm;
+    private bool isGround;
+    private bool isRight;
+    private bool isLeft;
+    private Rigidbody2D rb;
+
+    void Start()
+    {
+        rb = GetComponent<Rigidbody2D>();
+    }
+
+    void Update()
+    {
+        Move();
+        Jump();
+    }
+
+    void Move()
+    {
+        bool isMovingLeft = Input.GetKey(KeyCode.A);
+        bool isMovingRight = Input.GetKey(KeyCode.D);
+
+        // 多点射线检测左边是否有障碍物
+        if (isMovingLeft)
+        {
+            isLeft = CheckLeft();
+            if (!isLeft)
+            {
+                rb.velocity = new Vector2(-speed, rb.velocity.y);
+            }
+            else
+            {
+                rb.velocity = new Vector2(0, rb.velocity.y);
+            }
+        }
+        // 多点射线检测右边是否有障碍物
+        else if (isMovingRight)
+        {
+            isRight = CheckRight();
+            if (!isRight)
+            {
+                rb.velocity = new Vector2(speed, rb.velocity.y);
+            }
+            else
+            {
+                rb.velocity = new Vector2(0, rb.velocity.y);
+            }
+        }
+        else
+        {
+            rb.velocity = new Vector2(0, rb.velocity.y);
+        }
+    }
+
+    void Jump()
+    {
+        // 射线投射，检查是否在地面上
+        isGround = CheckGrounded();
+
+        if ((Input.GetKeyDown(KeyCode.Space) || Input.GetKeyDown(KeyCode.W)) && isGround)
+        {
+            rb.AddForce(new Vector2(0, jumpForce), ForceMode2D.Impulse);
+        }
+    }
+
+    bool CheckGrounded()
+    {
+        // 在角色的多个位置投射射线以检测地面
+        Vector2[] raycastPositions = new Vector2[]
+        {
+            new Vector2(transform.position.x - 0.5f, transform.position.y),
+            new Vector2(transform.position.x, transform.position.y),
+            new Vector2(transform.position.x + 0.5f, transform.position.y)
+        };
+
+        foreach (var pos in raycastPositions)
+        {
+            if (Physics2D.Raycast(pos, Vector2.down, rayDistance, lm))
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    bool CheckLeft()
+    {
+        // 在角色的多个位置投射射线以检测左边是否有障碍物
+        Vector2[] raycastPositions = new Vector2[]
+        {
+            new Vector2(transform.position.x, transform.position.y + 0.5f),
+            new Vector2(transform.position.x, transform.position.y),
+            new Vector2(transform.position.x, transform.position.y - 0.5f)
+        };
+
+        foreach (var pos in raycastPositions)
+        {
+            if (Physics2D.Raycast(pos, Vector2.left, rayObstcleDistance, lm))
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    bool CheckRight()
+    {
+        // 在角色的多个位置投射射线以检测右边是否有障碍物
+        Vector2[] raycastPositions = new Vector2[]
+        {
+            new Vector2(transform.position.x, transform.position.y + 0.5f),
+            new Vector2(transform.position.x, transform.position.y),
+            new Vector2(transform.position.x, transform.position.y - 0.5f)
+        };
+
+        foreach (var pos in raycastPositions)
+        {
+            if (Physics2D.Raycast(pos, Vector2.right, rayObstcleDistance, lm))
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+}
+
+
+代码过长可以改为用getAxis：
+using UnityEngine;
+
+public class control : MonoBehaviour
+{
+    public float speed = 8.0f;
+    public float jumpForce = 30.0f;
+    public float rayDistance = 0.8f;
+    public LayerMask lm;
+    private bool isGround;
+    private Rigidbody2D rb;
+
+    void Start()
+    {
+        rb = GetComponent<Rigidbody2D>();
+    }
+
+    void Update()
+    {
+        Move();
+        Jump();
+    }
+
+    void Move()
+    {
+        float horizontalInput = Input.GetAxis("Horizontal");
+
+        // 根据水平输入来设置速度
+        rb.velocity = new Vector2(horizontalInput * speed, rb.velocity.y);
+
+        // 多点射线检测左右是否有障碍物
+        bool isBlockedLeft = CheckLeft();
+        bool isBlockedRight = CheckRight();
+
+        // 如果左边有障碍物且向左移动，或者右边有障碍物且向右移动，则停止水平移动
+        if ((isBlockedLeft && horizontalInput < 0) || (isBlockedRight && horizontalInput > 0))
+        {
+            rb.velocity = new Vector2(0, rb.velocity.y);
+        }
+    }
+
+    void Jump()
+    {
+        // 射线投射，检查是否在地面上
+        isGround = CheckGrounded();
+
+        if ((Input.GetKeyDown(KeyCode.Space) || Input.GetKeyDown(KeyCode.W)) && isGround)
+        {
+            rb.AddForce(new Vector2(0, jumpForce), ForceMode2D.Impulse);
+        }
+    }
+
+    bool CheckGrounded()
+    {
+        // 在角色的多个位置投射射线以检测地面
+        Vector2[] raycastPositions = new Vector2[]
+        {
+            new Vector2(transform.position.x - 0.5f, transform.position.y),
+            new Vector2(transform.position.x, transform.position.y),
+            new Vector2(transform.position.x + 0.5f, transform.position.y)
+        };
+
+        foreach (var pos in raycastPositions)
+        {
+            if (Physics2D.Raycast(pos, Vector2.down, rayDistance, lm))
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    bool CheckLeft()
+    {
+        // 在角色的多个位置投射射线以检测左边是否有障碍物
+        Vector2[] raycastPositions = new Vector2[]
+        {
+            new Vector2(transform.position.x, transform.position.y + 0.5f),
+            new Vector2(transform.position.x, transform.position.y),
+            new Vector2(transform.position.x, transform.position.y - 0.5f)
+        };
+
+        foreach (var pos in raycastPositions)
+        {
+            if (Physics2D.Raycast(pos, Vector2.left, rayDistance, lm))
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    bool CheckRight()
+    {
+        // 在角色的多个位置投射射线以检测右边是否有障碍物
+        Vector2[] raycastPositions = new Vector2[]
+        {
+            new Vector2(transform.position.x, transform.position.y + 0.5f),
+            new Vector2(transform.position.x, transform.position.y),
+            new Vector2(transform.position.x, transform.position.y - 0.5f)
+        };
+
+        foreach (var pos in raycastPositions)
+        {
+            if (Physics2D.Raycast(pos, Vector2.right, rayDistance, lm))
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+}

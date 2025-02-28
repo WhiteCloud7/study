@@ -182,7 +182,7 @@
 <li>bytes：这是一个 byte 类型的数组，它包含了需要转换为字符串的字节数据。在文件读取的场景中，这个数组通常是从文件中读取到的字节内容。</li>
 <li>offset：这是一个整数，表示从 bytes 数组的哪个位置开始进行转换。索引从 0 开始计数。例如，若 - - offset 为 0，则从数组的第一个字节开始转换。</li>
 <li>length：同样是一个整数，指定了要转换的字节数量。它决定了从 offset 位置开始，取多少个字节进行字符串转换。</li>
-<li>charsetName：这是一个字符串，代表了字符编码的名称</li>
+<li>charsetName：<em><strong>这是一个字符串，代表了字符编码的名称,所以对于非utf-8编码的字节数组可用词方法转换</strong></em></li>
 </ul>
 <h2 id="try-catch">try-catch:</h2>
 <ul>
@@ -332,14 +332,16 @@ timer.schedule(参数);}
 <hr>
 <h1 id="io流">IO流：</h1>
 <p>参考博客：(IO流)[<a href="https://blog.csdn.net/a1405/article/details/116766237">https://blog.csdn.net/a1405/article/details/116766237</a>]</p>
+<p><em><strong>IO流，读的时候通过输入流读取数据，写的时候写入输出流，然后通过转到相应对象</strong></em></p>
 <h2 id="字节流">字节流</h2>
 <p>字节流以字节为单位进行数据的读写操作，可处理任意类型的数据，如图片、音频、视频等，在文件上传、下载、传输等场景中广泛应用。使用时需注意关闭输入输出流，否则可能导致数据写入失败。</p>
 <ul>
 <li>节点流
-FileInputStream 和 FileOutputStream：用于文件的读取和写入操作，可实现文件复制等功能。在开发中，文件的上传、下载等操作常使用这两个节点流，通常会与装饰后的处理流配合使用。</li>
-<li>处理流:ByteArrayInputStream 和 ByteArrayOutputStream：用于在内存中临时存储和操作字节数据，可将数据存储在字节数组中进行读写。
-还能将字节数组转化为字节流，如<code>ByteArrayInputStream bais = new ByteArrayInputStream(byteArray, offset, length)</code></li>
-<li>缓冲流：BufferedInputStream 和 BufferedOutputStream 是字节流的缓冲流，通过设置缓冲区，减少与数据源的交互次数，提高数据传输效率。(<strong>节点流每次只能读一个字节，而缓冲流可以一次读多个字节即字节数组</strong>)</li>
+FileInputStream 和 FileOutputStream：用于文件的读取和写入操作，可实现文件复制等功能。在开发中，文件的上传、下载等操作常使用这两个节点流，通常会与装饰后的处理流配合使用。（<strong>这个读写的对象都是文件</strong>）</li>
+<li>处理流:ByteArrayInputStream 和 ByteArrayOutputStream：这个内部维护了一个字节数组，即<strong>读写的对象是字节数组</strong>。
+那么除了以上还能想到可以将字节数组转化为字节流，就是直接创造一个输入流对象，参数是你要转的字节流即可。
+以及反过来，那么前提是输入流里有数据可以转换，读取后<strong>注意读取返回的是int</strong>，这里有的话就用输出处理流write写入，在toString方法转成字符。</li>
+<li>缓冲流：BufferedInputStream 和 BufferedOutputStream 是字节流的缓冲流，是一个装饰装饰字节流（即获取字节流对象），通过设置缓冲区，减少与数据源的交互次数，提高数据传输效率。(<strong>节点流每次只能读一个字节，而缓冲流可以一次读多个字节即字节数组</strong>)</li>
 </ul>
 <h2 id="字符流">字符流</h2>
 <p>字符流以字符为单位进行数据的读写操作，主要用于处理纯文本文件。在进行纯文本文件的 I/O 操作时，通常会配合处理流一起使用。</p>
@@ -347,9 +349,9 @@ FileInputStream 和 FileOutputStream：用于文件的读取和写入操作，�
 <li>节点流
 FileReader 和 FileWriter：用于纯文本文件的读取和写入操作，针对文本数据的处理更加方便。</li>
 <li>处理流:
-StringReader 和 StringWriter：用于在内存中临时存储和操作字符数据，可将数据存储在字符串中进行读写。
-还能将字符数组转化为字符流，如<code>StringReader sr = new StringReader(str)</code>
-可以为为一个字符串插入字符串<code>stringBuilder.insert(position, toInsert);</code></li>
+StringReader 和 StringWriter：这个内部维护了一个字符串或字符数组等等，即<strong>读写的对象是字符串或字符数组等</strong>。
+那么除了以上还能想到可以将字符串等转化为字节流，就是直接创造一个输入处理流对象，参数是你要转的字节流即可。
+以及反过来，那么前提是流里面字符串等有数据可以转换，读取后<strong>注意读取返回的是int</strong>，这是有的话就用输出处理流write方法一下，同理toString转化成字符串。</li>
 <li>缓冲流：BufferedReader 和 BufferedWriter 是字符流的缓冲流，同样通过设置缓冲区，提高文本数据的读写效率，并且 BufferedReader 提供了按行读取的便捷方法。(<strong>节点流每次只能读一个字符，而缓冲流可以自动识别换行符读一行</strong>)</li>
 <li>转换流：InputStreamReader 和 OutputStreamWriter 用于在字节流和字符流之间进行转换，可指定字符编码，默认编码为 UTF - 8。在处理不同编码的文本文件时非常有用。</li>
 </ul>
@@ -357,41 +359,43 @@ StringReader 和 StringWriter：用于在内存中临时存储和操作字符数
 <h2 id="socket">Socket:</h2>
 <p>参考博客：(Scoket)[<a href="https://blog.csdn.net/weixin_49561506/article/details/131554978">https://blog.csdn.net/weixin_49561506/article/details/131554978</a>]</p>
 <ol>
-<li>Socket:</li>
+<li>Socket（面向连接，客户端连接了服务端才能通信）:</li>
 </ol>
 <pre><code class="language-java">服务端:
 <span class="hljs-type">ServerSocket</span> <span class="hljs-variable">serverSocket</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">ServerSocket</span>(监听的端口号);
 <span class="hljs-type">Socket</span> <span class="hljs-variable">clientSocket</span> <span class="hljs-operator">=</span> serverSocket.accept();
 类似clientScoket.getInputStream获取对应输入输出字节流
 - 客户端:
-<span class="hljs-type">Socket</span> <span class="hljs-variable">socket</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">Socket</span>(服务端地址和端口);
+<span class="hljs-type">Socket</span> <span class="hljs-variable">socket</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">Socket</span>(服务端地址和监听的端口);
 类似socket.getInputStream获取对应输入输出字节流
 这里客户端的socket被正确创建（连接的端口无误，连接的地址有效）服务端才会accept
 </code></pre>
 <ol start="2">
-<li>UDP:</li>
+<li>UDP（通信时再通过对方的端口地址进行通信）:</li>
 </ol>
 <pre><code class="language-java">服务端:
+<span class="hljs-type">DatagramSocket</span> <span class="hljs-variable">socket</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">DatagramSocket</span>(监听的端口);
+<span class="hljs-keyword">while</span>(<span class="hljs-literal">true</span>){
+    <span class="hljs-type">byte</span>[] buffer = <span class="hljs-keyword">new</span> <span class="hljs-title class_">byte</span>[<span class="hljs-number">1024</span>];
+    <span class="hljs-type">DatagramPacket</span> <span class="hljs-variable">recivePacket</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">DatagramPacket</span>(buffer, buffer.length);
+    socket.receive(recivePacket);
+    这里接收后可以用recivePacket.getAddress()和recivePacket.getAddress()获取客户端地址以及端口，发送后也可以只是只用于提示用户发送的地址和端口信息
+
+    <span class="hljs-type">DatagramPacket</span> <span class="hljs-variable">sendPacket</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">DatagramPacket</span>(发送的信息message，还是要转为字节数组, message.length, 客户端地址及监控的端口);
+    socket.send(sendPacket);
+    用getData()获取数据(获取的字节数组,且编码需要变成utf-<span class="hljs-number">8</span>)
+}
+客户端:
 <span class="hljs-type">DatagramSocket</span> <span class="hljs-variable">socket</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">DatagramSocket</span>();
 <span class="hljs-keyword">while</span>(<span class="hljs-literal">true</span>){
     <span class="hljs-type">byte</span>[] buffer = <span class="hljs-keyword">new</span> <span class="hljs-title class_">byte</span>[<span class="hljs-number">1024</span>];
-    <span class="hljs-type">DatagramPacket</span> <span class="hljs-variable">recivePacket</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">DatagramPacket</span>(buffer, buffer.length, 客户端地址及监控的端口);
+    <span class="hljs-type">DatagramPacket</span> <span class="hljs-variable">recivePacket</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">DatagramPacket</span>(buffer, buffer.length);
     socket.receive(recivePacket);
+    这里接收后可以用recivePacket.getAddress()和recivePacket.getAddress()获取服务端地址以及端口
 
-    <span class="hljs-type">DatagramPacket</span> <span class="hljs-variable">sendPacket</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">DatagramPacket</span>(buffer, buffer.length, 客户端地址及监控的端口);
-    socket.send(sendPacket);
-    用getData()获取数据
-}
-客户端:
-<span class="hljs-type">DatagramSocket</span> <span class="hljs-variable">socket</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">DatagramSocket</span>(使用的端口);
-<span class="hljs-keyword">while</span>(<span class="hljs-literal">true</span>){
-    <span class="hljs-type">byte</span>[] buffer = <span class="hljs-keyword">new</span> <span class="hljs-title class_">byte</span>[<span class="hljs-number">1024</span>];
-    <span class="hljs-type">DatagramPacket</span> <span class="hljs-variable">sendPacket</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">DatagramPacket</span>(buffer, buffer.length, 服务端地址及连接的端口);
+    <span class="hljs-type">DatagramPacket</span> <span class="hljs-variable">sendPacket</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">DatagramPacket</span>(发送的信息message，还是要转为字节数组, message.length, 服务端地址及连接的端口);
     socket.send(sendPacket);	
-
-    <span class="hljs-type">DatagramPacket</span> <span class="hljs-variable">recivePacket</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">DatagramPacket</span>(buffer, buffer.length, 服务端地址及连接的端口);
-    socket.receive(recivePacket);
-    用getData()获取数据
+    用getData()获取数据（获取的字节数组，且编码需要变成utf-<span class="hljs-number">8</span>）
 }
 </code></pre>
 <h1 id="多线程">多线程</h1>

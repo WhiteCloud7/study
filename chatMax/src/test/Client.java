@@ -6,6 +6,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
@@ -20,7 +21,7 @@ import javax.swing.JTextArea;
 import javax.swing.JTextPane;
 
 public class Client {
-    private JTextPane clientAdd;
+    private JTextPane AddServer;
     private JTextPane port;
     private JFrame frame;
     private JButton send;
@@ -28,7 +29,6 @@ public class Client {
     private JTextArea chatPanel;
     private Socket socket;
     private int serverPort = 8080;
-    private String ClientAdd = "127.0.0.1";
 
     public static void main(String[] args) {
         EventQueue.invokeLater(() -> {
@@ -50,6 +50,7 @@ public class Client {
         frame.setBounds(100, 100, 700, 420);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.getContentPane().setLayout(null);
+        frame.setTitle("客户端");
 
         JPanel panel = new JPanel();
         panel.setBounds(0, 0, 686, 1);
@@ -66,9 +67,9 @@ public class Client {
         lblNewLabel_1.setBounds(303, 11, 80, 26);
         frame.getContentPane().add(lblNewLabel_1);
 
-        clientAdd = new JTextPane();
-        clientAdd.setBounds(137, 11, 131, 21);
-        frame.getContentPane().add(clientAdd);
+        AddServer = new JTextPane();
+        AddServer.setBounds(137, 11, 131, 21);
+        frame.getContentPane().add(AddServer);
 
         port = new JTextPane();
         port.setBounds(369, 15, 125, 21);
@@ -92,6 +93,7 @@ public class Client {
         chatPanel = new JTextArea();
         chatPanel.setEditable(false);
         scrollPane.setViewportView(chatPanel);
+        chatPanel.setText("输入端口号及地址以连接服务器！");
 
         send = new JButton("发送消息");
         send.setBounds(556, 340, 89, 23);
@@ -110,8 +112,10 @@ public class Client {
         if (socket != null && socket.isConnected()) {
             try {
                 BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
-                String sentMessage = message.getText();
-                chatPanel.append("客户端：" + sentMessage + "\n");
+                String originSentMessage = message.getText();
+                String sentMessage = originSentMessage.replaceAll("\n", "&@#");
+                String sentMessageShowPanel = originSentMessage.replaceAll("\n", "\n               ");
+                chatPanel.append("客户端：" + sentMessageShowPanel + "\n");
                 bw.write(sentMessage);
                 bw.newLine();
                 bw.flush();
@@ -128,9 +132,10 @@ public class Client {
     private void connect() {
         try {
             int clientPort = Integer.parseInt(port.getText());
+            String serverAdd = AddServer.getText();
             chatPanel.setText("准备连接服务器......");
-            if (clientPort == serverPort) {
-                socket = new Socket(ClientAdd, clientPort);
+            if (clientPort == serverPort && serverAdd !="") {
+                socket = new Socket(serverAdd, clientPort);
                 chatPanel.append("\n连接服务器成功！\n");
                 new Thread(() -> {
                     try {
@@ -138,9 +143,10 @@ public class Client {
                         String serverMessage;
                         while (true) {
                         	if((serverMessage = br.readLine()) != null) {
+                        		serverMessage = serverMessage.replaceAll("&@#", "\n");
+                        		serverMessage = serverMessage.replaceAll("\n", "\n               ");
                         		chatPanel.append("服务器：" + serverMessage + "\n");
                         	}
-                            
                         }
                     } catch (IOException e) {
                         if (socket != null &&!socket.isClosed()) {
@@ -156,9 +162,5 @@ public class Client {
         } catch (IOException ex) {
             chatPanel.append("\n连接服务器时发生错误：" + ex.getMessage());
         }
-    }
-
-    public JTextPane getClientAdd() {
-        return clientAdd;
     }
 }

@@ -45,7 +45,8 @@ public class Server {
         frame.setBounds(100, 100, 700, 420);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.getContentPane().setLayout(null);
-
+        frame.setTitle("服务器");
+        
         JPanel panel = new JPanel();
         panel.setBounds(0, 0, 686, 1);
         frame.getContentPane().add(panel);
@@ -87,6 +88,8 @@ public class Server {
                     String clientMessage;
                     while (true) {
                     	if((clientMessage = br.readLine()) != null) {
+                    		clientMessage = clientMessage.replaceAll("&@#", "\n");
+                    		clientMessage = clientMessage.replaceAll("\n", "\n               ");
                     		chatPanel.append("客户端：" + clientMessage + "\n");
                     	}
                     }
@@ -102,8 +105,10 @@ public class Server {
     private void sendMessage() {
         if (client != null && client.isConnected()) {
             try {
-                String sentMessage = message.getText();
-                chatPanel.append("服务器：" + sentMessage + "\n");
+            	String originSentMessage = message.getText();
+                String sentMessage = originSentMessage.replaceAll("\n", "&@#");;
+                String sentMessageShowPanel = originSentMessage.replaceAll("\n", "\n               ");
+                chatPanel.append("服务器：" + sentMessageShowPanel + "\n");
                 BufferedWriter os = new BufferedWriter(new OutputStreamWriter(client.getOutputStream()));
                 os.write(sentMessage);
                 os.newLine();

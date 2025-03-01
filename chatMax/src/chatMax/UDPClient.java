@@ -1,22 +1,24 @@
-package test;
+package chatMax;
 
 import java.awt.EventQueue;
 import java.awt.Font;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.SocketException;
 import java.net.UnknownHostException;
-import java.nio.file.ClosedDirectoryStreamException;
-
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextPane;
+
 
 // 定义一个 UDP 客户端类，用于与 UDP 服务器进行通信
 public class UDPClient {
@@ -38,6 +40,9 @@ public class UDPClient {
     InetAddress serverAdd;
     // UDP 套接字，用于发送和接收数据包
     DatagramSocket clientSocket;
+    
+    private JLabel wordCountLabel;
+    private JScrollPane scrollPane_1;
 
     // 程序入口方法，创建并显示客户端窗口
     public static void main(String[] args) {
@@ -63,7 +68,7 @@ public class UDPClient {
     // 初始化客户端界面，此部分省略 UI 相关注释
     private void initialize() {
         frame = new JFrame();
-        frame.setBounds(100, 100, 700, 420);
+        frame.setBounds(100, 100, 700, 480);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.getContentPane().setLayout(null);
         frame.setTitle("客户端");
@@ -114,6 +119,23 @@ public class UDPClient {
         scrollPane.setViewportView(chatPanel);
         chatPanel.setText("输入服务器端口号及地址以连接服务器！\n");
 
+        wordCountLabel = new JLabel("字数: 0");
+        wordCountLabel.setBounds(556, 365, 100, 20);
+        frame.getContentPane().add(wordCountLabel);
+        
+        scrollPane_1 = new JScrollPane();
+        scrollPane_1.setBounds(23, 338, 522, 24);
+        frame.getContentPane().add(scrollPane_1);
+
+        message = new JTextArea();
+        scrollPane_1.setViewportView(message);
+        message.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyReleased(KeyEvent e) {
+                updateWordCountAndSize();
+            }
+        });
+        
         send = new JButton("发送消息");
         send.setBounds(556, 340, 89, 23);
         frame.getContentPane().add(send);
@@ -121,13 +143,6 @@ public class UDPClient {
         send.addActionListener(e -> {
             sendMessage();
         });
-
-        JScrollPane scrollPane_1 = new JScrollPane();
-        scrollPane_1.setBounds(23, 338, 522, 24);
-        frame.getContentPane().add(scrollPane_1);
-
-        message = new JTextArea();
-        scrollPane_1.setViewportView(message);
     }
 
     // 接收服务器消息的方法
@@ -154,8 +169,8 @@ public class UDPClient {
             if (port.getText() != "" && serverPort == 8080) {
                 // 在聊天记录中显示连接成功信息
                 chatPanel.setText("连接到服务器！\n");
-                // 创建一个字节数组用于接收数据
-                byte[] buffer = new byte[1024];
+                // 创建一个字节数组用于接收数据,最大可接受约674个汉字（utf-8下），则我们可以设置最多发送500字
+            	byte[] buffer = new byte[2024];
                 // 创建一个 DatagramPacket 对象用于接收数据包
                 DatagramPacket recivePocket = new DatagramPacket(buffer, buffer.length);
                 // 进入一个无限循环持续接收服务器消息
@@ -168,10 +183,14 @@ public class UDPClient {
                         String recivedMessage = new String(recivePocket.getData(), 0, recivePocket.getLength(), "utf-8").replaceAll("\n", "\n               ");
                         // 在聊天记录中添加服务器发送的消息
                         chatPanel.append("服务器：" + recivedMessage + "\n");
+                        Thread.sleep(100); // 由于只是两个人的聊天器，故不需要那么频繁接收
                     } catch (IOException e) {
                         // 接收消息出错时打印异常信息
                         e.printStackTrace();
-                    }
+                    } catch (InterruptedException e) {
+						// TODO 自动生成的 catch 块
+						e.printStackTrace();
+					}
                 }
             } else {
                 // 端口号为空或不是 8080 时，在聊天记录中显示错误信息
@@ -190,15 +209,58 @@ public class UDPClient {
             // 将发送的消息转换为字符串，并处理换行符,注意sendPocket每次从messageContext开始暂存消息，但如果前一次的消息比后一次长，
             //那么后一次可能会包含前一次的消息，故我们接受sendPocket的真实长度而不是接受整个sendPocket
             String messaageShowPanel = new String(sendPacket.getData(), 0, sendPacket.getLength(), "utf-8").replaceAll("\n", "\n               ");
-            // 在聊天记录中添加客户端发送的消息
-            chatPanel.append("客户端：" + messaageShowPanel + "\n");
-            // 发送数据包到服务器
-            clientSocket.send(sendPacket);
+            if(messaageShowPanel.length() <= 500) {
+            	// 在聊天记录中添加客户端发送的消息
+                chatPanel.append("客户端：" + messaageShowPanel + "\n");
+                // 发送数据包到服务器
+                clientSocket.send(sendPacket);
+            }else {
+            	JOptionPane.showMessageDialog(null, "输入字数不能超过500，请减少字数或分次发送！","提示",JOptionPane.ERROR_MESSAGE);
+            }
             // 清空输入框
             message.setText("");
         } catch (IOException e) {
             // 发送消息出错时打印异常信息
             e.printStackTrace();
         }
+    }
+    
+    private void updateWordCountAndSize() {
+    	Thread thread = new Thread(() -> {
+            while (true) {
+                try {
+                    // 获取输入的文本
+                    String text = message.getText();
+                    // 更新字数显示
+                    wordCountLabel.setText("字数: " + text.length());
+
+                    // 强制重新绘制以确保实时刷新
+                    wordCountLabel.repaint();
+
+                    // 计算输入的行数
+                    int lineCount = message.getLineCount();
+                    int initialHeight = 20;
+                    int maxHeight = initialHeight * 4;
+
+                    int newHeight = initialHeight * lineCount;
+                    if (newHeight > maxHeight) {
+                        newHeight = maxHeight;
+                    }
+                    java.awt.Rectangle bounds = scrollPane_1.getBounds();
+                    if (bounds.height != newHeight) {
+                        bounds.height = newHeight;
+                        scrollPane_1.setBounds(bounds);
+                        frame.revalidate();
+                        frame.repaint();
+                    }
+                    Thread.sleep(100); // 设置线程休眠100毫秒，防止CPU过高
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                    break;
+                }
+            }
+        });
+        thread.setDaemon(true);
+        thread.start();
     }
 }

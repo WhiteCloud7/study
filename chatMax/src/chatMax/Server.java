@@ -1,8 +1,8 @@
-package test;
+package chatMax;
 
 import java.awt.EventQueue;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
@@ -12,6 +12,8 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
@@ -30,6 +32,9 @@ public class Server {
     private JButton send;
     // 与客户端建立连接的套接字
     private Socket client;
+    
+    private JLabel wordCountLabel;
+    private JScrollPane scrollPane_1;
 
     // 程序的入口方法，使用 EventQueue.invokeLater 确保 GUI 在事件调度线程中创建和显示
     public static void main(String[] args) {
@@ -55,7 +60,7 @@ public class Server {
     // 初始化服务器界面，此部分省略 UI 相关注释
     private void initialize() {
         frame = new JFrame();
-        frame.setBounds(100, 100, 700, 420);
+        frame.setBounds(100, 100, 700, 480);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.getContentPane().setLayout(null);
         frame.setTitle("服务器");
@@ -77,13 +82,23 @@ public class Server {
         chatPanel = new JTextArea();
         chatPanel.setEditable(false);
         scrollPane.setViewportView(chatPanel);
-
-        JScrollPane scrollPane_1 = new JScrollPane();
+        
+        wordCountLabel = new JLabel("字数: 0");
+        wordCountLabel.setBounds(556, 365, 100, 20);
+        frame.getContentPane().add(wordCountLabel);
+        
+        scrollPane_1 = new JScrollPane();
         scrollPane_1.setBounds(23, 338, 522, 24);
         frame.getContentPane().add(scrollPane_1);
 
         message = new JTextArea();
         scrollPane_1.setViewportView(message);
+        message.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyReleased(KeyEvent e) {
+                updateWordCountAndSize();
+            }
+        });
 
         send = new JButton("发送消息");
         send.setBounds(556, 340, 89, 23);
@@ -120,12 +135,16 @@ public class Server {
                             clientMessage = clientMessage.replaceAll("\n", "\n               ");
                             // 在聊天面板中添加客户端发送的消息
                             chatPanel.append("客户端：" + clientMessage + "\n");
+                            Thread.sleep(100); // 由于只是两个人的聊天器，故不需要那么频繁接收
                         }
                     }
                 } catch (IOException e) {
                     // 若接收客户端消息时出现异常，打印异常信息
                     e.printStackTrace();
-                }
+                } catch (InterruptedException e) {
+					// TODO 自动生成的 catch 块
+					e.printStackTrace();
+				}
             } catch (IOException e) {
                 // 若创建 ServerSocket 或等待客户端连接时出现异常，打印异常信息
                 e.printStackTrace();
@@ -144,16 +163,20 @@ public class Server {
                 String sentMessage = originSentMessage.replaceAll("\n", "&@#");
                 // 将原始消息中的换行符替换为特定格式，用于在聊天面板中显示
                 String sentMessageShowPanel = originSentMessage.replaceAll("\n", "\n               ");
-                // 在聊天面板中添加服务器发送的消息
-                chatPanel.append("服务器：" + sentMessageShowPanel + "\n");
-                // 创建一个 BufferedWriter 用于向客户端发送消息
-                BufferedWriter os = new BufferedWriter(new OutputStreamWriter(client.getOutputStream()));
-                // 向客户端发送处理后的消息
-                os.write(sentMessage);
-                // 写入换行符，表示消息结束
-                os.newLine();
-                // 刷新缓冲区，确保消息发送出去
-                os.flush();
+                if(sentMessage.length() <= 1000) {
+                	// 在聊天面板中添加服务器发送的消息
+                	chatPanel.append("服务器：" + sentMessageShowPanel + "\n");
+                	// 创建一个 BufferedWriter 用于向客户端发送消息
+                	BufferedWriter os = new BufferedWriter(new OutputStreamWriter(client.getOutputStream()));
+                	// 向客户端发送处理后的消息
+                    os.write(sentMessage);
+                    // 写入换行符，表示消息结束
+                    os.newLine();
+                    // 刷新缓冲区，确保消息发送出去
+                    os.flush();
+                }else {
+                	JOptionPane.showMessageDialog(null, "输入字数不能超过1000，请减少字数或分次发送！","提示",JOptionPane.ERROR_MESSAGE);
+                }
                 // 清空输入框
                 message.setText("");
             } catch (IOException e) {
@@ -165,5 +188,44 @@ public class Server {
             // 若客户端套接字未连接到客户端，在聊天面板中提示用户未连接到客户端
             chatPanel.append("\n未连接到客户端！");
         }
+    }
+    
+    private void updateWordCountAndSize() {
+        Thread thread = new Thread(() -> {
+            while (true) {
+                try {
+                    // 获取输入的文本
+                    String text = message.getText();
+                    // 更新字数显示
+                    wordCountLabel.setText("字数: " + text.length());
+
+                    // 强制重新绘制以确保实时刷新
+                    wordCountLabel.repaint();
+
+                    // 计算输入的行数
+                    int lineCount = message.getLineCount();
+                    int initialHeight = 20;
+                    int maxHeight = initialHeight * 4;
+
+                    int newHeight = initialHeight * lineCount;
+                    if (newHeight > maxHeight) {
+                        newHeight = maxHeight;
+                    }
+                    java.awt.Rectangle bounds = scrollPane_1.getBounds();
+                    if (bounds.height != newHeight) {
+                        bounds.height = newHeight;
+                        scrollPane_1.setBounds(bounds);
+                        frame.revalidate();
+                        frame.repaint();
+                    }
+                    Thread.sleep(100); // 设置线程休眠100毫秒，防止CPU过高
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                    break;
+                }
+            }
+        });
+        thread.setDaemon(true);
+        thread.start();
     }
 }

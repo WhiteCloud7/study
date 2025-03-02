@@ -289,7 +289,7 @@ Outer.<span class="hljs-type">Inner</span> <span class="hljs-variable">inner</sp
 </code></pre>
 <h2 id="数值转化">数值转化：</h2>
 <ul>
-<li>强制类型转换：<code>(类型)变量名</code>，高精度向低精度转换时会丢失精度，低精度向高精度转换时会自动转换，<em>精度排行：byte(8) &lt; short(16) &lt; int(32) &lt; long(32) &lt; float(32) &lt; double(64)。</em>
+<li>强制类型转换：<code>(类型)变量名</code>，高精度向低精度转换时会丢失精度，低精度向高精度转换时会自动转换，<em>精度排行：byte(8) &lt; short(16) &lt; int(32) &lt; long(64) &lt; float(32) &lt; double(64)。</em>
 如<code>short a= 8;int b = (int)a</code></li>
 <li>字符串和数值的转换（以int为例）：字符转整型有<code>Integer.parseInt(String s)</code>和<code>Integer.valueOf(String s)</code>，整型转字符有<code>String.valueOf(int i)</code>和<code>Integer.toString(int i)</code>。</li>
 <li>日期和字符串的转换：时间和字符串:format parse 格式:××formatter，例如：</li>
@@ -378,7 +378,7 @@ StringReader 和 StringWriter：这个内部维护了一个字符串或字符数
     <span class="hljs-type">byte</span>[] buffer = <span class="hljs-keyword">new</span> <span class="hljs-title class_">byte</span>[<span class="hljs-number">1024</span>];
     <span class="hljs-type">DatagramPacket</span> <span class="hljs-variable">recivePacket</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">DatagramPacket</span>(buffer, buffer.length);
     socket.receive(recivePacket);
-    这里接收后可以用recivePacket.getAddress()和recivePacket.getAddress()获取客户端地址以及端口，发送后也可以只是只用于提示用户发送的地址和端口信息
+    这里接收后可以用`recivePacket.getAddress()`和`recivePacket.getAddress()`获取客户端地址以及端口，发送后也可以只是只用于提示用户发送的地址和端口信息
 
     <span class="hljs-type">DatagramPacket</span> <span class="hljs-variable">sendPacket</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">DatagramPacket</span>(发送的信息message，还是要转为字节数组, message.length, 客户端地址及监控的端口);
     socket.send(sendPacket);
@@ -390,7 +390,7 @@ StringReader 和 StringWriter：这个内部维护了一个字符串或字符数
     <span class="hljs-type">byte</span>[] buffer = <span class="hljs-keyword">new</span> <span class="hljs-title class_">byte</span>[<span class="hljs-number">1024</span>];
     <span class="hljs-type">DatagramPacket</span> <span class="hljs-variable">recivePacket</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">DatagramPacket</span>(buffer, buffer.length);
     socket.receive(recivePacket);
-    这里接收后可以用recivePacket.getAddress()和recivePacket.getAddress()获取服务端地址以及端口
+    这里接收后可以用`recivePacket.getAddress()`和`recivePacket.getAddress()`获取服务端地址以及端口
 
     <span class="hljs-type">DatagramPacket</span> <span class="hljs-variable">sendPacket</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">DatagramPacket</span>(发送的信息message，还是要转为字节数组, message.length, 服务端地址及连接的端口);
     socket.send(sendPacket);	
@@ -420,60 +420,330 @@ StringReader 和 StringWriter：这个内部维护了一个字符串或字符数
 <h2 id="各种数值类型的存储">各种数值类型的存储：</h2>
 <p>前情提要，一个英文字符占1个字节，<em><strong>一个中文字符在主流的GBK编码占2个字节，而在UTF-8编码占一般认为3个字节（生僻字或特殊字符可能占4个）</strong></em></p>
 <ul>
-<li>整数：int[<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msup><mn>2</mn><mn>3</mn></msup><mn>1</mn></mrow><annotation encoding="application/x-tex">2^31</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8141em;"></span><span class="mord"><span class="mord">2</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8141em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">3</span></span></span></span></span></span></span></span><span class="mord">1</span></span></span></span>-1，<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo>−</mo><msup><mn>2</mn><mn>3</mn></msup><mn>1</mn></mrow><annotation encoding="application/x-tex">-2^31</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8974em;vertical-align:-0.0833em;"></span><span class="mord">−</span><span class="mord"><span class="mord">2</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8141em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">3</span></span></span></span></span></span></span></span><span class="mord">1</span></span></span></span>]、short[<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msup><mn>2</mn><mn>1</mn></msup><mn>5</mn></mrow><annotation encoding="application/x-tex">2^15</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8141em;"></span><span class="mord"><span class="mord">2</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8141em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">1</span></span></span></span></span></span></span></span><span class="mord">5</span></span></span></span>-1，<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo>−</mo><msup><mn>2</mn><mn>1</mn></msup><mn>5</mn></mrow><annotation encoding="application/x-tex">-2^15</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8974em;vertical-align:-0.0833em;"></span><span class="mord">−</span><span class="mord"><span class="mord">2</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8141em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">1</span></span></span></span></span></span></span></span><span class="mord">5</span></span></span></span>]、long[<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msup><mn>2</mn><mn>3</mn></msup><mn>1</mn></mrow><annotation encoding="application/x-tex">2^31</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8141em;"></span><span class="mord"><span class="mord">2</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8141em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">3</span></span></span></span></span></span></span></span><span class="mord">1</span></span></span></span>-1，<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo>−</mo><msup><mn>2</mn><mn>3</mn></msup><mn>1</mn></mrow><annotation encoding="application/x-tex">-2^31</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8974em;vertical-align:-0.0833em;"></span><span class="mord">−</span><span class="mord"><span class="mord">2</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8141em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">3</span></span></span></span></span></span></span></span><span class="mord">1</span></span></span></span>]、byte[<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msup><mn>2</mn><mn>7</mn></msup></mrow><annotation encoding="application/x-tex">2^7</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8141em;"></span><span class="mord"><span class="mord">2</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8141em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">7</span></span></span></span></span></span></span></span></span></span></span>-1，<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo>−</mo><msup><mn>2</mn><mn>7</mn></msup></mrow><annotation encoding="application/x-tex">-2^7</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8974em;vertical-align:-0.0833em;"></span><span class="mord">−</span><span class="mord"><span class="mord">2</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8141em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">7</span></span></span></span></span></span></span></span></span></span></span>]</li>
-<li>浮点数：float[<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msup><mn>2</mn><mn>3</mn></msup><mn>1</mn></mrow><annotation encoding="application/x-tex">2^31</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8141em;"></span><span class="mord"><span class="mord">2</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8141em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">3</span></span></span></span></span></span></span></span><span class="mord">1</span></span></span></span>-1，<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo>−</mo><msup><mn>2</mn><mn>3</mn></msup><mn>1</mn></mrow><annotation encoding="application/x-tex">-2^31</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8974em;vertical-align:-0.0833em;"></span><span class="mord">−</span><span class="mord"><span class="mord">2</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8141em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">3</span></span></span></span></span></span></span></span><span class="mord">1</span></span></span></span>]、double[<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msup><mn>2</mn><mn>6</mn></msup><mn>3</mn></mrow><annotation encoding="application/x-tex">2^63</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8141em;"></span><span class="mord"><span class="mord">2</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8141em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">6</span></span></span></span></span></span></span></span><span class="mord">3</span></span></span></span>-1，<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo>−</mo><msup><mn>2</mn><mn>6</mn></msup><mn>3</mn></mrow><annotation encoding="application/x-tex">-2^63</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8974em;vertical-align:-0.0833em;"></span><span class="mord">−</span><span class="mord"><span class="mord">2</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8141em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">6</span></span></span></span></span></span></span></span><span class="mord">3</span></span></span></span>]</li>
-<li>字符：char[0，<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msup><mn>2</mn><mn>1</mn></msup><mn>6</mn></mrow><annotation encoding="application/x-tex">2^16</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8141em;"></span><span class="mord"><span class="mord">2</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8141em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">1</span></span></span></span></span></span></span></span><span class="mord">6</span></span></span></span>]</li>
+<li>整数：int[<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msup><mn>2</mn><mn>31</mn></msup></mrow><annotation encoding="application/x-tex">2^{31}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8141em;"></span><span class="mord"><span class="mord">2</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8141em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">31</span></span></span></span></span></span></span></span></span></span></span></span>-1，<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo>−</mo><msup><mn>2</mn><mn>31</mn></msup></mrow><annotation encoding="application/x-tex">-2^{31}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8974em;vertical-align:-0.0833em;"></span><span class="mord">−</span><span class="mord"><span class="mord">2</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8141em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">31</span></span></span></span></span></span></span></span></span></span></span></span>]、short[<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msup><mn>2</mn><mn>15</mn></msup></mrow><annotation encoding="application/x-tex">2^{15}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8141em;"></span><span class="mord"><span class="mord">2</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8141em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">15</span></span></span></span></span></span></span></span></span></span></span></span>-1，<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo>−</mo><msup><mn>2</mn><mn>15</mn></msup></mrow><annotation encoding="application/x-tex">-2^{15}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8974em;vertical-align:-0.0833em;"></span><span class="mord">−</span><span class="mord"><span class="mord">2</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8141em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">15</span></span></span></span></span></span></span></span></span></span></span></span>]、long[<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msup><mn>2</mn><mn>63</mn></msup></mrow><annotation encoding="application/x-tex">2^{63}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8141em;"></span><span class="mord"><span class="mord">2</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8141em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">63</span></span></span></span></span></span></span></span></span></span></span></span>-1，<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo>−</mo><msup><mn>2</mn><mn>63</mn></msup></mrow><annotation encoding="application/x-tex">-2^{63}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8974em;vertical-align:-0.0833em;"></span><span class="mord">−</span><span class="mord"><span class="mord">2</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8141em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">63</span></span></span></span></span></span></span></span></span></span></span></span>]、byte[<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msup><mn>2</mn><mn>7</mn></msup></mrow><annotation encoding="application/x-tex">2^7</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8141em;"></span><span class="mord"><span class="mord">2</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8141em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">7</span></span></span></span></span></span></span></span></span></span></span>-1，<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo>−</mo><msup><mn>2</mn><mn>7</mn></msup></mrow><annotation encoding="application/x-tex">-2^7</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8974em;vertical-align:-0.0833em;"></span><span class="mord">−</span><span class="mord"><span class="mord">2</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8141em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">7</span></span></span></span></span></span></span></span></span></span></span>]</li>
+<li>浮点数：float[3.4*<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>1</mn><msup><mn>0</mn><mn>38</mn></msup></mrow><annotation encoding="application/x-tex">10^{38}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8141em;"></span><span class="mord">1</span><span class="mord"><span class="mord">0</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8141em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">38</span></span></span></span></span></span></span></span></span></span></span></span>，<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo>−</mo><mn>3.4</mn><mo>∗</mo><mn>1</mn><msup><mn>0</mn><mn>38</mn></msup></mrow><annotation encoding="application/x-tex">-3.4*10^{38}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.7278em;vertical-align:-0.0833em;"></span><span class="mord">−</span><span class="mord">3.4</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">∗</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:0.8141em;"></span><span class="mord">1</span><span class="mord"><span class="mord">0</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8141em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">38</span></span></span></span></span></span></span></span></span></span></span></span>]、double[1.7*<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>1</mn><msup><mn>0</mn><mn>308</mn></msup></mrow><annotation encoding="application/x-tex">10^{308}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8141em;"></span><span class="mord">1</span><span class="mord"><span class="mord">0</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8141em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">308</span></span></span></span></span></span></span></span></span></span></span></span>，1.7*<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>1</mn><msup><mn>0</mn><mn>308</mn></msup></mrow><annotation encoding="application/x-tex">10^{308}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8141em;"></span><span class="mord">1</span><span class="mord"><span class="mord">0</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8141em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">308</span></span></span></span></span></span></span></span></span></span></span></span>]</li>
+<li>字符：char[0，<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msup><mn>2</mn><mn>16</mn></msup></mrow><annotation encoding="application/x-tex">2^{16}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8141em;"></span><span class="mord"><span class="mord">2</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8141em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">16</span></span></span></span></span></span></span></span></span></span></span></span>]</li>
 </ul>
 <h2 id="数组和集合存储需要结合数据结构理解">数组和集合存储，需要结合数据结构理解：</h2>
-<p>使用场景:<em><strong>数组适合固定大小、要频繁高性能访问的场景；集合适合动态大小、多样化、多对象操作的场景；字符串适合处理文本信息。</strong></em></p>
+<h3 id="使用场景"><em><strong>使用场景</strong></em>:</h3>
 <ul>
-<li>数组：存储固定长度的相同类型的数据，数组的长度在创建时就确定，无法改变，<strong>最大的长度为int的最大值</strong>。aslist变列表</li>
-<li>列表：存储固定长度的不同类型的数据，列表的长度在创建时就确定，无法改变。toArray转对象数组</li>
+<li>数组和列表适合固定大小、要频繁高性能访问的场景；</li>
+<li>集合适合动态大小、多样化、多对象操作的场景
+<ul>
+<li>集合中list接口和Queue接口的适用数据不唯一有序，</li>
+<li>hashSet唯一无序，TreeSet唯一有序</li>
+<li>Map接口的适用数据键值对，hashMap唯一无序，TreeMap唯一有序</li>
+</ul>
+</li>
+<li>字符串适合处理文本信息。</li>
+</ul>
+<h3 id="详细介绍及常用方法">详细介绍及常用方法</h3>
+<ul>
+<li>数组：存储固定长度的相同类型的数据，<strong>最大的长度为int的最大值</strong>。aslist变列表</li>
+<li>列表：存储固定长度的相同类型的数据，列表的长度在创建时就确定，无法改变。toArray转对象数组</li>
 <li>集合：存储可变长度的不同类型的数据，集合的长度可以动态改变。
 <ul>
-<li>集合的分类：
+<li>集合的分类（一层层都是继承关系，子类继承父类所用方法）：
 <ul>
-<li>
-<p>集合的分类：</p>
-<ol>
-<li>Collection：存储一组不唯一、无序的对象。</li>
-</ol>
+<li>Collection：
 <ul>
-<li>
-<p>List：存储一组不唯一、有序（插入顺序）的对象。</p>
+<li><strong>List</strong>：存储一组不唯一、有序（插入顺序）的对象。（<strong>这里子类特殊是可以直接用=转成list的</strong>，而同级转换到其他如ArrayList转到LinkedList直接在建立LinkedList加上ArrayList参数即可）
 <ul>
 <li>ArrayList：基于数组实现故插入和删除效率低，动态数组，支持随机访问，线程不安全。
-常用方法：add(),get(),remove(),set(),size(),contains(),isEmpty(),indexOf()(返回数据索引),clear(),equals()等等</li>
-<li>LinkedList：基于双向链表实现故插入和删除效率高，不支持随机访问，线程不安全。
-常用方法：add(),addFirst()(开头加),addLast()(结尾加,get、remove、set等都一样，略),contains(),isEmpty(),indexOf()(返回数据索引),clear(),equals()等等</li>
-<li>Vector：基于数组实现，线程安全。类似于ArrayList，常用方法也类似。</li>
-</ul>
-</li>
-<li>
-<p>Queue：存储一组不唯一、有序（先进先出）的对象。</p>
+<em>常用方法</em>：add(),get(),remove(),set(),size(),contains(),isEmpty(),indexOf()(返回数据索引),clear(),equals()，addAll(加另一个集合)等等</li>
+<li>LinkedList：基于双向链表实现故插入和删除效率高，不支持随机访问，线程不安全。<br>
+<em>常用方法</em>：方法和ArrayList类似，就是多了addFirst()(在开头添加),addLast()(在结尾添加)等等关于首尾的方法。另外，<strong>还可以作为栈、队列使用，即链栈和链队列</strong>,相应方法如下：
+链栈：出栈push()或addFirst()(后面包括队就不写或了，自行找对应方法)，入栈pop()，查看栈顶元素peek()，判断栈是否为空empty()
+链队列: 出队poll()，入队offer()，查看队首元素peek()，判断队是否为空isEmpty()</li>
+<li>Vector：基于数组实现，线程安全。类似于ArrayList，常用方法也类似。
 <ul>
-<li>PriorityQueue：基于优先级堆实现，元素按照优先级排序。</li>
-<li>ArrayBlockingQueue：基于数组实现的有界阻塞队列。</li>
-<li>LinkedBlockingQueue：基于链表实现的无界阻塞队列。</li>
+<li>Stack：基于Vector实现，线程安全，后进先出（LIFO）的栈结构,<strong>即顺序栈</strong>，方法就多了pop()(出栈),push()(入栈),peek()(查看栈顶元素)，empty()(判断栈是否为空)，search()(查找元素在栈中的位置)等等</li>
 </ul>
 </li>
 </ul>
-<ol start="2">
-<li>Map：存储一组键值对，每个键对应一个值。</li>
+</li>
+<li>Queue：存储一组不唯一、有序（先进先出）的对象。
+<ul>
+<li>Deque：双端队列，支持在队列的两端进行插入和删除操作。线程不安全。
+<ul>
+<li>ArrayDeque：基于数组实现的双端队列。<strong>即顺序队列</strong>。</li>
+<li>LinkedList：基于链表实现的双端队列。<em>但其实用linkedList即可</em></li>
+</ul>
+</li>
+<li>ArrayBlockingQueue：基于数组实现的有界阻塞队，用于多线程环境，
+当队列已满时，如果有线程尝试向队列中添加元素，该线程会被阻塞，直到队列中有空间可用；当队列为空时，如果有线程尝试从队列中移除元素，该线程也会被阻塞，直到队列中有元素可用。</li>
+<li>LinkedBlockingQueue：基于链表实现的无界阻塞队列。线程安全。</li>
+<li>PriorityQueue：基于堆实现的优先队列，元素按照优先级排序，至于如何自定义优先级即排序规则，我们在TreeSet说明。</li>
+<li>PriorityBlockingQueue：基于优先级堆实现的无界阻塞队列。</li>
+</ul>
+</li>
+<li><strong>Set</strong>：
+<ul>
+<li>HashSet：基于哈希表实现，不保证元素的顺序。<strong>基于哈希码（hashCode()）和equals方法判断表中元素是否相等，即每个元素只能出现一次</strong>且无索引无序。<br>
+<em>常用方法</em>：也和List类似，就是有了哈希码来判断是否相等</li>
+<li>LinkedHashSet：基于哈希表和链表实现，保证元素的插入顺序。其他和HashSet类似。</li>
+<li>TreeSet：基于红黑树实现，元素按照自然顺序排序，也可以自定义排序规则。
+常用方法：和list类似。
+<h4 id="自定义排序规则"><em><strong>自定义排序规则</strong></em>：</h4>
+<ol>
+<li>实现Comparable接口，重写compareTo方法。</li>
 </ol>
+<pre><code class="language-java"><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">Person</span> <span class="hljs-keyword">implements</span> <span class="hljs-title class_">Comparable</span>&lt;Person&gt; {
+    <span class="hljs-keyword">private</span> String name;
+    <span class="hljs-keyword">private</span> <span class="hljs-type">int</span> age;
+    <span class="hljs-meta">@Override</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-type">int</span> <span class="hljs-title function_">compareTo</span><span class="hljs-params">(Person other)</span> {
+        <span class="hljs-comment">// 按照年龄升序排序</span>
+        <span class="hljs-keyword">return</span> Integer.compare(<span class="hljs-built_in">this</span>.age, other.age);;
+    }
+}主类中实例化该类自动按照自定义的年龄升序排序
+</code></pre>
+<ol start="2">
+<li>实现Comparator接口，重写compare方法。</li>
+</ol>
+<pre><code class="language-java"><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">Person</span> {
+    <span class="hljs-keyword">private</span> String name;
+    <span class="hljs-keyword">private</span> <span class="hljs-type">int</span> age;
+    <span class="hljs-comment">//略其他方法</span>
+}
+主类中实例化该类，使用匿名内部类实现Comparator接口，重写compare方法。
+TreeSet&lt;Person&gt; set = <span class="hljs-keyword">new</span> <span class="hljs-title class_">TreeSet</span>&lt;&gt;(<span class="hljs-keyword">new</span> <span class="hljs-title class_">Comparator</span>&lt;Person&gt;() {
+    <span class="hljs-meta">@Override</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-type">int</span> <span class="hljs-title function_">compare</span><span class="hljs-params">(Person o1, Person o2)</span> {
+        <span class="hljs-comment">// 按照年龄升序排序</span>
+        <span class="hljs-keyword">return</span> Integer.compare(o1.getAge(), o2.getAge());
+    }
+});也可以不用匿名内部类，直接实例化一个重写了compare方法Comparator对象，然后作为参数传入TreeSet中，这里是为了简化代码。
+</code></pre>
+<em><strong>这里补充一个重要知识点，对象的toString方法，返回的是对象名和哈希码，要想得到相应的数值，因该重写toString方法。</strong></em> 如以上两个例子都应该重写toString方法。</li>
+</ul>
+</li>
+<li><strong>Map</strong>：存储一组<strong>键值对</strong>，每个键对应一个值。</li>
+<li>HashMap：基于哈希表实现，不保证键的顺序。<br>
+<em>常用方法</em>：put(key,value),get(key),remove(key),containsKey(key),containsValue(value),size(),isEmpty(),clear(),keySet()（得到Set类型的键值集合）,values()（得到Collection的值集合）,entrySet()(获取Set类型的Map.Entry集合，有getkey和getvalue方法)等等</li>
+<li>LinkedHashMap：基于哈希表和链表实现，保证键的插入顺序。<br>
+<em>常用方法</em>：和HashMap类似，就是多了putFirst(key,value),putLast(key,value),removeFirst(),removeLast(),getFirst(),getLast()等等关于首尾的方法。</li>
+<li>TreeMap：基于红黑树实现，键按照自然顺序排序。常用方法和LinkedHashMap类似。</li>
+<li>Hashtable：基于哈希表实现，线程安全，不允许键或值为null。常用方法和HashMap类似。</li>
+<li>ConcurrentHashMap：基于哈希表实现，线程安全。常用方法和HashMap类似。</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>一些线程安全的集合或包装类：如synchronizedList，synchronizedSet，synchronizedMap，Collections.synchronizedList，Collections.synchronizedSet，Collections.synchronizedMap，CopyOnWriteArrayList，CopyOnWriteArraySet，ConcurrentHashMap等等,<strong>这些集合或包装类的效率较低，所以一般情况下不使用，但如果程序对线程安全的要求较高时也必须可以使用这些线程安全的集合或包装类</strong>。具体使用自行搜索。</li>
+<li>集合遍历方法：
 <ul>
-<li>HashMap：基于哈希表实现，不保证键的顺序。</li>
-<li>LinkedHashMap：基于哈希表和链表实现，保证键的插入顺序。</li>
-<li>TreeMap：基于红黑树实现，键按照自然顺序排序。</li>
-<li>Hashtable：基于哈希表实现，线程安全。</li>
-<li>Properties：继承自Hashtable，用于存储属性键值对。</li>
+<li>迭代器（常用，但不能在迭代时修改数据）：Iterator
+<ul>
+<li>常用方法：hasNext(),next(),remove() （即删除用迭代器的remove方法）</li>
+</ul>
+</li>
+<li>增强for循环（更简单，但不能在迭代时修改和删除数据，但可以用Iterator.remove()删除当前数据）：for(E e : 要遍历的对象)  (E为集合中元素的类型)</li>
+<li>普通for循环（通用,对于要修改或删除数据时使用）：for</li>
+<li>对于Map集合的遍历：
+<ul>
+<li>通过keySet()遍历：</li>
+</ul>
+<pre><code class="language-java">Map&lt;String, Integer&gt; map = <span class="hljs-keyword">new</span> <span class="hljs-title class_">HashMap</span>&lt;&gt;();
+map.put(<span class="hljs-string">&quot;A&quot;</span>, <span class="hljs-number">1</span>);
+<span class="hljs-comment">//略多次put</span>
+<span class="hljs-keyword">for</span> (String key : map.keySet()) {
+    <span class="hljs-type">int</span> <span class="hljs-variable">value</span> <span class="hljs-operator">=</span> map.get(key);
+    System.out.println(key + <span class="hljs-string">&quot;: &quot;</span> + value);
+}
+</code></pre>
+<ul>
+<li>通过entrySet()遍历：</li>
+</ul>
+<pre><code class="language-java">Map&lt;String, Integer&gt; map = <span class="hljs-keyword">new</span> <span class="hljs-title class_">HashMap</span>&lt;&gt;();
+map.put(<span class="hljs-string">&quot;A&quot;</span>, <span class="hljs-number">1</span>);
+<span class="hljs-comment">//略多次put</span>
+<span class="hljs-keyword">for</span> (Map.Entry&lt;String, Integer&gt; entry : map.entrySet()) {
+    <span class="hljs-type">String</span> <span class="hljs-variable">key</span> <span class="hljs-operator">=</span> entry.getKey();
+    <span class="hljs-type">int</span> <span class="hljs-variable">value</span> <span class="hljs-operator">=</span> entry.getValue();
+    System.out.println(key + <span class="hljs-string">&quot;: &quot;</span> + value);
+}
+</code></pre>
+<ul>
+<li>通过values()遍历：类似于keySet()，略</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>参考博客：(集合)[<a href="https://blog.csdn.net/2301_79842503/article/details/140886252">https://blog.csdn.net/2301_79842503/article/details/140886252</a>]</li>
+</ul>
+<h1 id="泛型">泛型：</h1>
+<ul>
+<li>泛型的本质是参数化类型，即把类型作为参数传递给类或方法。</li>
+<li>泛型的优点是可以提高代码的复用性和安全性，避免了类型转换的错误。</li>
+<li>泛型的使用方法：
+<ul>
+<li>定义泛型类时，需要在类名后面加上尖括号，并在尖括号中指定泛型类型参数。
+比如ArrayList<E>，其中E就是泛型类型参数。</li>
+<li>泛型类可以有多个泛型类型参数，每个参数之间用逗号分隔。
+比如HashMap&lt;K,V&gt;，其中K和V就是泛型类型参数。</li>
+<li>泛型类可以在类的成员变量、方法参数和方法返回值中使用泛型类型参数。</li>
+<li>泛型类的实例化时需要指定泛型类型参数的具体类型。</li>
+<li>那对于加了泛型的类，该类的对象可以调用泛型类的方法，但是不能调用泛型类的属性，<strong>该类的泛型方法的参数和返回值也需要指定泛型类型参数的具体类型</strong>。就比如上面集合几乎都是泛型类，都有泛型方法，如：</li>
+</ul>
+<pre><code class="language-java"><span class="hljs-keyword">class</span> <span class="hljs-title class_">Person</span> <span class="hljs-keyword">implements</span> <span class="hljs-title class_">Comparable</span>&lt;Person&gt; {
+    <span class="hljs-keyword">private</span> String name;
+    <span class="hljs-keyword">private</span> <span class="hljs-type">int</span> age;
+
+    <span class="hljs-keyword">public</span> <span class="hljs-title function_">Person</span><span class="hljs-params">(String name, <span class="hljs-type">int</span> age)</span> {
+        <span class="hljs-built_in">this</span>.name = name;
+        <span class="hljs-built_in">this</span>.age = age;
+    }
+    <span class="hljs-keyword">public</span> <span class="hljs-type">int</span> <span class="hljs-title function_">gatAge</span><span class="hljs-params">()</span> {
+        <span class="hljs-keyword">return</span> age;
+}
+    <span class="hljs-meta">@Override</span> <span class="hljs-comment">//重写compareTo方法,这里用不到就随便写了</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-type">int</span> <span class="hljs-title function_">compareTo</span><span class="hljs-params">(Person o)</span> {
+        <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;
+    }
+    <span class="hljs-keyword">public</span> String <span class="hljs-title function_">toString</span><span class="hljs-params">()</span> {
+        <span class="hljs-keyword">return</span> <span class="hljs-string">&quot;Person{name=&#x27;&quot;</span> + name + <span class="hljs-string">&quot;&#x27;, age=&quot;</span> + age + <span class="hljs-string">&#x27;}&#x27;</span>;
+    }
+}
+
+<span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">test</span> {
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">main</span><span class="hljs-params">(String[] args)</span>  {
+        HashSet&lt;Person&gt; h = <span class="hljs-keyword">new</span> <span class="hljs-title class_">HashSet</span>&lt;Person&gt;();
+        h.add(<span class="hljs-keyword">new</span> <span class="hljs-title class_">Person</span>(<span class="hljs-string">&quot;a&quot;</span>,<span class="hljs-number">1</span>));
+        h.add(<span class="hljs-keyword">new</span> <span class="hljs-title class_">Person</span>(<span class="hljs-string">&quot;b&quot;</span>,<span class="hljs-number">2</span>));
+        h.add(<span class="hljs-keyword">new</span> <span class="hljs-title class_">Person</span>(<span class="hljs-string">&quot;c&quot;</span>,<span class="hljs-number">3</span>));
+        <span class="hljs-keyword">for</span>(Person e : h) {
+            System.out.println(e);
+        }
+    }
+}
+</code></pre>
+hashSet的泛型方法add()和遍历都得用Person对象。那么可以得出使用泛型类<strong>可以灵活的指定泛型类型参数的具体类型，而不用像普通类那样指定具体类型</strong>，当我们需要灵活的指定泛型类型参数的具体类型时，可以使用泛型类定义泛型类方法，<strong>参数类型和返回值类型都用泛型参数指定</strong>。
+<ul>
+<li><em><strong>泛型参数</strong></em>：所有大写字母都可以作为泛型参数，但为了代码的可读性，一般约定使用以下字母作为泛型参数：
+<ul>
+<li>K - Key（键）</li>
+<li>V - Value（值）</li>
+<li>N - Number（数值类型）</li>
+<li>E - Element (在集合中使用，因为集合中存放的是元素)</li>
+<li>T - Type（java类型，最常用最广泛的约定参数）</li>
+<li>K - Key（键）V - Value（值） N - Number（数值类型）等等</li>
+<li>K,V - 键值对</li>
+<li>两个或两个以上的泛型参数用逗号分隔 按A，B，C顺序命名</li>
 </ul>
 </li>
 </ul>
 </li>
 </ul>
+<h1 id="枚举类">枚举类：</h1>
+<ul>
+<li>定义：<pre><code class="language-java"><span class="hljs-keyword">enum</span> 枚举类名 {
+    枚举值<span class="hljs-number">1</span>,
+    枚举值<span class="hljs-number">2</span>,
+    ...
+}
+</code></pre>
+</li>
+<li>特性：
+<ul>
+<li>枚举类中的每个常量都是该枚举类的一个实例，并且是单例的，如：<pre><code class="language-java"><span class="hljs-keyword">enum</span> <span class="hljs-title class_">Day</span> {
+MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY, SATURDAY, SUNDAY;
+}
+
+<span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">EnumSingleton</span> {
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">main</span><span class="hljs-params">(String[] args)</span> {
+        <span class="hljs-type">Day</span> <span class="hljs-variable">day1</span> <span class="hljs-operator">=</span> Day.MONDAY;<span class="hljs-comment">//因为每个常量都是该枚举类的一个实例，故这里可以用枚举类名.枚举值来创建实例</span>
+        <span class="hljs-type">Day</span> <span class="hljs-variable">day2</span> <span class="hljs-operator">=</span> Day.MONDAY;
+        System.out.println(day1 == day2); <span class="hljs-comment">// 输出: true</span>
+    }
+}
+</code></pre>
+这里的day1和day2是同一个实例。</li>
+<li>枚举类可以使用 Enum 类提供的一些方法，如：name()、ordinal()(枚举常量在枚举类中声明的顺序，从 0 开始计数)、values()（得到所以枚举值）等等。</li>
+<li>枚举类可以用自己的属性和方法，如：<pre><code class="language-java"><span class="hljs-keyword">enum</span> <span class="hljs-title class_">Season</span> {
+    <span class="hljs-comment">//因为每个常量都是该枚举类的一个实例，故枚举值也可看做一个实例对象，故这里可以用构造函数来初始化属性</span>
+    SPRING(<span class="hljs-string">&quot;温暖&quot;</span>), SUMMER(<span class="hljs-string">&quot;炎热&quot;</span>), AUTUMN(<span class="hljs-string">&quot;凉爽&quot;</span>), WINTER(<span class="hljs-string">&quot;寒冷&quot;</span>);
+
+    <span class="hljs-keyword">private</span> <span class="hljs-keyword">final</span> String description;
+
+    <span class="hljs-comment">// 构造函数</span>
+    Season(String description) {
+        <span class="hljs-built_in">this</span>.description = description;
+    }
+
+    <span class="hljs-comment">// 获取描述信息的方法</span>
+    <span class="hljs-keyword">public</span> String <span class="hljs-title function_">getDescription</span><span class="hljs-params">()</span> {
+        <span class="hljs-keyword">return</span> description;
+    }
+}
+
+<span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">EnumWithAttributes</span> {
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">main</span><span class="hljs-params">(String[] args)</span> {
+        <span class="hljs-keyword">for</span> (Season season : Season.values()) {
+            System.out.println(season + <span class="hljs-string">&quot;: &quot;</span> + season.getDescription());
+        }
+    }
+}
+</code></pre>
+这里的枚举类Season有自己的属性description，且有自己的方法getDescription()。</li>
+<li>枚举类可以实现接口，如：<pre><code class="language-java"><span class="hljs-keyword">interface</span> <span class="hljs-title class_">SeasonAction</span> {
+    <span class="hljs-keyword">void</span> <span class="hljs-title function_">action</span><span class="hljs-params">()</span>;
+}
+
+<span class="hljs-keyword">enum</span> <span class="hljs-title class_">Season</span> <span class="hljs-keyword">implements</span> <span class="hljs-title class_">SeasonAction</span> {
+    SPRING {
+        <span class="hljs-meta">@Override</span>
+        <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">action</span><span class="hljs-params">()</span> {
+            System.out.println(<span class="hljs-string">&quot;外出踏青&quot;</span>);
+        }
+    },
+    SUMMER {
+        <span class="hljs-meta">@Override</span>
+        <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">action</span><span class="hljs-params">()</span> {
+            System.out.println(<span class="hljs-string">&quot;游泳解暑&quot;</span>);
+        }
+    <span class="hljs-comment">//略重复实现的代码</span>
+    };
+}
+
+<span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">EnumImplementingInterface</span> {
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">main</span><span class="hljs-params">(String[] args)</span> {
+        <span class="hljs-comment">//用Season.values()来遍历枚举类</span>
+        <span class="hljs-keyword">for</span> (Season season : Season.values()) {
+            System.out.print(season + <span class="hljs-string">&quot; 适合: &quot;</span>);
+            season.action();
+        }
+    }
+}
+</code></pre>
 </li>
 </ul>
+</li>
+<li>枚举类在switch语句中的使用：</li>
+</ul>
+<pre><code class="language-java"><span class="hljs-keyword">enum</span> <span class="hljs-title class_">Day</span> {
+      MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY, SATURDAY, SUNDAY;
+  }
+
+  <span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">EnumSwitchExample</span> {
+      <span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">main</span><span class="hljs-params">(String[] args)</span> {
+          <span class="hljs-type">Day</span> <span class="hljs-variable">today</span> <span class="hljs-operator">=</span> Day.MONDAY;
+          <span class="hljs-keyword">switch</span> (today) {
+              <span class="hljs-keyword">case</span> MONDAY:
+                  System.out.println(<span class="hljs-string">&quot;开始新的一周，加油工作！&quot;</span>);
+                  <span class="hljs-keyword">break</span>;
+              <span class="hljs-comment">//略重复的代码</span>
+              <span class="hljs-keyword">case</span> SUNDAY:
+                  System.out.println(<span class="hljs-string">&quot;周日，准备迎接新一周！&quot;</span>);
+                  <span class="hljs-keyword">break</span>;
+          }
+      }
+  }
+- 枚举类的使用场景：
+- **当需要定义一组固定的常量时，可以使用枚举类，如颜色选择、星期选择、策略选择等。**
+- 当需要在 <span class="hljs-keyword">switch</span> 语句中使用枚举类型时，可以使用枚举类。</code></pre>
 
             <script async src="https://cdn.jsdelivr.net/npm/katex-copytex@latest/dist/katex-copytex.min.js"></script>
             

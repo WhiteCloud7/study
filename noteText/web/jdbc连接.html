@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="UTF-8">
+            <title>&#x666e;&#x901a;&#x7684;JDBC&#x8fde;&#x63a5;</title>
+            <style>
+/* From extension vscode.github */
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
+
+.vscode-dark img[src$=\#gh-light-mode-only],
+.vscode-light img[src$=\#gh-dark-mode-only],
+.vscode-high-contrast:not(.vscode-high-contrast-light) img[src$=\#gh-light-mode-only],
+.vscode-high-contrast-light img[src$=\#gh-dark-mode-only] {
+	display: none;
+}
+
+</style>
+            
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/markdown.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/highlight.css">
+<style>
+            body {
+                font-family: -apple-system, BlinkMacSystemFont, 'Segoe WPC', 'Segoe UI', system-ui, 'Ubuntu', 'Droid Sans', sans-serif;
+                font-size: 14px;
+                line-height: 1.6;
+            }
+        </style>
+        <style>
+.task-list-item {
+    list-style-type: none;
+}
+
+.task-list-item-checkbox {
+    margin-left: -20px;
+    vertical-align: middle;
+    pointer-events: none;
+}
+</style>
+<style>
+:root {
+  --color-note: #0969da;
+  --color-tip: #1a7f37;
+  --color-warning: #9a6700;
+  --color-severe: #bc4c00;
+  --color-caution: #d1242f;
+  --color-important: #8250df;
+}
+
+</style>
+<style>
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-note: #2f81f7;
+    --color-tip: #3fb950;
+    --color-warning: #d29922;
+    --color-severe: #db6d28;
+    --color-caution: #f85149;
+    --color-important: #a371f7;
+  }
+}
+
+</style>
+<style>
+.markdown-alert {
+  padding: 0.5rem 1rem;
+  margin-bottom: 16px;
+  color: inherit;
+  border-left: .25em solid #888;
+}
+
+.markdown-alert>:first-child {
+  margin-top: 0
+}
+
+.markdown-alert>:last-child {
+  margin-bottom: 0
+}
+
+.markdown-alert .markdown-alert-title {
+  display: flex;
+  font-weight: 500;
+  align-items: center;
+  line-height: 1
+}
+
+.markdown-alert .markdown-alert-title .octicon {
+  margin-right: 0.5rem;
+  display: inline-block;
+  overflow: visible !important;
+  vertical-align: text-bottom;
+  fill: currentColor;
+}
+
+.markdown-alert.markdown-alert-note {
+  border-left-color: var(--color-note);
+}
+
+.markdown-alert.markdown-alert-note .markdown-alert-title {
+  color: var(--color-note);
+}
+
+.markdown-alert.markdown-alert-important {
+  border-left-color: var(--color-important);
+}
+
+.markdown-alert.markdown-alert-important .markdown-alert-title {
+  color: var(--color-important);
+}
+
+.markdown-alert.markdown-alert-warning {
+  border-left-color: var(--color-warning);
+}
+
+.markdown-alert.markdown-alert-warning .markdown-alert-title {
+  color: var(--color-warning);
+}
+
+.markdown-alert.markdown-alert-tip {
+  border-left-color: var(--color-tip);
+}
+
+.markdown-alert.markdown-alert-tip .markdown-alert-title {
+  color: var(--color-tip);
+}
+
+.markdown-alert.markdown-alert-caution {
+  border-left-color: var(--color-caution);
+}
+
+.markdown-alert.markdown-alert-caution .markdown-alert-title {
+  color: var(--color-caution);
+}
+
+</style>
+        
+        </head>
+        <body class="vscode-body vscode-light">
+            <h1 id="普通的jdbc连接">普通的JDBC连接</h1>
+<ol>
+<li>建立连接</li>
+</ol>
+<pre><code class="language-java"><span class="hljs-comment">// 数据库连接信息</span>
+<span class="hljs-keyword">private</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">final</span> <span class="hljs-type">String</span> <span class="hljs-variable">URL</span> <span class="hljs-operator">=</span> <span class="hljs-string">&quot;jdbc:mysql://localhost:3306/your_database_name?useUnicode=true&amp;characterEncoding=UTF-8&amp;serverTimezone=UTC&quot;</span>;
+<span class="hljs-keyword">private</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">final</span> <span class="hljs-type">String</span> <span class="hljs-variable">USERNAME</span> <span class="hljs-operator">=</span> <span class="hljs-string">&quot;your_username&quot;</span>;
+<span class="hljs-keyword">private</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">final</span> <span class="hljs-type">String</span> <span class="hljs-variable">PASSWORD</span> <span class="hljs-operator">=</span> <span class="hljs-string">&quot;your_password&quot;</span>;
+
+<span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> Connection <span class="hljs-title function_">establishConnection</span><span class="hljs-params">()</span> {
+    <span class="hljs-type">Connection</span> <span class="hljs-variable">connection</span> <span class="hljs-operator">=</span> <span class="hljs-literal">null</span>;
+    <span class="hljs-keyword">try</span> {
+        <span class="hljs-comment">// 加载 MySQL 数据库的驱动类</span>
+        Class.forName(<span class="hljs-string">&quot;com.mysql.cj.jdbc.Driver&quot;</span>);
+        <span class="hljs-comment">// 建立与数据库的连接</span>
+        connection = DriverManager.getConnection(URL, USERNAME, PASSWORD);
+        System.out.println(<span class="hljs-string">&quot;数据库连接成功！&quot;</span>);
+    } <span class="hljs-keyword">catch</span> (ClassNotFoundException e) {
+        System.err.println(<span class="hljs-string">&quot;未找到数据库驱动类，请检查依赖。&quot;</span>);
+        e.printStackTrace();
+    } <span class="hljs-keyword">catch</span> (SQLException e) {
+        System.err.println(<span class="hljs-string">&quot;建立数据库连接时出现错误。&quot;</span>);
+        e.printStackTrace();
+    }
+    <span class="hljs-keyword">return</span> connection;
+}
+</code></pre>
+<ol start="2">
+<li>执行sql语句</li>
+</ol>
+<pre><code class="language-java"><span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">executeQuery</span><span class="hljs-params">(Connection connection, String sql)</span> {
+    <span class="hljs-type">String</span> <span class="hljs-variable">sql</span> <span class="hljs-operator">=</span> <span class="hljs-string">&quot;SELECT * FROM users&quot;</span>;
+        <span class="hljs-comment">// 检查连接是否有效</span>
+        <span class="hljs-keyword">if</span> (connection == <span class="hljs-literal">null</span>) {
+            System.err.println(<span class="hljs-string">&quot;数据库连接未建立，无法执行查询。&quot;</span>);
+            <span class="hljs-keyword">return</span>;
+        }
+        <span class="hljs-comment">// 执行 SQL 查询,这里Statement需要try-with-resource来关闭</span>
+        <span class="hljs-keyword">try</span> (<span class="hljs-type">Statement</span> <span class="hljs-variable">statement</span> <span class="hljs-operator">=</span> connection.createStatement();
+             <span class="hljs-type">ResultSet</span> <span class="hljs-variable">resultSet</span> <span class="hljs-operator">=</span> statement.executeQuery(sql)) {
+            <span class="hljs-comment">// 处理查询结果</span>
+            <span class="hljs-keyword">while</span> (resultSet.next()) {
+                <span class="hljs-comment">// 这里可以根据表的列名和数据类型获取具体的数据</span>
+                <span class="hljs-comment">// 例如，假设表中有一个名为 &quot;column_name&quot; 的列，数据类型为字符串</span>
+                <span class="hljs-comment">// String columnValue = resultSet.getString(&quot;column_name&quot;);</span>
+                <span class="hljs-comment">// 可以添加更多的处理逻辑，将获取到的数据进行处理或展示</span>
+            }
+        } <span class="hljs-keyword">catch</span> (SQLException e) {
+            System.err.println(<span class="hljs-string">&quot;执行 SQL 查询时出现错误。&quot;</span>);
+            e.printStackTrace();
+        }
+    }
+</code></pre>
+<ul>
+<li><strong>这里得到结果一般应该将其装配到一个列表中</strong>,也可以是用set、map等其他接口,用这些接口来装配数据,方便后续如list能灵活变成arraylist等等。</li>
+<li>装配到对应数据结构中后，上述代码的相应返回类型应该相应改变。</li>
+<li><em><strong>但对于需要占位符即需要输入的sql语句，应该使用preparedStatement而不是statement</strong></em>。<br>
+具体使用方法如下：</li>
+</ul>
+<pre><code class="language-java"><span class="hljs-keyword">try</span> (<span class="hljs-type">Connection</span> <span class="hljs-variable">connection</span> <span class="hljs-operator">=</span> DriverManager.getConnection(url, username, password)) {
+            <span class="hljs-type">String</span> <span class="hljs-variable">sql</span> <span class="hljs-operator">=</span> <span class="hljs-string">&quot;SELECT * FROM users WHERE username = ?&quot;</span>;
+            <span class="hljs-keyword">try</span> (<span class="hljs-type">PreparedStatement</span> <span class="hljs-variable">preparedStatement</span> <span class="hljs-operator">=</span> connection.prepareStatement(sql)) {
+                preparedStatement.setString(<span class="hljs-number">1</span>, inputUsername);
+                <span class="hljs-type">ResultSet</span> <span class="hljs-variable">resultSet</span> <span class="hljs-operator">=</span> preparedStatement.executeQuery();
+                <span class="hljs-keyword">if</span> (resultSet.next()) {
+                    System.out.println(<span class="hljs-string">&quot;登录成功&quot;</span>);
+                } <span class="hljs-keyword">else</span> {
+                    System.out.println(<span class="hljs-string">&quot;登录失败&quot;</span>);
+                }
+            }
+        } <span class="hljs-keyword">catch</span> (Exception e) {
+            e.printStackTrace();
+        }
+</code></pre>
+<ol>
+<li>关闭连接</li>
+</ol>
+<pre><code class="language-java"><span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">closeConnection</span><span class="hljs-params">(Connection connection)</span> {
+        <span class="hljs-keyword">if</span> (connection != <span class="hljs-literal">null</span>) {
+            <span class="hljs-keyword">try</span> {
+                connection.close();
+                System.out.println(<span class="hljs-string">&quot;数据库连接已关闭。&quot;</span>);
+            } <span class="hljs-keyword">catch</span> (SQLException e) {
+                System.err.println(<span class="hljs-string">&quot;关闭数据库连接时出现错误。&quot;</span>);
+                e.printStackTrace();
+            }
+        }
+    }
+</code></pre>
+
+            
+            
+        </body>
+        </html>

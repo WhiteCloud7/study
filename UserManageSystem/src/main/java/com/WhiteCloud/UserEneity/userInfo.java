@@ -1,11 +1,11 @@
 package com.WhiteCloud.UserEneity;
 
 public class userInfo {
+    private int userId;
     private String username;
     private String sex;
     private String phone;
     private String email;
-
     public userInfo(){
         super();
     }
@@ -15,6 +15,14 @@ public class userInfo {
         this.sex=sex;
         this.phone=phone;
         this.email=email;
+    }
+
+    public int getUserId() {
+        return userId;
+    }
+
+    public void setUserId(int userId) {
+        this.userId = userId;
     }
 
     public String getUsername() {

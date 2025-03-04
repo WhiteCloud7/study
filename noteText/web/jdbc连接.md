@@ -9,7 +9,7 @@ private static final String PASSWORD = "your_password";
 public static Connection establishConnection() {
     Connection connection = null;
     try {
-        // 加载 MySQL 数据库的驱动类
+        // 加载 MySQL 数据库的驱动类,如果是maven项目,则不需要这一步
         Class.forName("com.mysql.cj.jdbc.Driver");
         // 建立与数据库的连接
         connection = DriverManager.getConnection(URL, USERNAME, PASSWORD);
@@ -85,3 +85,43 @@ public static void closeConnection(Connection connection) {
     }
 ```
 
+# HikariCP连接池
+- 如下
+```java
+public class getConnection {
+    private static final HikariDataSource dataSource;
+
+    static {
+        // 配置 HikariCP
+        HikariConfig config = new HikariConfig();
+        // 设置数据库连接 URL
+        config.setJdbcUrl("jdbc:mysql://localhost:3306/usermanagesystem?useUnicode=true&characterEncoding=utf-8&useSSL=false");
+        // 设置数据库用户名
+        config.setUsername("root");
+        // 设置数据库密码
+        config.setPassword("123456");
+        // 设置连接池的最小空闲连接数
+        config.setMinimumIdle(5);
+        // 设置连接池的最大连接数
+        config.setMaximumPoolSize(15);
+        // 设置连接的最大空闲时间
+        config.setIdleTimeout(30000);
+        // 设置连接的最大生命周期
+        config.setMaxLifetime(1800000);
+        // 设置获取连接的最大等待时间
+        config.setConnectionTimeout(30000);
+
+        // 创建 HikariDataSource 实例
+        dataSource = new HikariDataSource(config);
+    }
+
+    public static Connection myConnection() {
+        try {
+            // 从连接池中获取连接
+            return dataSource.getConnection();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+}
+```

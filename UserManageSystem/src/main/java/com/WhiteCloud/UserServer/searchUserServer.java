@@ -14,7 +14,7 @@ import java.util.List;
 import static com.WhiteCloud.Utils.getConnection.*;
 
 public class searchUserServer implements searchUserServerImpl {
-    Connection conn = myConnection();
+    Connection conn = myConnection1();
 
     @Override
     public List<userInfo> showUser() {

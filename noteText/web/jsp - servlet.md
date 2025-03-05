@@ -71,7 +71,7 @@
       - void setHeader(String name, String value)：设置响应头的名称和值。
       - void setContentType(String type)：设置响应的内容类型（如 text/html、application/json 等）。
       - void setCharacterEncoding(String charset)：设置响应的字符编码。
-    - 输出响应内容
+    - 输出响应内容  
       - PrintWriter getWriter()：获取一个字符输出流，用于输出文本内容。
       - ServletOutputStream getOutputStream()：获取一个字节输出流，用于输出二进制内容。  
     - 重定向

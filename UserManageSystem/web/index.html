@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>学生管理系统</title>
+    <link rel="stylesheet" href="css/index.css" />
+</head>
+<body>
+<header>用户管理系统</header>
+<nav>
+    <a href="index.html">首页</a>
+</nav>
+<main>
+    <fieldset>
+        <legend>选择你要对用户的操作</legend>
+        <form action="" method="post">
+            <div>
+                <select name="operationType">
+                    <option value="search">查找</option>
+                    <option value="delete">删除</option>
+                    <option value="add">添加</option>
+                    <option value="alter">修改</option>
+                </select>
+                <input type="text" id="searchContent">
+                <input type="submit" name="submittedOption" value="执行操作">
+            </div>
+        </form>
+    </fieldset>
+    <table>
+        <tr>
+            <th>用户名</th>
+            <th>性别</th>
+            <th>电话号码</th>
+            <th>邮箱</th>
+        </tr>
+        <tr>
+            <td><input type="checkbox" name="selected"></td>
+            <td>刘文杰</td>
+            <td>男</td>
+            <td>18671551575</td>
+            <td>2334646904@qq.com</td>
+        </tr>
+    </table>
+</main>
+<footer></footer>
+</body>
+</html>

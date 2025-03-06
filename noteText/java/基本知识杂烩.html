@@ -175,7 +175,27 @@
 }
 </code></pre>
 <p><strong>age实例化的age1，age2，age3都是不同的，而name实例化的name1，name2，name3都是相同的</strong>。</p>
-<hr>
+<ul>
+<li><em><strong>static{}:静态代码块，在类加载时执行，且只执行一次。用于初始化静态资源。</strong></em></li>
+</ul>
+<pre><code class="language-java"><span class="hljs-keyword">class</span> <span class="hljs-title class_">MyBatisUtil</span>{
+    <span class="hljs-keyword">private</span> <span class="hljs-keyword">static</span> SqlSessionFactory ssf;
+    <span class="hljs-keyword">static</span> {
+        <span class="hljs-keyword">try</span> {
+            <span class="hljs-type">String</span> <span class="hljs-variable">resource</span> <span class="hljs-operator">=</span> <span class="hljs-string">&quot;mybatis-config.xml&quot;</span>;
+            <span class="hljs-type">InputStream</span> <span class="hljs-variable">is</span> <span class="hljs-operator">=</span> Resources.getResourceAsStream(resource);
+            ssf = <span class="hljs-keyword">new</span> <span class="hljs-title class_">SqlSessionFactoryBuilder</span>().build(is);
+        } <span class="hljs-keyword">catch</span> (IOException e) {
+            <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">RuntimeException</span>(e);
+        }
+    }
+
+    <span class="hljs-keyword">public</span> SqlSession <span class="hljs-title function_">getSession</span><span class="hljs-params">()</span>{
+        <span class="hljs-keyword">return</span> ssf.openSession();
+    }
+}
+</code></pre>
+<h2 id="这里要初始化sqlsessionfactory这个静态资源故用到了静态代码块">这里要初始化SqlSessionFactory这个静态资源，故用到了静态代码块。</h2>
 <h1 id="一些方法及一些必要的基本概念">一些方法及一些必要的基本概念</h1>
 <h2 id="newstring">newString():</h2>
 <p>new String(byte[] bytes, int offset, int length, String charsetName)</p>

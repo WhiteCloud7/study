@@ -1,4 +1,4 @@
-package com.WhiteCloud.UserEneity;
+package com.WhiteCloud.UserEntity;
 
 public class userInfo {
     private int userId;

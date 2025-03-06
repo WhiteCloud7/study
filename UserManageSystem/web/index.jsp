@@ -1,7 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ page import="com.WhiteCloud.UserServer.searchUserServer" %>
-<%@ page import="com.WhiteCloud.UserEneity.userInfo" %>
+<%@ page import="com.WhiteCloud.UserEntity.userInfo" %>
 <%@ page import="java.util.List" %>
 <!DOCTYPE html>
 <html lang="zh-CN">

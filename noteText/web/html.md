@@ -82,20 +82,6 @@
   p {color:blue;}
 </style>
 ```
-- 表格：HTML 表格是通过标签 <table> 来定义的。如：
-```html
-<table border="1">
-  <tr>
-    <th>表格标题</th>
-    <th>表格标题</th>
-  </tr>
-  <!-- 标题就相当于字段名，数据就是数据，每一行数据就是一个tr，当然可以用js循环 -->
-  <tr>
-    <td>表格数据</td>
-    <td>表格数据</td>
-  </tr>
-</table>
-```
 - 列表(记得包含在`<p>`)：
   - 无序列表：HTML 无序列表是通过标签 <ul> 来定义的。如：
   ```html
@@ -205,7 +191,57 @@
   - multiple：多选
 其中用for属性指定了标签的指向
 以上只是基础，更详细的（表单）[https://developer.mozilla.org/zh-CN/docs/Learn_web_development/Extensions/Forms]
-## 一些参数：
+## 表格：
+HTML 表格是通过标签`<table>` 来定义的。如：
+```html
+<table border="1">
+  <tr>
+    <th>表格标题</th>
+    <th>表格标题</th>
+  </tr>
+  <!-- 标题就相当于字段名，数据就是数据，每一行数据就是一个tr，当然可以用js循环 -->
+  <tr>
+    <td>表格数据</td>
+    <td>表格数据</td>
+  </tr>
+</table>
+```
+还有一些标签来定义表格的样式，配合css使用：
+- `<caption>`：定义表格标题
+- `<thead>`: 定义表格的头部，即字段名那一行
+- `<tbody>`: 定义表格的主体，即数据那几行
+- `<tfoot>`: 定义表格的尾部，即汇总那一行
+- `scope`: 定义表格的作用域，即表格的行、列、整个表格，例如：
+```html
+<table>
+  <thead>
+    <tr>
+      <th scope="col">姓名</th>
+      <th scope="col">年龄</th>
+      <th scope="col">性别</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>张三</td>
+      <td>20</td>
+      <td>男</td>
+    </tr>
+    <tr>
+      <td>李四</td>
+      <td>25</td>
+      <td>女</td>
+    </tr>
+  </tbody>
+  <tfoot>
+    <tr>
+      <td colspan="2">总人数</td>
+      <td>2</td>
+    </tr>
+  </tfoot>
+</table>
+```
+## 常用属性：
 - value：
   - 用于定义输入框、下拉框、复选框等元素的默认值
   - 用于定义按钮的文本

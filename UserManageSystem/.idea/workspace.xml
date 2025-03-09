@@ -10,32 +10,17 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="78eb3de5-809e-4ed7-a14b-26e50ca5acfd" name="更改" comment="">
-      <change afterPath="$PROJECT_DIR$/logs/application_size.log" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/WhiteCloud/Controller/test.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/resources/logback.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/resources/mybatis-config.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/web/css/index.css" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/web/index.html" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/web/photo/QQ图片20250226223205.jpg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/web/test.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/compiler.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/compiler.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/WhiteCloud/UserDao/UserManage.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/WhiteCloud/UserDao/UserManage.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/WhiteCloud/UserEntity/userInfo.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/WhiteCloud/UserEntity/userInfo.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/mapper/userMapper.xml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/mapper/userMapper.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/mybatis.-config.xml" beforeDir="false" afterPath="$PROJECT_DIR$/logs/application.log" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/WhiteCloud/UserDaoServlet/showUserDao.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/WhiteCloud/UserEneity/userInfo.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/WhiteCloud/UserServer/searchUserServer.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/WhiteCloud/UserServerImpl/searchUserServerImpl.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/WhiteCloud/Utils/getConnection.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/web/index.jsp" beforeDir="false" afterPath="$PROJECT_DIR$/web/index.jsp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../noteText/java/基本知识杂烩.html" beforeDir="false" afterPath="$PROJECT_DIR$/../noteText/java/基本知识杂烩.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/web/1.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/web/1.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/web/css/index.css" beforeDir="false" afterPath="$PROJECT_DIR$/web/css/index.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/web/css/test.css" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/web/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/web/index.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/web/test.html" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/../noteText/java/基本知识杂烩.md" beforeDir="false" afterPath="$PROJECT_DIR$/../noteText/java/基本知识杂烩.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../noteText/web/jdbc连接.html" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../noteText/web/mybatisAndPlus.md" beforeDir="false" afterPath="$PROJECT_DIR$/../noteText/web/mybatisAndPlus.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../noteText/web/其他常用的依赖.md" beforeDir="false" afterPath="$PROJECT_DIR$/../noteText/web/其他常用的依赖.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../noteText/web/css.md" beforeDir="false" afterPath="$PROJECT_DIR$/../noteText/web/css.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../noteText/web/html.md" beforeDir="false" afterPath="$PROJECT_DIR$/../noteText/web/html.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../参考学习网站.txt" beforeDir="false" afterPath="$PROJECT_DIR$/../参考学习网站.txt" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -79,34 +64,41 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "ASKED_ADD_EXTERNAL_FILES": "true",
-    "ASKED_SHARE_PROJECT_CONFIGURATION_FILES": "true",
-    "RunOnceActivity.OpenProjectViewOnStart": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
-    "WebServerToolWindowFactoryState": "false",
-    "extract.method.default.visibility": "private",
-    "last_opened_file_path": "D:/GitHub/study/UserManageSystem/src/main/resources/photo",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "project.structure.last.edited": "全局库",
-    "project.structure.proportion": "0.15",
-    "project.structure.side.proportion": "0.2",
-    "settings.editor.selected.configurable": "preferences.keymap",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;ASKED_ADD_EXTERNAL_FILES&quot;: &quot;true&quot;,
+    &quot;ASKED_SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
+    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
+    &quot;extract.method.default.visibility&quot;: &quot;private&quot;,
+    &quot;last_opened_file_path&quot;: &quot;D:/GitHub/study/UserManageSystem/src/main/resources/photo&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;project.structure.last.edited&quot;: &quot;全局库&quot;,
+    &quot;project.structure.proportion&quot;: &quot;0.15&quot;,
+    &quot;project.structure.side.proportion&quot;: &quot;0.2&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.pluginManager&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  },
+  &quot;keyToStringList&quot;: {
+    &quot;ChangesTree.GroupingKeys&quot;: [
+      &quot;module&quot;,
+      &quot;directory&quot;
+    ]
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="D:\GitHub\study\UserManageSystem\src\main\resources\photo" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
       <recent name="D:\GitHub\study\UserManageSystem\web" />
+      <recent name="D:\GitHub\study\UserManageSystem\web\css\" />
     </key>
   </component>
   <component name="RunAnythingCache">
@@ -114,20 +106,7 @@
       <command value="mvn clean" />
     </option>
   </component>
-  <component name="RunManager" selected="JavaScript 调试.test.html">
-    <configuration name="test (4)" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
-      <option name="MAIN_CLASS_NAME" value="com.WhiteCloud.Controller.test" />
-      <module name="UserManageSystem" />
-      <extension name="coverage">
-        <pattern>
-          <option name="PATTERN" value="com.WhiteCloud.Controller.*" />
-          <option name="ENABLED" value="true" />
-        </pattern>
-      </extension>
-      <method v="2">
-        <option name="Make" enabled="true" />
-      </method>
-    </configuration>
+  <component name="RunManager" selected="JavaScript 调试.index.html">
     <configuration name="test (5)" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
       <option name="MAIN_CLASS_NAME" value="com.WhiteCloud.Controller.test" />
       <module name="UserManageSystem" />
@@ -155,6 +134,9 @@
       </method>
     </configuration>
     <configuration name="index.html" type="JavascriptDebugType" temporary="true" nameIsGenerated="true" engineId="37cae5b9-e8b2-4949-9172-aafa37fbc09c" uri="http://localhost:63342/UserManageSystem/web/index.html" useBuiltInWebServerPort="true">
+      <method v="2" />
+    </configuration>
+    <configuration name="login.html" type="JavascriptDebugType" temporary="true" nameIsGenerated="true" uri="http://localhost:63342/UserManageSystem/web/login.html" useBuiltInWebServerPort="true">
       <method v="2" />
     </configuration>
     <configuration name="test.html" type="JavascriptDebugType" temporary="true" nameIsGenerated="true" uri="http://localhost:63342/UserManageSystem/web/test.html" useBuiltInWebServerPort="true">
@@ -249,20 +231,20 @@
       </method>
     </configuration>
     <list>
+      <item itemvalue="JavaScript 调试.login.html" />
       <item itemvalue="JavaScript 调试.test.html" />
       <item itemvalue="JavaScript 调试.index.html" />
       <item itemvalue="Tomcat 服务器.Tomcat 9.0.34" />
       <item itemvalue="应用程序.test" />
-      <item itemvalue="应用程序.test (4)" />
       <item itemvalue="应用程序.test (5)" />
     </list>
     <recent_temporary>
       <list>
-        <item itemvalue="JavaScript 调试.test.html" />
         <item itemvalue="JavaScript 调试.index.html" />
+        <item itemvalue="JavaScript 调试.test.html" />
+        <item itemvalue="JavaScript 调试.login.html" />
         <item itemvalue="应用程序.test" />
         <item itemvalue="应用程序.test (5)" />
-        <item itemvalue="应用程序.test (4)" />
       </list>
     </recent_temporary>
   </component>
@@ -284,6 +266,12 @@
       <workItem from="1741165258962" duration="15000" />
       <workItem from="1741165289588" duration="5750000" />
       <workItem from="1741237931844" duration="26968000" />
+      <workItem from="1741269875719" duration="171000" />
+      <workItem from="1741319589410" duration="21723000" />
+      <workItem from="1741413385719" duration="6220000" />
+      <workItem from="1741435104565" duration="246000" />
+      <workItem from="1741512334437" duration="5614000" />
+      <workItem from="1741527905560" duration="3961000" />
     </task>
     <servers />
   </component>

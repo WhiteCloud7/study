@@ -25,9 +25,9 @@
       - `a:focus`：鼠标点击链接时选择链接
       - `a:link`：用于选择未被访问过的链接
     - 结构伪类：
-      - `li:last-child`：选择作为其父元素的最后一个子元素的元素,如`li:last-child`选择最后一个li元素
-      - `li:nth-child(n)`: 选择作为其父元素的第n个子元素的元素,如`li:nth-child(2)`选择第二个li元素
-      - `:only-child`: 选择作为其父元素唯一子元素的元素,如`div:only-child`选择唯一的div元素，示例：
+      - `li:last-child`：选择该元素的最后一个元素,如`li:last-child`选择最后一个li元素
+      - `li:nth-child(n)`: 选择该元素的第n个元素,如`li:nth-child(2)`选择第二个li元素
+      - `:only-child`: 选择是该元素唯一元素,如`div:only-child`选择唯一的div元素，示例：
      ```css
     <div>
     <div>我是唯一子元素。</div>
@@ -62,7 +62,7 @@
       当用户点击链接`#section1`时，该选择器将匹配对应的元素并显示出来。 
 6. 运算符：选择器可以将其他选择器组合起来，更复杂的选择元素。
    - 后代选择器：如`div p`，选择div元素的所有后代元素p 
-   - 子代选择器：如`div > p`，选择div元素的所有直接子元素p
+   - 子代选择器：如`div > p`，选择div元素的所有**直接**子元素p
    - 邻接兄弟选择器：如`div + p`，选择div元素后面的第一个兄弟元素p
    - 通用兄弟选择器：如`div ~ p`，选择div元素后面的所有兄弟元素p
 
@@ -112,14 +112,34 @@
     box-sizing: inherit;
     }
    ```
-5.弹性盒模型：
+5.**弹性盒模型：**
    - 弹性盒模型是一种布局模型，它被专门设计出来用于创建横向或是纵向的一维页面布局。要使用 flexbox，你只需要在想要进行flex布局的父元素上应用`display: flex` ，所有直接子元素都将会按照flex进行布局。
+   - 
    - flex属性：
-     - `flex: initial`:元素不会主动扩展以填充剩余空间，但会根据需要缩小以适应容器。弹性项目的初始大小由其内容决定。
+     - `flex: initial`:元素不会主动扩展以填充剩余空间，但会根据需要缩小以适应容器。弹性项目的初始大小由其内容决定。 
      - `flex: auto`:元素会主动扩展以填充剩余空间，并且在必要时缩小以适应容器。弹性项目的初始大小由其内容决定。
      - `flex: none`:略
      - `flex: 扩展比例`:元素会根据指定的比例扩展以填充剩余空间，并且在必要时缩小以适应容器。如果有两个弹性项目，一个`flex:1`，另一个`flex:2`，那么后者会占用两倍于前者的剩余空间。
      - `flex:扩展比例 缩小比列 初始大小`:如`flex: 1 2 300px`，1表示元素会按照这个比例扩展以填充剩余空间。2 表示在容器空间不足时，该元素会以这个比例缩小。300px 表示元素的初始大小为 300 像素。
+   - 对于盒子内部其他属性：
+     - `flex-direction`:决定主轴的方向（即项目的排列方向）。
+       - `row`（默认值）：主轴为水平方向，起点在左端。
+       - `row-reverse`：主轴为水平方向，起点在右端。
+       - `column`：主轴为垂直方向，起点在上沿。
+     - `flex-wrap`:决定如果一条轴线排不下，如何换行。
+       - `nowrap`（默认）：不换行。
+       - `wrap`：换行，第一行在上方。
+       - `wrap-reverse`：换行，第一行在下方。
+     - `flex-flow`:是 flex-direction 属性和 flex-wrap 属性的简写形式，默认值为 row nowrap。
+     - `justify-content`:定义了项目在主轴上的对齐方式。
+       - `flex-start`（默认值）：左对齐
+       - `flex-end`：右对齐
+       - `center`： 居中
+     - `align-items`:定义项目在交叉轴上如何对齐。
+       - `flex-start`：交叉轴的起点对齐。
+       - `flex-end`：交叉轴的终点对齐。
+       - `center`：交叉轴的中点对齐。
+     - `align-content`:定义了多根轴线的对齐方式。如果项目只有一根轴线，该属性不起作用。值同justify-content
    - 要在所有元素中使用弹性盒模型（这是开发人员的常见选择），请在`<html>` 元素上设置 display 属性，并将所有其他元素设置为。
    ```css
    html {
@@ -160,7 +180,7 @@
 1. 正常流：即block和inline，上面有介绍。
 2. 在正常流用一些属性改变布局:
    - float：浮动，如`float: left;`，将元素向左浮动，即元素会向左移动，直到它的左边没有其他元素。
-   - position：定位.
+   - position：定位（范围是整个页面，不是元素之间）
       - static：默认值，元素不会被定位。
       - relative：元素会被定位，但不会影响其他元素的位置。
       - absolute：元素会被定位，但会影响其他元素的位置。
@@ -190,9 +210,87 @@
 - border-collapse：
   - collapse：相邻单元格之间的边框会合并成一个单一的边框
   - separate：相邻单元格之间的边框会被分开  
+一个简单的表格布局示例：
+```css
+  /* 表格样式 */
+  table{
+      justify-content: center;
+      table-layout: fixed;
+      margin: 0 auto; /* 这里是为了配合使表格居中 */
+      width: 80%;
+      border-collapse: collapse;
+      border: 1px solid #ddd;
+  }
+  /* 表格行样式 */
+  th, td{
+      padding: 10px;
+      text-align: left;
+      border: 1px solid #ddd;
+  }
+  /* 表格列宽设置 */
+  th:nth-child(1) {
+      width: 10px;
+  }
+
+  td:first-child,
+  th:first-child {
+      border: none;
+  }
+```
 6. 多列布局：我们可以使用`column-count`属性来告诉浏览器我们需要多少列，也可以使用`column-width`来告诉浏览器以至少某个宽度的尽可能多的列来填充容器。
 7. 响应式布局：
 # 文本样式： 
+1. 字体：
+   - font-family：字体，可写多个字体，浏览器从左往右依次寻找，直到找到可用的字体。用于保证字体的可用性。
+   - font-size：字体大小
+   - font-weight：字体粗细
+   - font-style：字体样式
+   - font-transform：字体变形
+     - none：默认值，无变形
+     - capitalize：将每个单词的首字母转换为大写
+     - uppercase：将所有字母转换为大写
+     - lowercase：将所有字母转换为小写
+     - full-width：将所有字母转换为全宽字符
+     - full-size-kana：将所有假名转换为全宽字符
+   - text-decoration：文本装饰
+     - underline：下划线
+     - overline：上划线
+     - line-through：删除线
+     - blink：闪烁
+   - text-shadow：文本阴影
+2. 文本布局：
+   - text-align：文本对齐
+     - left：左对齐
+     - right：右对齐
+     - center：居中对齐 
+     - justify：两端对齐
+   - 行高：
+     - line-height：行高
+     - vertical-align：垂直对齐  
+   - 字母和单词间距：
+     - letter-spacing：字母间距
+     - word-spacing：单词间距
+3. 列表样式：
+   - 基本的盒型模型，略
+   - 行高，略
+   - 对齐，略
+   - list-style-type：列表样式类型
+     - disc：实心圆
+     - circle：空心圆
+     - square：实心方块
+     - decimal：数字
+     - decimal-leading-zero：数字，前面有0
+     - lower-roman：小写罗马数字
+     - upper-roman：大写罗马数字
+    - list-type-position：列表样式位置
+      - inside：列表样式在文本内部
+      - outside：列表样式在文本外部
+    - list-style-image：列表样式图像(一般不用这个用background-image)
+   - 管理列表计数：
+4. 链接样式：
+   - 基本的盒型模型，略
+   - 行高，略
+   - 伪类选择器，略
 # 常用属性(上面提到的就不写了)：
 - all: 所有属性
 - color: 颜色
@@ -201,12 +299,11 @@
 - background: 背景
 - display: 显示，用于盒型模型
 - content: 内容
-- font: 字体
-  - font-family: 字体
-  - font-size: 字体大小
-  - font-weight: 字体粗细
-  - font-style: 字体样式
 - atuoflow: 自动换行
+- box-shadow:定义了盒子的阴影
+  - `box-shadow: 水平偏移 垂直偏移 模糊距离 阴影尺寸 阴影颜色`
+  - 如`box-shadow: 0 0 10px 5px #000;`
+   - 其中，水平偏移和垂直偏移是阴影的位置，模糊距离是阴影的模糊程度，阴影尺寸是阴影的尺寸，阴影颜色是阴影的颜色 
 # 单位：
 - 长度单位：
   - 绝对长度最常用的是px，即像素，其他略

@@ -1,0 +1,80 @@
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    margin: 0;
+}
+main{
+}
+
+/* 导航栏样式 */
+nav {
+    background-color: #333;
+    color: white;
+    display: flex;
+    padding: 10px 20px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* 标题样式 */
+nav header {
+    display: inline;
+    font-size: 24px;
+    font-weight: bold;
+    margin-right: 50px;
+}
+
+/* 链接样式 */
+nav a {
+    color: white;
+    text-decoration: none;
+    margin: 0 15px;
+    padding: 8px 12px;
+    border-radius: 4px;
+    transition: background-color 0.3s ease;
+}
+
+/* 链接悬停样式 */
+nav a:hover {
+    background-color: #555;
+}
+
+/*操作选择样式 */
+.operationForm{
+    display: flex;
+    justify-content: center;
+    padding: 1px;
+}
+
+/* 操作选择 */
+.operationForm select,
+.operationForm input,
+.operationForm button {
+    margin-right: 50px;
+    font-size: 20px;
+    padding: 0px;
+}
+
+/* 表格样式 */
+table{
+    justify-content: center;
+    table-layout: fixed;
+    margin: 0 auto;
+    width: 80%;
+    border-collapse: collapse;
+    border: 1px solid #ddd;
+}
+/* 表格行样式 */
+th, td{
+    padding: 10px;
+    text-align: left;
+    border: 1px solid #ddd;
+}
+/* 表格列宽设置 */
+th:nth-child(1) {
+    width: 10px;
+}
+
+td:first-child,
+th:first-child {
+    border: none;
+}
+

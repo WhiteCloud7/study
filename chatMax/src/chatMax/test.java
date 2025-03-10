@@ -1,30 +1,16 @@
 package chatMax;
 
-class A{
-	public void a(){
-		System.out.println("我是父类");
-	}
-	
-	public void b(){
-		System.out.println("我也是子类");
-	}
-}
-
-class B extends A{
-	public void a(){
-
-		System.out.println("我是子类");
-	}
-	
-	public void b(){
-		System.out.println("我也是子类");
-	}
-}
+import java.util.ArrayList;
+import java.util.Arrays;
 
 public class test {
+	static int b;
 	public static void main(String[] args) {
-		A a = new B();
-		B b = new B();
-		a.a();
+		int []a= {5,1,7,9,3};
+		Arrays.sort(a);
+		for(int i=0;i<5;i++) {
+			System.out.println(a[i]);
+		}
+		
 	}
 }

@@ -77,4 +77,98 @@ td:first-child,
 th:first-child {
     border: none;
 }
+/*添加用户表单样式 */
+.addUser {
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* 让表单内容在水平方向居中 */
+    font-size: 20px;
+    padding: 20px;
+    width: 35%;
+    max-width: 500px;
+    position: absolute;
+    top: 85px;
+    left: 50%;
+    transform: translateX(-50%); /* 让表单在水平方向完全居中 */
+    box-shadow: 0 4px 10px #eaeaea;
+}
 
+.addUser p {
+    font-size: 28px;
+    text-align: center;
+    margin-bottom: 50px;
+}
+
+.addUser .row {
+    display: flex;
+    align-items: center;
+    width: 80%; /* 让每一行占据整个表单宽度 */
+    margin-bottom: 10px;
+}
+
+.addUser label {
+    width: 30%; /* 给 label 设置固定宽度 */
+    text-align: left;
+    margin-right: 10px;
+    margin-bottom: 20px;
+}
+
+.addUser input {
+    width: 70%; /* 让 input 占据剩余宽度 */
+    text-align: left;
+    padding: 5px;
+    margin-bottom: 20px;
+}
+
+.addUser .button-group {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+}
+
+.addUser button {
+    margin-right: 40px;
+    padding: 5px 10px;
+}
+
+/* 修改用户表单样式 */
+.alterUser{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    font-size: 20px;
+    padding: 20px;
+    width: 40%;
+    max-width: 500px;
+    position: absolute;
+    top: 85px;
+    left: 30%;
+    box-shadow: 0 4px 10px #eaeaea;
+}
+
+.alterUser p{
+    text-align: center;
+    margin-bottom: 30px;
+    font-size: 28px;
+}
+
+.alterUser .row{
+    display: flex;
+    width: 80%;
+    margin-bottom: 15px;
+}
+
+.alterUser label{
+    text-align: left;
+    width: 30%;
+}
+
+.alterUser input{
+    text-align: left;
+    width: 70%;
+}
+
+.alterUser button{
+    margin-right: 40px;
+    padding: 5px 10px;
+}

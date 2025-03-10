@@ -264,6 +264,7 @@
      - right：右对齐
      - center：居中对齐 
      - justify：两端对齐
+     - ***这里注意当设置类似input、label等元素的text-align时，如果不设置width，那么文本将不会对应对齐，因为这些元素的宽度是根据内容来决定的。对于上面的一些布局，也会有类似的问题，表格等等***
    - 行高：
      - line-height：行高
      - vertical-align：垂直对齐  

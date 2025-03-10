@@ -15,7 +15,7 @@
     </span>
 </nav>
 <main>
-    <fieldset hidden>
+    <fieldset>
         <legend style="display: inline;text-align: center">选择你要对用户的操作</legend>
         <form action="" method="post" class="operationForm">
             <div>
@@ -30,7 +30,7 @@
             </div>
         </form>
     </fieldset>
-    <table hidden>
+    <table>
         <caption>用户信息表</caption>
         <thead>
             <tr>
@@ -51,41 +51,58 @@
             </tr>
         </tbody>
     </table>
-
-    <form action="" class="addUser">
-        <caption>添加用户</caption>
-        <label for="addUsername">用户名</label>
-        <input type="text" id="addUsername" name="addUsername" placeholder="请输入用户名">
-
-        <label for="addSex">性别</label>
-        <input type="text" id="addSex" name="addSex" placeholder="请输入性别">
-
-        <label for="addPhone">电话号码</label>
-        <input type="text" id="addPhone" name="addPhone" placeholder="请输入电话号码">
-
-        <label for="addEmail">邮箱</label>
-        <input type="text" id="addEmail" name="addEmail" placeholder="请输入邮箱">
-
-        <button type="submit" name="addUser">确认添加</button>
-        <button type="reset">重置</button>
-        <button type="button" name="back">返回</button>
-    </form>
-
-    <form action="" class="alterUser" hidden>
-        <caption>修改用户</caption>
-        <label for="alterUsername">用户名</label>
-        <input type="text" id="alterUsername" name="alterUsername" placeholder="请输入用户名">
-
-        <label for="alterSex">性别</label>
-        <input type="text" id="alterSex" name="alterSex" placeholder="请输入性别">
-
-        <label for="alterPhone">电话号码</label>
-        <input type="text" id="alterPhone" name="alterPhone" placeholder="请输入电话号码">
-
-        <button type="submit" name="alterUser">确认修改</button>
-        <button type="reset">重置</button>
-        <button type="button" name="back">返回</button>
-    </form>
+    <section hidden>
+        <form action="" class="addUser">
+            <p>添加用户</p>
+            <div class="row">
+                <label for="addUsername">用户名</label>
+                <input type="text" id="addUsername" name="addUsername" placeholder="请输入用户名">
+            </div>
+            <div class="row">
+                <label for="addSex">性别</label>
+                <input type="text" id="addSex" name="addSex" placeholder="请输入性别">
+            </div>
+            <div class="row">
+                <label for="addPhone">电话号码</label>
+                <input type="text" id="addPhone" name="addPhone" placeholder="请输入电话号码">
+            </div>
+            <div class="row">
+                <label for="addEmail">邮箱</label>
+                <input type="text" id="addEmail" name="addEmail" placeholder="请输入邮箱">
+            </div>
+            <div class="button-group">
+                <button type="submit" name="addUser">确认添加</button>
+                <button type="reset">重置</button>
+                <button type="button" name="back">返回</button>
+            </div>
+        </form>
+    </section>
+    <section hidden>
+        <form action="" class="alterUser">
+            <p>修改用户信息</p>
+            <div class="row">
+                <label for="alterUsername">用户名</label>
+                <input type="text" id="alterUsername" name="alterUsername" placeholder="请输入用户名">
+            </div>
+            <div class="row">
+                <label for="alterSex">性别</label>
+                <input type="text" id="alterSex" name="alterSex" placeholder="请输入性别">
+            </div>
+            <div class="row">
+                <label for="addEmail">邮箱</label>
+                <input type="text" id="addEmail" name="addEmail" placeholder="请输入邮箱">
+            </div>
+            <div class="row">
+                <label for="alterPhone">电话号码</label>
+                <input type="text" id="alterPhone" name="alterPhone" placeholder="请输入电话号码">
+            </div>
+            <div class="button-group">
+                <button type="submit" name="alterUser">确认修改</button>
+                <button type="reset">重置</button>
+                <button type="button" name="back">返回</button>
+            </div>
+        </form>
+    </section>
 </main>
 <footer></footer>
 </body>

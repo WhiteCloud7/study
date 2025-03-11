@@ -1,4 +1,4 @@
-参考博客：(html)[https://blog.csdn.net/zong596568821xp/article/details/83277729]
+参考博客：[html](https://blog.csdn.net/zong596568821xp/article/details/83277729)
 # html网页基本结构:
 ```html
 <!DOCTYPE html>

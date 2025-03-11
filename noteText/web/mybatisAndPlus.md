@@ -1,7 +1,7 @@
 # mybatis
 参考博客：  
-(简单介绍)[https://blog.csdn.net/vcj1009784814/article/details/106391982]
-(这个有具体的结构)[https://blog.csdn.net/weixin_52937170/article/details/142468894]
+[简单介绍](https://blog.csdn.net/vcj1009784814/article/details/106391982)
+[这个有具体的结构](https://blog.csdn.net/weixin_52937170/article/details/142468894)
 ## mybatis.xml配置文件（(resoures下)）：
 ```xml
 <?xml version="1.0" encoding="UTF-8" ?>

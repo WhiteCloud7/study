@@ -188,7 +188,12 @@ Student.prototype.setPrice = function (price) { // 添加子类型私有的方�
      - querySelectorAll(CSS选择器)：根据CSS选择器查找元素，返回元素对象列表  
      - getElementsByTagName(tagName)：根据标签名查找元素，返回元素对象列表
      - getElementsByClassName(className)：根据类名查找元素，返回元素对象列表
-     - getAttributeNode(name)：根据属性名查找属性，返回属性对象,但一般不用
+     - 关于元素属性：
+       - getAttribute(name)：获取元素的属性值
+       - setAttribute(name, value)：设置元素的属性值
+       - removeAttribute(name)：删除元素的属性值
+       - hasAttribute(name)：判断元素是否有指定的属性
+       - 以上方法都可以用元素.属性名来调用
    - 修改,常用于添加html代码：
       - createElement(tagName)：创建元素，返回元素对象
       - createAttribute(name)：创建属性，返回属性对象
@@ -236,6 +241,7 @@ Student.prototype.setPrice = function (price) { // 添加子类型私有的方�
       - change 元素改变时
       - load 页面加载完成时 unload 页面卸载时
       - resize 窗口大小改变时
+      - DOMContentLoaded ：DOM加载完成时
     - 键盘事件
       - keydown keyup keypress 键盘按下、抬起、按下并松开
       - 触发某个事件时可以获得以下值
@@ -283,8 +289,13 @@ Student.prototype.setPrice = function (price) { // 添加子类型私有的方�
 ```js
 var obj = {name: "猪八戒", age: 28, gender: "男"};
 var jsonStr = JSON.stringify(obj);
-```  
-## AJAX：
+``` 
+1. json字符串转js对象：
+```js
+var jsonStr = '{"name":"猪八戒","age":28,"gender":"男"}';
+var obj = JSON.parse(jsonStr);
+```
+## AJAX(涉及前后端数据交互使用)：
 前言：传统的web交互是用户触发一个http请求服务器，然后服务器收到之后，在做出响应到用户，并且返回一个新的页面，每当服务器处理客户端提交的请求时，客户都只能空闲等待，并且哪怕只是一次很小的交互、只需从服务器端得到很简单的一个数据，都要返回一个完整的HTML页，而用户每次都要浪费时间和带宽去重新读取整个页面。这个做法浪费了许多带宽，由于每次应用的交互都需要向服务器发送请求，应用的响应时间就依赖于服务器的响应时间，这导致了用户界面的响应比本地应用慢得多。
 
 AJAX 的出现,刚好解决了传统方法的缺陷，AJAX 是一种用于创建快速动态网页的技术，通过在后台与服务器进行少量数据交换，AJAX 可以使网页实现异步更新，这意味着可以在不重新加载整个网页的情况下，对网页的某部分进行更新。
@@ -307,9 +318,10 @@ if (window.XMLHttpRequest) {
   - async：true（异步）或 false（同步）
   - user：可选的用户名称
   - psw：可选的密码
-- send()	将请求发送到服务器，用于 GET 请求
+- send()	将请求发送到服务器，用于GET请求
 - send(string)	将请求发送到服务器，用于 POST 请求
 - setRequestHeader()	向要发送的报头添加标签/值对
+- responseType	规定响应的类型
 3. 常用属性：
 - onreadystatechange：定义当 readyState 属性发生变化时被调用的函数
 - readyState：保存 XMLHttpRequest 的状态。
@@ -358,6 +370,93 @@ ajax.onreadystatechange = function () {
     }
 };
 ``` 
+6. ***fetch + async/await*** :
+  1. 概述： 这是对ajax的简化甚至替代，还能处理put、delete等请求
+  2. GET请求：
+  ```js
+    async function getUsers() {
+      try {
+          let response = await fetch("https://jsonplaceholder.typicode.com/users");
+          if (!response.ok) throw new Error(`HTTP 错误！状态码: ${response.status}`);
+          
+          let data = await response.json();
+          console.log(data);
+      } catch (error) {
+          console.error("请求失败:", error);
+      }
+  }
+  getUsers();
+  ```  
+  2. POST请求:
+  ```js
+    async function createUser() {
+      let newUser = {
+          name: "Tom",
+          email: "tom@example.com",
+      };
+
+      try {
+          let response = await fetch("https://jsonplaceholder.typicode.com/users", {
+              method: "POST",
+              headers: {
+                  "Content-Type": "application/json", // 发送 JSON
+              },
+              body: JSON.stringify(newUser), // 转换对象为 JSON 字符串
+          });
+
+          let data = await response.json();
+          console.log("用户创建成功:", data);
+      } catch (error) {
+          console.error("请求失败:", error);
+      }
+  }
+  createUser();
+  ``` 
+  3. 其他请求参考以上两个 
+***关于Content-Type：***
+- text/plain：表明传输的数据是纯文本，编码格式一般是 UTF - 8。
+- text/html：意味着传输的数据是 HTML 文档。
+- application/json：说明传输的数据是 JSON 格式，在前后端交互里使用频率较高。
+- application/x-www-form-urlencoded：常用于表单数据的提交，数据会被编码成键值对形式，键和值都会进行 URL 编码。
+- multipart/form-data：主要用于表单中包含文件上传的情况。
+关于接受参数遍历，可以如下简化：
+```js
+let tableContent = json.map(user => `
+    <tr>
+        <td><input type="checkbox"></td>
+        <td>${user.username}</td>
+        <td>${user.sex}</td>
+        <td>${user.phone}</td>
+        <td>${user.email}</td>
+    </tr>
+`).join("");
+tableData.innerHTML = tableContent;
+```
+***关于请求头和响应头：***
+1. 实体首部字段
+   - Content-Type：指定请求体的媒体类型
+   - Content-Length：指定请求体的长度
+   - Content-Encoding：指定请求体的编码方式
+   - Content-Language：指定请求体的语言
+   - Content-Location：指定请求体的位置
+   - 等等
+2. 请求首部字段：
+  1. 内容协商类:
+    - Accept：指定客户端可以接受的媒体类型
+    - Accept-Charset：指定客户端可以接受的字符集
+    - Accept-Encoding：指定客户端可以接受的编码方式
+    - Accept-Language：指定客户端可以接受的语言
+  2. 用户信息类：
+    - User-Agent：指定客户端的用户代理字符串
+    - Referer：指定请求的来源地址  
+  3. 认证类:Authorization：指定客户端的认证信息
+  4. cookie类:Cookie：指定客户端的cookie信息    
+  5. 其他 Host：指定请求的主机和端口号，响应头为server
+  6. 通用类:
+    - Connection：指定客户端与服务器之间的连接类型
+    - Cache-Control：指定缓存控制策略
+    - Date：指定请求的日期和时间
+    - Pragma：指定请求的优先级 
 ## BOM:  
 1. window对象:以下方法都是window.方法名来调用
   - 弹出框：
@@ -375,6 +474,7 @@ ajax.onreadystatechange = function () {
     - scrollTo(x, y): 窗口滚动到指定位置
   - 其他常用方法：
     - open ![参数](photo\open.png) close: 打开和关闭窗口
+    - on+事件：监听窗口事件要执行的方法
     - moveTo(x, y): 窗口移动到指定位置
     - resizeTo(width, height): 窗口调整大小
 2. Navigator对象:以下方法都是navigator.方法名来调用
@@ -443,6 +543,27 @@ try {
 cookie使用：
 1. 创建cookie：`document.cookie = "username=zhangsan; expires=Thu, 18 Dec 2043 12:00:00 GMT; path=/";` 过期时间和路径组成都是可选的
 2. 获取cookie：let一个变量接受`document.cookie`即可
+   - 获取cookie函数：
+    ```js
+    function getCookie(cname) {
+        var name = cname + "=";
+        var ca = document.cookie.split(';');
+        for (var i = 0; i < ca.length; i++) {
+            var c = ca[i].trim();
+            if (c.indexOf(name) == 0) return c.substring(name.length, c.length);
+        }
+        return "";
+    }
+    ```
 3. 修改cookie：覆盖即可
-4. 删除cookie：将过期时间设置为现在即可
+   - 设置cookie函数：
+    ```js
+    function setCookie(cname, cvalue, exdays) {
+      var d = new Date();
+      d.setTime(d.getTime() + (exdays * 24 * 60 * 60 * 1000));
+      var expires = "expires=" + d.toGMTString();
+      document.cookie = cname + "=" + cvalue + "; " + expires;
+    }
+    ```
+4. 删除cookie：设置过期时间为过去即可
 ## webStorage：

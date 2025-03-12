@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.WhiteCloud.UserDao.UserManage">
+    <select id="selectAll" resultType="userInfo">
+        SELECT * FROM userinfo
+    </select>
+    <select id="selectOnePara" resultType="userInfo">
+        SELECT * FROM userinfo WHERE CONCAT_WS(",",username,sex,phone,email) LIKE CONCAT('%',#{para},'%')
+    </select>
+    <select id="selectByManyPara" resultType="userInfo">
+        SELECT * FROM userinfo WHERE CONCAT_WS(",",username,sex,phone,email) LIKE
+            <foreach collection="ParaList" item="Para" separator=" AND ">
+                CONCAT('%',#{para},'%')
+            </foreach>
+            )
+    </select>
+</mapper>

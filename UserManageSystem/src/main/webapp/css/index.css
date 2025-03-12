@@ -1,0 +1,190 @@
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    margin: 0;
+}
+main{
+}
+
+#mask{
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 999;
+    pointer-events: auto;
+}
+
+/* 导航栏样式 */
+nav {
+    background-color: #333;
+    color: white;
+    display: flex;
+    padding: 10px 20px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* 标题样式 */
+nav header {
+    display: inline;
+    font-size: 24px;
+    font-weight: bold;
+    margin-right: 50px;
+}
+
+/* 链接样式 */
+nav a {
+    color: white;
+    text-decoration: none;
+    margin: 0 15px;
+    padding: 8px 12px;
+    border-radius: 4px;
+    transition: background-color 0.3s ease;
+}
+
+/* 链接悬停样式 */
+nav a:hover {
+    background-color: #555;
+}
+
+/*操作选择样式 */
+.operationForm{
+    display: flex;
+    justify-content: center;
+    padding: 1px;
+}
+
+/* 操作选择 */
+.operationForm select,
+.operationForm input,
+.operationForm button {
+    margin-right: 50px;
+    font-size: 20px;
+    padding: 0px;
+}
+
+/* 表格样式 */
+table{
+    justify-content: center;
+    table-layout: fixed;
+    margin: 0 auto;
+    width: 80%;
+    border-collapse: collapse;
+    border: 1px solid #ddd;
+}
+/* 表格行样式 */
+th, td{
+    padding: 10px;
+    text-align: left;
+    border: 1px solid #ddd;
+}
+/* 表格列宽设置 */
+th:nth-child(1) {
+    width: 10px;
+}
+
+td:first-child,
+th:first-child {
+    border: none;
+}
+/*添加用户表单样式 */
+.addUser {
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* 让表单内容在水平方向居中 */
+    background-color: white;
+    font-size: 20px;
+    padding: 20px;
+    width: 35%;
+    max-width: 500px;
+    position: fixed;
+    top: 85px;
+    left: 50%;
+    transform: translateX(-50%); /* 让表单在水平方向完全居中 */
+    box-shadow: 0 4px 10px #eaeaea;
+    z-index: 1000;
+}
+
+.addUser p {
+    font-size: 28px;
+    text-align: center;
+    margin-bottom: 50px;
+    margin-top: 10px;
+}
+
+.addUser .row {
+    display: flex;
+    align-items: center;
+    width: 80%; /* 让每一行占据整个表单宽度 */
+    margin-bottom: 10px;
+}
+
+.addUser label {
+    width: 30%; /* 给 label 设置固定宽度 */
+    text-align: left;
+    margin-right: 10px;
+    margin-bottom: 20px;
+}
+
+.addUser input {
+    width: 70%; /* 让 input 占据剩余宽度 */
+    text-align: left;
+    padding: 5px;
+    margin-bottom: 20px;
+}
+
+.addUser .button-group {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+}
+
+.addUser button {
+    margin-right: 40px;
+    padding: 5px 10px;
+}
+
+/* 修改用户表单样式 */
+.alterUser{
+    display: flex;
+    background-color: white;
+    flex-direction: column;
+    align-items: center;
+    font-size: 20px;
+    padding: 20px;
+    width: 40%;
+    max-width: 500px;
+    position: absolute;
+    top: 85px;
+    left: 30%;
+    box-shadow: 0 4px 10px #eaeaea;
+    z-index: 1000;
+}
+
+.alterUser p{
+    text-align: center;
+    margin-bottom: 30px;
+    font-size: 28px;
+}
+
+.alterUser .row{
+    display: flex;
+    width: 80%;
+    margin-bottom: 15px;
+}
+
+.alterUser label{
+    text-align: left;
+    width: 30%;
+}
+
+.alterUser input{
+    text-align: left;
+    width: 70%;
+}
+
+.alterUser button{
+    margin-right: 40px;
+    padding: 5px 10px;
+}

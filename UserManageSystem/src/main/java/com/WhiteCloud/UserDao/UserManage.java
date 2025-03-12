@@ -5,6 +5,6 @@ import org.apache.ibatis.annotations.Param;
 
 public interface UserManage {
 	public List<userInfo> selectAll();
-	public List<userInfo> selectByUsername(String username);
-	public List<userInfo> selectByOtherInfo(@Param("sex") String sex,@Param("phone") String phone,@Param("email") String email);
+	public List<userInfo> selectOnePara(String para);
+	public List<userInfo> selectByManyPara(List<String> ParaList);
 }

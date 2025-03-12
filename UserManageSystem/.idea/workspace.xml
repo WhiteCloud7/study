@@ -10,10 +10,42 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="78eb3de5-809e-4ed7-a14b-26e50ca5acfd" name="更改" comment="">
+      <change afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/WhiteCloud/Controller/selectManyPara.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/WhiteCloud/Controller/selectOnePara.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/WhiteCloud/Controller/showAllUserInfo.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/webapp/index.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/webapp/js/index.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/webapp/js/indexInit.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/artifacts/UserManageSystem_war_exploded.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/artifacts/UserManageSystem_war_exploded.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/encodings.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/encodings.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/web/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/web/index.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/web/js/index.js" beforeDir="false" afterPath="$PROJECT_DIR$/web/js/index.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/UserManageSystem.iml" beforeDir="false" afterPath="$PROJECT_DIR$/UserManageSystem.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/artifacts/UserManageSystem_war_exploded/WEB-INF/web.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/artifacts/UserManageSystem_war_exploded/index.jsp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/WhiteCloud/Controller/test.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/WhiteCloud/UserDao/UserManage.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/WhiteCloud/UserDao/UserManage.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/mapper/userMapper.xml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/mapper/userMapper.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/WhiteCloud/Controller/MybatisUtils.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/WhiteCloud/Controller/test.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/WhiteCloud/UserDao/UserManage.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/WhiteCloud/UserDao/UserManage.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/WhiteCloud/UserEntity/userInfo.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/WhiteCloud/UserEntity/userInfo.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/mapper/userMapper.xml" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/mapper/userMapper.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/maven-status/maven-compiler-plugin/compile/default-compile/createdFiles.lst" beforeDir="false" afterPath="$PROJECT_DIR$/target/maven-status/maven-compiler-plugin/compile/default-compile/createdFiles.lst" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/maven-status/maven-compiler-plugin/compile/default-compile/inputFiles.lst" beforeDir="false" afterPath="$PROJECT_DIR$/target/maven-status/maven-compiler-plugin/compile/default-compile/inputFiles.lst" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/web/WEB-INF/web.xml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/webapp/WEB-INF/web.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/web/css/index.css" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/webapp/css/index.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/web/index.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/web/index.jsp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/web/js/index.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/WhiteCloud/Utils/MybatisUtils.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/web/photo/QQ图片20250226223205.jpg" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/webapp/photo/1.jpg" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../chatMax/bin/.gitignore" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/../noteText/java/基本知识杂烩.md" beforeDir="false" afterPath="$PROJECT_DIR$/../noteText/java/基本知识杂烩.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../noteText/web/css.md" beforeDir="false" afterPath="$PROJECT_DIR$/../noteText/web/css.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../noteText/web/js.md" beforeDir="false" afterPath="$PROJECT_DIR$/../noteText/web/js.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../noteText/web/jsp - servlet.md" beforeDir="false" afterPath="$PROJECT_DIR$/../noteText/web/jsp - servlet.md" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -66,16 +98,16 @@
     &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
     &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
     &quot;extract.method.default.visibility&quot;: &quot;private&quot;,
-    &quot;last_opened_file_path&quot;: &quot;D:/GitHub/study/UserManageSystem/src/main/resources/photo&quot;,
+    &quot;last_opened_file_path&quot;: &quot;D:/GitHub/study/UserManageSystem/out/artifacts/UserManageSystem_war_exploded&quot;,
     &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
     &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
     &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
     &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
     &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;project.structure.last.edited&quot;: &quot;全局库&quot;,
+    &quot;project.structure.last.edited&quot;: &quot;模块&quot;,
     &quot;project.structure.proportion&quot;: &quot;0.15&quot;,
     &quot;project.structure.side.proportion&quot;: &quot;0.2&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.pluginManager&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;File.Encoding&quot;,
     &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   },
   &quot;keyToStringList&quot;: {
@@ -87,9 +119,12 @@
 }</component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="D:\GitHub\study\UserManageSystem\out\artifacts\UserManageSystem_war_exploded" />
+      <recent name="D:\GitHub\study\UserManageSystem\web\js" />
       <recent name="D:\GitHub\study\UserManageSystem\src\main\resources\photo" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="D:\GitHub\study\UserManageSystem\src\main" />
       <recent name="D:\GitHub\study\UserManageSystem\web" />
       <recent name="D:\GitHub\study\UserManageSystem\web\css\" />
     </key>
@@ -99,20 +134,7 @@
       <command value="mvn clean" />
     </option>
   </component>
-  <component name="RunManager" selected="JavaScript 调试.index.html">
-    <configuration name="test (5)" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
-      <option name="MAIN_CLASS_NAME" value="com.WhiteCloud.Controller.test" />
-      <module name="UserManageSystem" />
-      <extension name="coverage">
-        <pattern>
-          <option name="PATTERN" value="com.WhiteCloud.Controller.*" />
-          <option name="ENABLED" value="true" />
-        </pattern>
-      </extension>
-      <method v="2">
-        <option name="Make" enabled="true" />
-      </method>
-    </configuration>
+  <component name="RunManager" selected="Tomcat 服务器.Tomcat 9.0.34">
     <configuration name="test" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
       <option name="MAIN_CLASS_NAME" value="com.WhiteCloud.Controller.test" />
       <module name="UserManageSystem" />
@@ -133,6 +155,9 @@
       <method v="2" />
     </configuration>
     <configuration name="test.html" type="JavascriptDebugType" temporary="true" nameIsGenerated="true" uri="http://localhost:63342/UserManageSystem/web/test.html" useBuiltInWebServerPort="true">
+      <method v="2" />
+    </configuration>
+    <configuration name="index.js" type="NodeJSConfigurationType" temporary="true" nameIsGenerated="true" path-to-js-file="$PROJECT_DIR$/src/main/webapp/js/index.js" working-dir="$PROJECT_DIR$/src/main/webapp/js">
       <method v="2" />
     </configuration>
     <configuration name="Tomcat 9.0.34" type="#com.intellij.j2ee.web.tomcat.TomcatRunConfigurationFactory" factoryName="Local" APPLICATION_SERVER_NAME="Tomcat 9.0.34" ALTERNATIVE_JRE_ENABLED="true" ALTERNATIVE_JRE_PATH="1.8" nameIsGenerated="true">
@@ -227,17 +252,17 @@
       <item itemvalue="JavaScript 调试.login.html" />
       <item itemvalue="JavaScript 调试.test.html" />
       <item itemvalue="JavaScript 调试.index.html" />
+      <item itemvalue="Node.js.index.js" />
       <item itemvalue="Tomcat 服务器.Tomcat 9.0.34" />
       <item itemvalue="应用程序.test" />
-      <item itemvalue="应用程序.test (5)" />
     </list>
     <recent_temporary>
       <list>
         <item itemvalue="JavaScript 调试.index.html" />
+        <item itemvalue="应用程序.test" />
+        <item itemvalue="Node.js.index.js" />
         <item itemvalue="JavaScript 调试.test.html" />
         <item itemvalue="JavaScript 调试.login.html" />
-        <item itemvalue="应用程序.test" />
-        <item itemvalue="应用程序.test (5)" />
       </list>
     </recent_temporary>
   </component>
@@ -266,7 +291,15 @@
       <workItem from="1741512334437" duration="5614000" />
       <workItem from="1741527905560" duration="3961000" />
       <workItem from="1741567931749" duration="9484000" />
-      <workItem from="1741663766322" duration="3886000" />
+      <workItem from="1741663766322" duration="6552000" />
+      <workItem from="1741682468019" duration="10477000" />
+      <workItem from="1741694218389" duration="5912000" />
+      <workItem from="1741701204428" duration="28000" />
+      <workItem from="1741701272728" duration="3151000" />
+      <workItem from="1741704451306" duration="879000" />
+      <workItem from="1741741738268" duration="6245000" />
+      <workItem from="1741767554748" duration="472000" />
+      <workItem from="1741768374047" duration="17665000" />
     </task>
     <servers />
   </component>

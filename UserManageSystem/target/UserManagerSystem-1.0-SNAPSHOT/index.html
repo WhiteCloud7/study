@@ -2,7 +2,7 @@
 <html>
 <head>
     <meta charset="UTF-8">
-    <title>学生管理系统</title>
+    <title>用户管理系统</title>
     <link rel="stylesheet" href="css/index.css" />
 </head>
 <body>
@@ -26,7 +26,7 @@
                     <option value="add">添加</option>
                     <option value="alter">修改</option>
                 </select>
-                <input type="text" id="searchContent" required="required">
+                <input type="text" id="searchContent">
                 <button type="button" name="operationSelected" onclick="performOperation()">确认操作</button>
             </div>
         </form>
@@ -36,6 +36,7 @@
         <thead>
             <tr>
                 <th scope="col"></th>
+                <th scope="col" hidden></th>
                 <th scope="col">用户名</th>
                 <th scope="col">性别</th>
                 <th scope="col">电话号码</th>
@@ -46,24 +47,24 @@
         </tbody>
     </table>
 </main>
-<section id="addUserSection" hidden>
-    <form action="" class="addUser">
+<section  id="addUserSection" hidden>
+    <form class="addUser" id="addUserForm" >
         <p>添加用户</p>
         <div class="row">
             <label for="addUsername">用户名</label>
-            <input type="text" id="addUsername" name="addUsername" placeholder="请输入用户名">
+            <input type="text" id="addUsername" name="addUsername" required placeholder="请输入用户名">
         </div>
         <div class="row">
             <label for="addSex">性别</label>
-            <input type="text" id="addSex" name="addSex" placeholder="请输入性别">
+            <input type="text" id="addSex" name="addSex" required placeholder="请输入性别">
         </div>
         <div class="row">
             <label for="addPhone">电话号码</label>
-            <input type="text" id="addPhone" name="addPhone" placeholder="请输入电话号码">
+            <input type="text" id="addPhone" name="addPhone" required placeholder="请输入电话号码">
         </div>
         <div class="row">
             <label for="addEmail">邮箱</label>
-            <input type="text" id="addEmail" name="addEmail" placeholder="请输入邮箱">
+            <input type="text" id="addEmail" name="addEmail" required placeholder="请输入邮箱">
         </div>
         <div class="button-group">
             <button type="submit" name="addUser">确认添加</button>
@@ -73,7 +74,7 @@
     </form>
 </section>
 <section id="alterUserSection" hidden>
-    <form action="" class="alterUser">
+    <form method="post" class="alterUser" id="alterUser">
         <p>修改用户信息</p>
         <div class="row">
             <label for="alterUsername">用户名</label>
@@ -84,12 +85,12 @@
             <input type="text" id="alterSex" name="alterSex" placeholder="请输入性别">
         </div>
         <div class="row">
-            <label for="alterEmail">邮箱</label>
-            <input type="text" id="alterEmail" name="addEmail" placeholder="请输入邮箱">
-        </div>
-        <div class="row">
             <label for="alterPhone">电话号码</label>
             <input type="text" id="alterPhone" name="alterPhone" placeholder="请输入电话号码">
+        </div>
+        <div class="row">
+            <label for="alterEmail">邮箱</label>
+            <input type="text" id="alterEmail" name="addEmail" placeholder="请输入邮箱">
         </div>
         <div class="button-group">
             <button type="submit" name="alterUser">确认修改</button>
@@ -100,8 +101,6 @@
 </section>
 <footer>
 </footer>
-<script src="js/indexInit.js">
-</script>
 <script src="js/index.js"></script>
 </body>
 </html>

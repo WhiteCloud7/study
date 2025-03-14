@@ -13,6 +13,7 @@
     - 大部分和java一样
     - slice(start, end) 
     - substr(start, length) 
+    - includes(str) 
   - boolean: 布尔值
   - array: 数组 这个就可看做对象列表
     - 用push和pop对最后一个元素增删
@@ -23,6 +24,12 @@
     - join(separator) 将数组转换为字符串，separator为分隔符，默认为逗号
     - reverse() sort() 
     - 自定义排序，重写sort方法，定义a和b，返回a-b为升序，b-a为降序
+    - **map方法**：对数组中的每个元素执行你的函数，返回一个新数组，原数组不变 
+      - 参数一：函数，该函数接受三个参数：
+        - 参数一：当前元素
+        - 参数二：当前元素的索引（可选）
+        - 参数三：数组本身（可选）
+      - 参数二：this指向（可选）
   - 对象：
     - 两种定义方式：
       ```js
@@ -62,7 +69,23 @@
         console.log("===============");
         fun.call(obj, 2, 3);
         ```
+    - 对象遍历：
+        ```js
+        for (var key in person) {
+            console.log(key + " = " + person[key]);
+        }
+        for(const [key,value] of Object.entries(a)){
+            console.log(key,value)
+        }
+        ```    
     - **arguments**对象，可以用来获取函数的参数，类型java的mian方法的args一样，我们函数所接受的参数都存在这里面
+  - map:
+    - size(): 获取map的大小
+    - get(key): 获取key对应的值
+    - set(key, value): 设置key对应的值
+    - has(key): 判断map中是否存在key
+    - delete(key): 删除key对应的值
+    - clear(): 清空map
   - undefined: 未定义
   - null: 空值
   - symbol: 符号  
@@ -109,7 +132,7 @@
 # 条件、循环、函数：
 多数和java一样，但是有一些不同：
 - 遍历：
-  - 可以用for...in来遍历对象，类似python
+  - 可以用for...of来遍历对象，类似python
   - 还可以用forEach来遍历数组，但是不能用break和continue且只支持IE9+
 - 函数定义用function定义
 - 另外js一般用不到class，而用对象来代替，同样里面写属性和方法，但我们可以不用定义如以上介绍对象的例子，故封装一般用对象来代替，如：
@@ -225,7 +248,7 @@ Student.prototype.setPrice = function (price) { // 添加子类型私有的方�
      - firstChild firstElementChild：第一个子节点和第一个子元素
      - lastChild lastElementChild：最后一个子节点和最后一个子元素
      - previousSibling previousElementSibling：前一个兄弟节点和前一个兄弟元素
-     - nextSibling nextElementSibling：后一个兄弟节点和后一个兄弟元素
+     - nextSibling nextElementSibling：后一个兄弟节点和后一个兄弟元素 
 2. 对文档元素值操作： 
    - 查找及修改：这个是元素.方法名来调用
      - innerHTML：获取或设置元素的HTML内容
@@ -456,9 +479,11 @@ tableData.innerHTML = tableContent;
     - Connection：指定客户端与服务器之间的连接类型
     - Cache-Control：指定缓存控制策略
     - Date：指定请求的日期和时间
+      - getDate() getDay() getMonth() getFullYear() getHours() getMinutes() getSeconds() getTime() 获取日期、星期、月份、年份、小时、分钟、秒、时间戳
+      - 对应的set方法
     - Pragma：指定请求的优先级 
 ## BOM:  
-1. window对象:以下方法都是window.方法名来调用
+1. **window对象**:以下方法都是window.方法名来调用
   - 弹出框：
     - alert: 警告框
     - confirm: 确认框
@@ -473,7 +498,7 @@ tableData.innerHTML = tableContent;
     - scrollTop scrollLeft: 窗口的滚动条的位置
     - scrollTo(x, y): 窗口滚动到指定位置
   - 其他常用方法：
-    - open ![参数](photo\open.png) close: 打开和关闭窗口
+    - open ![参数](../photo/1.png) close: 打开和关闭窗口
     - on+事件：监听窗口事件要执行的方法
     - moveTo(x, y): 窗口移动到指定位置
     - resizeTo(width, height): 窗口调整大小
@@ -486,9 +511,9 @@ tableData.innerHTML = tableContent;
   - 常用方法：
     - javaEnabled(): 判断浏览器是否支持Java
     - cookieEnabled(): 判断浏览器是否支持Cookie
-3. Location对象:以下方法都是location.方法名来调用
+3. **Location对**象:以下方法都是window.location.方法名来调用
   - 常用属性：
-    - href: 当前页面的URL
+    - href: 当前页面的URL  (改变相当于跳转，以下都可以改变)
     - origin: 当前页面的源
     - host: 当前页面的主机名
     - port: 当前页面的端口号
@@ -499,7 +524,7 @@ tableData.innerHTML = tableContent;
     - assign(url): 跳转到指定页面
     - replace(url): 替换当前页面
     - toString(): 返回当前页面的URL字符串
-4. History对象:以下方法都是history.方法名来调用
+4. **History对象**:以下方法都是history.方法名来调用
   - 常用属性：
     - length: 历史记录的长度
   - 常用方法：
@@ -541,7 +566,7 @@ try {
 概念：cookie是一种存储在用户本地的小型文本文件，用于存储用户的信息。cookie由**名称、值、过期时间和路径组成**。  
 
 cookie使用：
-1. 创建cookie：`document.cookie = "username=zhangsan; expires=Thu, 18 Dec 2043 12:00:00 GMT; path=/";` 过期时间和路径组成都是可选的
+1. 创建cookie：`document.cookie = "username=zhangsan; expires=Thu, 18 Dec 2043 12:00:00 GMT; path=/";` 过期时间和路径组成都是可选的，由于的数据是键值对，故可以进行下面几点操作
 2. 获取cookie：let一个变量接受`document.cookie`即可
    - 获取cookie函数：
     ```js
@@ -567,3 +592,13 @@ cookie使用：
     ```
 4. 删除cookie：设置过期时间为过去即可
 ## webStorage：
+## ***关于#{}和${}***
+1. 在js中：
+  - #{}：不是内置对象，只当文本处理
+  - ${}：是一个占位符，用于替换变量的值，在模板字符串中可以用反引号`来包裹
+2. java中
+  - ${}: 适用于 Spring 的 @Value("${}") 读取 application.properties 或 application.yml 配置
+  - #{}: 无特殊含义
+3. Mybatis： 
+  - ${}: 直接拼接sql，不是用户输入而是开发者进行动态sql拼接，但是会有sql注入风险
+  - #{}: 主要用于传递参数，防止SQL注入。MyBatis 会自动把#{}里的参数解析为?占位符，然后绑定变量。

@@ -97,7 +97,8 @@
     - ServletContextAttributeListener：监听 ServletContext 中属性的添加、删除和修改事件。
     - HttpSessionAttributeListener：监听 HttpSession 中属性的添加、删除和修改事件。
     - ServletRequestAttributeListener：监听 ServletRequest 中属性的添加、删除和修改事件。
-  8. ***关于一个接受ajax请求的servlet： ***
+## 其他重要运用 
+  - ***关于一个接受ajax请求的servlet： ***
      1. 首先设置contentType
      2. 然后获取请求流、参数、请求头等等
      3. 然后处理业务逻辑
@@ -163,5 +164,29 @@
      这里对于前端不同的ContentType：
      - application/json: 这时用getReader()接受json数据
      - application/x-www-form-urlencoded: 这时用getParameter()接受表单数据，具体如上例
-     - multipart/form-data: 这时用getPart()接受文件数据
-     - text/plain: 这时用getParameter接受文本字段，用getReader()接受文本数据
+     - multipart/form-data: 这时用getPart()接受文件数据,如下例
+     ```java
+      Map<String, String> newUserInfoMap = new HashMap<>();
+
+      for (Part part : request.getParts()) {
+          String fieldName = part.getName();
+          try(BufferedReader reader = new BufferedReader(new InputStreamReader(part.getInputStream(), StandardCharsets.UTF_8));){
+              StringBuilder sb = new StringBuilder();
+              String line;
+              while ((line = reader.readLine()) != null) {
+                  sb.append(line);
+              }
+              String fieldValue = sb.toString();
+              newUserInfoMap.put(fieldName, fieldValue);
+              System.out.println("参数名: " + fieldName + ", 参数值: " + fieldValue);
+          } catch (IOException e) {
+              throw new RuntimeException(e);
+          }
+      }
+      ```
+      ***注意该请求头除了要加webservlt外还要加@MultipartConfig才能解析请求头***        
+     - text/plain: 这时用getParameter接受文本字段，用getReader()接受文本数据 
+  - 重定向和转发：
+    - response.sendRedirect() 用于重定向到另一个 URL
+    - request.getRequestDispatcher().include() 用于在当前请求中包含另一个资源
+    - request.getRequestDispatcher().forward() 用于转发请求到另一个资源，此时URL不会改变

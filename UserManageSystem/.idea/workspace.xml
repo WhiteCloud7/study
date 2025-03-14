@@ -10,40 +10,39 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="78eb3de5-809e-4ed7-a14b-26e50ca5acfd" name="更改" comment="">
-      <change afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/WhiteCloud/Controller/selectManyPara.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/WhiteCloud/Controller/selectOnePara.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/WhiteCloud/Controller/showAllUserInfo.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/webapp/index.html" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/webapp/js/index.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/webapp/js/indexInit.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/artifacts/UserManageSystem_war_exploded.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/artifacts/UserManageSystem_war_exploded.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/encodings.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/encodings.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/WhiteCloud/Controller/addUser.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/WhiteCloud/Controller/deleteManyUser.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/WhiteCloud/Controller/deleteOneUser.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/WhiteCloud/Controller/updateUser.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/webapp/js/cookie.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/test/java/test.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/UserManageSystem.iml" beforeDir="false" afterPath="$PROJECT_DIR$/UserManageSystem.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/artifacts/UserManageSystem_war_exploded/WEB-INF/web.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/artifacts/UserManageSystem_war_exploded/index.jsp" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/WhiteCloud/Controller/test.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/WhiteCloud/Controller/selectManyPara.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/WhiteCloud/Controller/selectManyPara.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/WhiteCloud/UserDao/UserManage.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/WhiteCloud/UserDao/UserManage.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/resources/mapper/userMapper.xml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/mapper/userMapper.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/WhiteCloud/Controller/MybatisUtils.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/WhiteCloud/Controller/test.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/webapp/css/index.css" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/webapp/css/index.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/webapp/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/webapp/index.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/webapp/js/index.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/webapp/js/index.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/webapp/js/indexInit.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/UserManagerSystem-1.0-SNAPSHOT/WEB-INF/classes/com/WhiteCloud/Controller/selectManyPara.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/UserManagerSystem-1.0-SNAPSHOT/WEB-INF/classes/com/WhiteCloud/Controller/selectManyPara.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/UserManagerSystem-1.0-SNAPSHOT/WEB-INF/classes/com/WhiteCloud/Controller/selectOnePara.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/UserManagerSystem-1.0-SNAPSHOT/WEB-INF/classes/com/WhiteCloud/Controller/selectOnePara.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/UserManagerSystem-1.0-SNAPSHOT/WEB-INF/classes/com/WhiteCloud/UserDao/UserManage.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/UserManagerSystem-1.0-SNAPSHOT/WEB-INF/classes/com/WhiteCloud/UserDao/UserManage.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/UserManagerSystem-1.0-SNAPSHOT/WEB-INF/classes/com/WhiteCloud/UserEntity/userInfo.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/UserManagerSystem-1.0-SNAPSHOT/WEB-INF/classes/com/WhiteCloud/UserEntity/userInfo.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/UserManagerSystem-1.0-SNAPSHOT/WEB-INF/classes/com/WhiteCloud/Utils/MybatisUtils.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/UserManagerSystem-1.0-SNAPSHOT/WEB-INF/classes/com/WhiteCloud/Utils/MybatisUtils.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/UserManagerSystem-1.0-SNAPSHOT/WEB-INF/classes/mapper/userMapper.xml" beforeDir="false" afterPath="$PROJECT_DIR$/target/UserManagerSystem-1.0-SNAPSHOT/WEB-INF/classes/mapper/userMapper.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/UserManagerSystem-1.0-SNAPSHOT/css/index.css" beforeDir="false" afterPath="$PROJECT_DIR$/target/UserManagerSystem-1.0-SNAPSHOT/css/index.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/UserManagerSystem-1.0-SNAPSHOT/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/target/UserManagerSystem-1.0-SNAPSHOT/index.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/UserManagerSystem-1.0-SNAPSHOT/js/index.js" beforeDir="false" afterPath="$PROJECT_DIR$/target/UserManagerSystem-1.0-SNAPSHOT/js/index.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/UserManagerSystem-1.0-SNAPSHOT/js/indexInit.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/WhiteCloud/Controller/selectManyPara.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/WhiteCloud/Controller/selectManyPara.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/WhiteCloud/Controller/selectOnePara.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/WhiteCloud/Controller/selectOnePara.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/target/classes/com/WhiteCloud/UserDao/UserManage.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/WhiteCloud/UserDao/UserManage.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/target/classes/com/WhiteCloud/UserEntity/userInfo.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/WhiteCloud/UserEntity/userInfo.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/WhiteCloud/Utils/MybatisUtils.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/WhiteCloud/Utils/MybatisUtils.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/target/classes/mapper/userMapper.xml" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/mapper/userMapper.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/maven-status/maven-compiler-plugin/compile/default-compile/createdFiles.lst" beforeDir="false" afterPath="$PROJECT_DIR$/target/maven-status/maven-compiler-plugin/compile/default-compile/createdFiles.lst" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/maven-status/maven-compiler-plugin/compile/default-compile/inputFiles.lst" beforeDir="false" afterPath="$PROJECT_DIR$/target/maven-status/maven-compiler-plugin/compile/default-compile/inputFiles.lst" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/web/WEB-INF/web.xml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/webapp/WEB-INF/web.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/web/css/index.css" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/webapp/css/index.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/web/index.html" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/web/index.jsp" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/web/js/index.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/WhiteCloud/Utils/MybatisUtils.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/web/photo/QQ图片20250226223205.jpg" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/webapp/photo/1.jpg" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../chatMax/bin/.gitignore" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/../noteText/java/基本知识杂烩.md" beforeDir="false" afterPath="$PROJECT_DIR$/../noteText/java/基本知识杂烩.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../noteText/web/css.md" beforeDir="false" afterPath="$PROJECT_DIR$/../noteText/web/css.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../noteText/photo/49dda761b483586c97140150f4c6aaef.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../noteText/web/html.md" beforeDir="false" afterPath="$PROJECT_DIR$/../noteText/web/html.md" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../noteText/web/js.md" beforeDir="false" afterPath="$PROJECT_DIR$/../noteText/web/js.md" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../noteText/web/jsp - servlet.md" beforeDir="false" afterPath="$PROJECT_DIR$/../noteText/web/jsp - servlet.md" afterDir="false" />
     </list>
@@ -299,7 +298,10 @@
       <workItem from="1741704451306" duration="879000" />
       <workItem from="1741741738268" duration="6245000" />
       <workItem from="1741767554748" duration="472000" />
-      <workItem from="1741768374047" duration="17665000" />
+      <workItem from="1741768374047" duration="17914000" />
+      <workItem from="1741845812800" duration="28930000" />
+      <workItem from="1741929856527" duration="19355000" />
+      <workItem from="1741949282486" duration="6762000" />
     </task>
     <servers />
   </component>

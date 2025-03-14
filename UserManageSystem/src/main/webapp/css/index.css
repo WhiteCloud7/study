@@ -84,6 +84,11 @@ th:nth-child(1) {
     width: 10px;
 }
 
+/* userId隐藏 */
+th:nth-child(2){
+    width: 0;
+}
+
 td:first-child,
 th:first-child {
     border: none;

@@ -11,7 +11,7 @@
   - number: 数字,即不分整型、浮点型了
   - string: 字符串
     - 大部分和java一样
-    - slice(start, end) 
+    - slice(start, end) 截取,   slice()也能作为深拷贝
     - substr(start, length) 
     - includes(str) 
   - boolean: 布尔值
@@ -88,9 +88,72 @@
     - clear(): 清空map
   - undefined: 未定义
   - null: 空值
-  - symbol: 符号  
+  - symbol: 唯一值
+  - iterator: 迭代器
+    - 获取迭代器：`let iterator = arr[Symbol.iterator]();`
+    - 常用方法：
+      - next(): 返回一个对象，包含value和done两个属性，value为当前元素，done为是否遍历完
+      - value: 当前元素
+      - done: 是否遍历完
+    - 遍历结果形式为：{value: 当前元素, done: 是否遍历完}
+    - 常用于自定义遍历：
+      ```js
+      class CustomArray {
+          constructor() {
+              this.items = [];
+          }
+
+          add(item) {
+              this.items.push(item);
+          }
+
+          // 实现 Symbol.iterator 方法
+          [Symbol.iterator]() {
+              let index = 0;
+              return {
+                  next: () => {
+                      if (index < this.items.length) {
+                          return { value: this.items[index++], done: false };
+                      }
+                      return { done: true };
+                  }
+              };
+          }
+      }
+
+      const customArray = new CustomArray();
+      customArray.add('apple');
+      customArray.add('banana');
+      customArray.add('cherry');
+
+      // 使用 for...of 循环遍历自定义数组
+      for (const item of customArray) {
+          console.log(item);
+      }
+      ``` 
+  - yeild: 生成器
+    - 用于依次执行某个函数，返回一个迭代器对象，如下：
+      ```js
+      function * gen() { //这里必须用*号
+          /*代码1开始执行*/
+          console.log("代码1执行了");
+          yield "一只没有耳朵";  //如果函数有参数，这里可以用yeild定义参数，如这里改成let a = yield "一只没有耳朵"; 那么a函数就可以接收yeild的参数且具有yeild的作用
+          /*代码2开始执行*/
+          console.log("代码2执行了");
+          yield "一只没有尾巴";
+          /*代码3开始执行*/
+          console.log("代码3执行了");
+          return "真奇怪";
+      }
+
+      let iterator = gen();
+      console.log(iterator.next());
+      console.log(iterator.next());
+      console.log(iterator.next());
+      ```    
   - Date：日期
   - Math：数学 无需new 可看作里面都是静态方法
+  - ***class***: 以上对象的使用都可以用class实现，class就是传统的面对对象，不同的是js的class声明变量和无需let等关键字，构造函数为constructor而不是和类名同名
   - 正则表达式：
     - var 变量名 = new RegExp("正则表达式","匹配模式");
     - 匹配模式：
@@ -482,6 +545,23 @@ tableData.innerHTML = tableContent;
       - getDate() getDay() getMonth() getFullYear() getHours() getMinutes() getSeconds() getTime() 获取日期、星期、月份、年份、小时、分钟、秒、时间戳
       - 对应的set方法
     - Pragma：指定请求的优先级 
+***Promise: ***
+用来封装异步操作，调用then函数返回异步操作是否成功。使用方法如下：
+```js
+const p = new Promise((resolve, reject) => {
+    // 这里写异步操作以上的ajax和await fetch都是异步操作，其实不封装也可以，封装只是为了更好的管理异步操作
+})
+//然后可以用then函数来调用
+p.then((data) => {
+    //这里写异步操作成功后的操作
+}, (error) => {
+    //这里写异步操作失败后的操作
+})
+//如果只想调用失败的操作，可以用catch函数来调用
+p.catch((error) => {
+    //这里写异步操作失败后的操作
+})
+```
 ## BOM:  
 1. **window对象**:以下方法都是window.方法名来调用
   - 弹出框：
@@ -592,10 +672,17 @@ cookie使用：
     ```
 4. 删除cookie：设置过期时间为过去即可
 ## webStorage：
+1. localStorage：本地存储，永久存储，除非手动删除
+   - setItem(key, value): 保存单个数据
+   - getItem(key): 读取单个数据
+   - removeItem(key): 删除单个数据
+   - clear(): 删除所有数据
+2. sessionStorage：会话存储，关闭浏览器即删除，方法同上
+这些用于cookie实在无法存下的情况
 ## ***关于#{}和${}***
 1. 在js中：
   - #{}：不是内置对象，只当文本处理
-  - ${}：是一个占位符，用于替换变量的值，在模板字符串中可以用反引号`来包裹
+  - ${}：是一个占位符，用于替换变量的值，在模板字符串中可以用反引号`来包裹，模板字符串为字符串与变量的拼接，如`${name} is ${age}`
 2. java中
   - ${}: 适用于 Spring 的 @Value("${}") 读取 application.properties 或 application.yml 配置
   - #{}: 无特殊含义

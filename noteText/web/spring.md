@@ -1,6 +1,7 @@
 [参考](https://blog.csdn.net/weixin_44207403/article/details/106736102?ops_request_misc=%257B%2522request%255Fid%2522%253A%252232d38a872bc9357d21ce37e50a5b0faf%2522%252C%2522scm%2522%253A%252220140713.130102334..%2522%257D&request_id=32d38a872bc9357d21ce37e50a5b0faf&biz_id=0&utm_medium=distribute.pc_search_result.none-task-blog-2~all~top_positive~default-1-106736102-null-null.142^v102^pc_search_result_base8&utm_term=spring&spm=1018.2226.3001.4187)
 [这个有步骤图](https://blog.csdn.net/weixin_68522070/article/details/141360851?ops_request_misc=%257B%2522request%255Fid%2522%253A%252232d38a872bc9357d21ce37e50a5b0faf%2522%252C%2522scm%2522%253A%252220140713.130102334..%2522%257D&request_id=32d38a872bc9357d21ce37e50a5b0faf&biz_id=0&utm_medium=distribute.pc_search_result.none-task-blog-2~all~top_positive~default-2-141360851-null-null.142^v102^pc_search_result_base8&utm_term=spring&spm=1018.2226.3001.4187)
 # Spring Core
+依赖：org.springframework.spring-webmvc
 ## IOC(控制反转)：
 1. 基本概念
    - ***控制反转***IoC(Inversion of Control)，是一种设计思想，DI(依赖注入)是实现IoC的一种方法，也有人认为DI只是IoC的另一种说法。没有IoC的程序中 , 我们使用面向对象编程 , 对象的创建与对象间的依赖关系完全硬编码在程序中，对象的创建由程序自己控制，控制反转后将对象的创建转移给第三方。就如我们写service时，不需要实现Dao层，第三方帮我们是实现了，我们只需要new一个即可。
@@ -122,14 +123,15 @@ Person对象的属性是怎么设置的 ? Person对象的属性是由Spring容�
        http://www.springframework.org/schema/beans/spring-beans.xsd">
    ```
    2. ***注解自动注入***： 先再xml加上`<context:annotation-config/>`
-      - @Autowired：按类型自动转配的，不支持id匹配，*使用时删除原有的set方法*，相当于bytype
+      - @Autowired(required=true或true，及是否必须注入，一般不用默认必须注入，下面两个都有)：按类型自动转配的，不支持id匹配，*使用时删除原有的set方法*，相当于bytype
       - @Qualifier：按id匹配的，*使用时删除原有的set方法*，相当于byname
       - @Resource(可选的默认name)：这里如果有指定name就按指定name，没有就按byname，还没有就bytype，*使用时删除原有的set方法*，*以上对于删除set方法，也不可以删，在set方法上注解即可，下面的也同理。*
+      - 但以上都直接使用可能会让依赖关系变得混乱（对于团体协作而言），对于简单的需要注入的Bean，可以直接用在字段注解，多了就在构造方法上注解，在复杂就建议用配置类来管理，再在构造函数上注解。
    3. ***其他配置，以下就不止是只注入其他bean，具体自行看下面理解***
       - `<context:component-scan base-package="com.CloudWhite.Entity"/>`: 配置要扫描的包. 然后在指定包里的类加上注解@Component("可写的bean的id")，就相当于xml里的bean标签
       - @value("可选的默认赋值")：给属性赋值，这里就可以去掉基本数据类型的set方法
       - @Component有三个衍生注解，即@Controller、@Service、@Repository，分别对应控制层、业务层、持久层，使用了就将其交给spring管理。
-## 基于Java类进行配置：
+## 基于Java类进行配置(配置类)：
 以下一个例子了解注解作用：
 ```java
 //先写一个实体类
@@ -150,7 +152,239 @@ public class MyConfig {
 ```
 # Spring AOP
 ## 代理模式：
+1. 静态代理：比如你要租房，你去找中介，中介就是代理，你不用去找房东，房东就是目标对象。那么现在有一个接口是租房，实现他的类就是房东，再写一个类真正实现租房接口就是中介即代理对象，代理对象代替房东实现接口，以及可能需要的新方法。
+2. 动态代理：就是代理对象是动态生成的,下例就是动态代理：
+```java
+interface Rent {
+    public void rent();
+ }
+ 
+//真实角色: 房东，房东要出租房子
+class Host implements Rent{
+    public void rent() {
+        System.out.println("房屋出租");
+   }
+ }
+ 
+
+public class ProxyInvocationHandler implements InvocationHandler {
+    private Rent rent;
+    public void setRent(Rent rent) {
+        this.rent = rent;
+   }
+    //生成代理类，重点是第二个参数，获取要代理的抽象角色！之前都是一个角色，现在可以代理一类角色,且代理的是接口
+    public Object getProxy(){
+        return Proxy.newProxyInstance(this.getClass().getClassLoader(),
+                rent.getClass().getInterfaces(),this);
+   }
+    // proxy : 代理类 method : 代理类的调用处理程序的方法对象.
+    // 处理代理实例上的方法调用并返回结果
+    @Override
+    public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+        seeHouse();
+        //核心：本质利用反射实现！
+        Object result = method.invoke(rent, args);
+        fare();
+        return result;
+   }
+    //看房
+    public void seeHouse(){
+        System.out.println("带房客看房");
+   }
+    //收中介费
+    public void fare(){
+        System.out.println("收中介费");
+   }
+ }
+ //租客
+class Client {
+    public static void main(String[] args) {
+        //真实角色
+        Host host = new Host();
+        //代理实例的调用处理程序
+        ProxyInvocationHandler pih = new ProxyInvocationHandler();
+        pih.setRent(host); //将真实角色放置进去！
+        Rent proxy = (Rent)pih.getProxy(); //动态生成对应的代理类！
+        proxy.rent();
+   }
+ }
+```
+## AOP
+依赖：org.aspectj.aspectjweaver
+1. 概述：
+- AOP(Aspect Oriented Programming)意为面向切面编程，通过预编译方式和运行期动态代理实现程序功能的统一维护的一种技术。AOP是OOP的延续，是软件开发中的一个热点，也是Spring框架中的一个重要内容，是函数式编程的一种衍生范型。利用AOP可以对业务逻辑的各个部分进行隔离，从而使得业务逻辑各部分之间的耦合度降低，提高程序的可重用性，同时提高了开发的效率。[跳转到图](../photo/3.png)
+- spring中的aop：
+  - 先了解一下几个概念：
+    - 横切关注点：跨越应用程序多个模块的方法或功能。即是，与我们业务逻辑无关的，但是我们需要关注的部分，就是横切关注点。如日志 , 安全 , 缓存 , 事务等等 …
+    - 切面（ASPECT）：横切关注点 被模块化 的特殊对象。即，它是一个类。
+    - 通知（Advice）：切面必须要完成的工作。即，它是类中的一个方法。
+    - 目标（Target）：被通知对象。
+    - 代理（Proxy）：向目标对象应用通知之后创建的对象。
+    - 切入点（PointCut）：切面通知 执行的 “地点”的定义。
+    - 连接点（JointPoint）：与切入点匹配的执行点。 
+  - 以及![以上概念的图](../photo/2.png),[spring的五种通知](../photo/4.png)
+2. AOP非注解实现： 
+   1. 接口：`public interface testImpl { public void test();}`
+   2. 服务类:`public class testService implements testImpl { public void test(){System.out.println("测试的好啊！1");}}`
+   3. 增强类：
+   ```java
+   public class beforeLog implements MethodBeforeAdvice {
+      //method : 要执行的目标对象的方法
+      //objects : 被调用的方法的参数
+      //Object : 目标对象
+      @Override
+      public void before(Method method, Object[] objects, Object o) throws Throwable {
+         System.out.println( o.getClass().getName() + "的" + method.getName() + "方法被执行了");
+      }
+   }
+   public class afterLog implements AfterReturningAdvice {
+    //returnValue 返回值
+    //method被调用的方法
+    //args 被调用的方法的对象的参数
+    //target 被调用的目标对象
+    @Override
+      public void afterReturning(Object returnValue, Method method, Object[] args, Object target) throws Throwable {
+         System.out.println("执行了" + target.getClass().getName()
+                  +"的"+method.getName()+"方法,"
+                  +"返回值："+returnValue);
+      }
+   }
+   ```
+   4. beans.xml:
+   ```xml
+   <?xml version="1.0" encoding="UTF-8"?>
+   <beans xmlns="http://www.springframework.org/schema/beans"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+
+         xmlns:context="http://www.springframework.org/schema/context"
+         xmlns:aop="http://www.springframework.org/schema/aop"
+
+         xsi:schemaLocation="
+         http://www.springframework.org/schema/context
+         http://www.springframework.org/schema/context/spring-context.xsd
+
+         http://www.springframework.org/schema/beans
+         http://www.springframework.org/schema/beans/spring-beans.xsd
+         http://www.springframework.org/schema/aop
+         http://www.springframework.org/schema/aop/spring-aop.xsd">
+
+
+      <bean id="service" class="com.CloudWhite.Service.testService"></bean>
+      <bean id="beforeLog" class="com.CloudWhite.Log.beforeLog"></bean>
+      <bean id="afterLog" class="com.CloudWhite.Log.afterLog"></bean>
+      <!--aop的配置-->
+      <aop:config>
+         <!--切入点 expression:表达式匹配要执行的方法-->
+         <aop:pointcut id="pointcut" expression="execution(* com.CloudWhite.Service.testService.*(..))"/>
+         <!--执行环绕; advice-ref执行方法 . pointcut-ref切入点-->
+         <aop:advisor advice-ref="beforeLog" pointcut-ref="pointcut"/>
+         <aop:advisor advice-ref="afterLog" pointcut-ref="pointcut"/>
+      </aop:config>
+   </beans>
+   ```
+   5. 测试类：`testImpl testService = (testImpl) context.getBean("service");testService.test();`
+3. ***注解实现： ***
+   1. 接口、服务类同上
+   2. 增强类：
+   ```java
+   @Aspect
+   @Component
+   public class Log{
+      @Before("execution(* com.CloudWhite.Service.testService.*(..))")
+      public void before(){
+         System.out.println("方法被执行前!");
+      }
+
+      @After("execution(* com.CloudWhite.Service.testService.*(..))")
+      public void afterReturning(){
+         System.out.println("方法被执行后!");
+      }
+
+      @Around("execution(* com.CloudWhite.Service.testService.*(..))")//先around，然后通过类型如下jp.proceed() ，执行before，然后继续around，最后执行after，当然也不宜不写这个，这个是为了区分多个方法
+      public Object around(ProceedingJoinPoint jp) throws Throwable {
+         System.out.println("环绕前");
+         System.out.println("签名:"+jp.getSignature());//执行方法的返回类型、完整方法路径名
+         Object proceed = jp.proceed();//执行目标方法proceed的返回值，有这个才会执行before
+         System.out.println("环绕后");
+         System.out.println(proceed);
+         return proceed;//特别注意，这里通常需要返回值，否则mybatis的返回值可能错误  
+      }
+   }
+   ```
+   3. 最后bean.xml只要加上`<aop:aspectj-autoproxy/> `(其他如依赖注入记得开启组件扫描或手动注入)
 # Spring MVC
+就是spring加mvc设计模式，主要是controller层，service层，dao层，model层，view层，其中controller层是核心，其他都是辅助。
+## MVC：
+- 模型(Model)：模型是应用程序中用于处理数据的部分。即实体类。
+- 视图(View)：视图是应用程序中处理数据的显示部分。
+- 控制器(Controller)：控制器作用于模型和视图上。它控制数据流向模型对象，并在数据变化时更新视图。它使视图与模型分离开。
+- DAO：数据访问对象
+- Service：业务逻辑
+## Mybatis-Spring
+例子见SpringTest，是Spring AOP + Mybatis + Spring Core的整合
+1. 在先前xml基础上加上如下：
+```xml
+<aop:aspectj-autoproxy/>
+<!-- 加载外部属性配置文件 -->
+<context:property-placeholder location="classpath:db.properties"/>
+<!--配置数据源：数据源有非常多，可以使用第三方的，也可使使用Spring的-->
+<bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+   <!-- 也可以不加载外部资源直接载value里写 -->
+   <property name="driverClassName" value="${jdbc.driver}"/>
+   <property name="url" value="${jdbc.url}"/>
+   <property name="username" value="${jdbc.username}"/>
+   <property name="password" value="${jdbc.password}"/>
+</bean>
+<!-- 声明SqlSessionFactoryBean，在这个类的内部，创建SqlSessionFactory对象，之后就可以获取SqlSession对象 -->
+<bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+   <!-- 获取数据源 -->
+   <property name="dataSource" ref="dataSource" />
+   <!-- 获取其他配置，虽然数据源帮忙做了属性设置mybatis-config不用在写了，但其他配置如typeAlias等配置还是要加载mybatis-config。当然如果有mybatis-config之外的其他配置也可以在下面写注入到SqlSessionFactoryBean -->
+   <property name="configLocation" value="classpath:mybatis-config.xml"/>
+</bean>
+
+<!-- 声明MapperScannerConfigurer -->
+<!--
+   MapperScannerConfigurer作用：
+      循环basePackage所表示的包，把包中的每个接口都找到，调用SqlSession.getMapper(XXXDao.class)
+      把每个dao接口都创建出对应的dao代理对象，将dao代理对象放在容器中。对于StudentDao接口，其代理对象为 studentDao,即我们不用mybatis的传统的用接口代理，而是用spring的getBean()动态代理接口
+-->
+<bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+   <!-- 指定SqlSessionFactory对象的名称 -->
+   <property name="sqlSessionFactoryBeanName" value="sqlSessionFactory"/>
+   <!-- 指定基本包，dao接口所在的包名 -->
+   <property name="basePackage" value="com.CloudWhite.Dao"/>
+</bean>
+```
+2. Dao接口，即mapper层：
+```java
+@Mapper//如果你不想用MapperScannerConfigurer可以用mapper注解，然后在启动类加上mapper扫描的注解，但这一般用在SpringBoot，后面再说
+public interface testDao {
+    List<UserInfo> selectAll();
+}
+```
+3，Service层：
+```java
+//service接口，也可以不写，但一般写
+public interface testImpl {
+    List<UserInfo> selectAllUserInfo();
+}
+//接口实现类，主要为了调用dao层的方法，然后返回给controller层
+@Service("testService")
+public class testService implements testImpl {
+    private testDao testDao;
+    @Autowired
+    public void setTestDao(com.CloudWhite.Dao.testDao testDao) {
+        this.testDao = testDao;
+    }
+    @Override
+    public List<UserInfo> selectAllUserInfo(){
+        List<UserInfo> list = testDao.selectAll();
+        return list;
+    }
+}
+```
+4. Controller层：调用service层的方法，返回给前端
 # Spring Boot
 # Spring Data
 # Spring Security

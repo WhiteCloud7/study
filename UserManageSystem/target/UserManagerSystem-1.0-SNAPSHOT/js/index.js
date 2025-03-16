@@ -254,7 +254,11 @@ function performOperation(){
         if(count == 1) {
             deleteOneUser();
         }else if(count > 1) {
-            deleteManyUser();
+            deleteManyUser().then((data) =>{
+                console.log(data);
+            },(error)=>{
+                console.log(error);
+            });
         }else if(count < 1){
             alert("请选择一个用户！");
         }else{

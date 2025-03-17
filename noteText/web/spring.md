@@ -320,7 +320,7 @@ class Client {
 - 控制器(Controller)：控制器作用于模型和视图上。它控制数据流向模型对象，并在数据变化时更新视图。它使视图与模型分离开。
 - DAO：数据访问对象
 - Service：业务逻辑
-## Mybatis-Spring
+## ***Mybatis-Spring***
 例子见SpringTest，是Spring AOP + Mybatis + Spring Core的整合
 1. 在先前xml基础上加上如下：
 ```xml
@@ -384,8 +384,158 @@ public class testService implements testImpl {
     }
 }
 ```
-4. Controller层：调用service层的方法，返回给前端
+4. Controller层：调用service层的方法，返回给前端，另外从以上层次可看出，service依赖dao，controller依赖service，那么可以通过依赖注入来代替getBean()，当然用注解注入击得开启三个层级的扫描。
+## ***Spring MVC:***
+[]()
+springBoot可以直接创建Spring MVC项目，即创建SpringBoot项目，勾选web即可  
+[参考](https://blog.csdn.net/m0_64338546/article/details/132071506?ops_request_misc=%257B%2522request%255Fid%2522%253A%2522f4ba18099d6a0a7452cdecb50b53c40e%2522%252C%2522scm%2522%253A%252220140713.130102334..%2522%257D&request_id=f4ba18099d6a0a7452cdecb50b53c40e&biz_id=0&utm_medium=distribute.pc_search_result.none-task-blog-2~all~top_positive~default-1-132071506-null-null.142^v102^pc_search_result_base8&utm_term=Spring%20mvc&spm=1018.2226.3001.4187)
+1. 路由映射（就是访问地址）：
+   - @RequestMapping(/路由地址,方法类型可以不写不写就是任意方法格式为method = RequestMethod.方法名，ContentType内容，以及三个不常用的属性略)：
+     - @RequestMapping注解可以修饰类，也可以修饰方法，当修饰类和方法时，访问的地址是类＋方法。
+     - @RequestMapping注解可以处理任何HTTP方法的请求，包括GET、POST、PUT、DELETE等。
+     - @RequestMapping注解可以使用method属性来进行限定处理请求的HTTP方法。
+   - PostMapping(/路由地址)：
+     - @PostMapping注解通常用于修饰控制器类中的方法，而不是类本身。
+     - @PostMapping注解只可以处理HTTP POST请求映射到处理方法上。
+   - GetMapping(/路由地址)：
+     - @GetMapping注解通常用于修饰控制器类中的方法，而不是类本身。
+     - @GetMapping注解只可以处理HTTP GET请求映射到处理方法上。
+2. 路由获取参数：
+   - 单个普通参数：当路由地址前加了一个value属性时就代表指定参数值，路由地址就变成了`路由地址?参数值=参数值`，此时的参数就是方法里定义的参数。如果想指定参数值则可用@RequestParam，如`test(@RequestParam("username") String name)`
+   - 普通对象参数：同上
+   - json对象：用@RequestBody注解标注对应对象即可，spring会自动将json转为对象
+   - 获取url参数：即获取路由地址里的参数，如`路由地址/{参数名}`，此时的参数就是方法里定义的参数，用@PathVariable注解标注参数即可，如`test(@PathVariable("username") String name)`
+   - 获取上传文件参数：使用@RequestParam注解，如`test(@RequestParam("file") MultipartFile file)`
+   - 获取请求头：使用@RequestHeader注解，如`test(@RequestHeader("User-Agent") String userAgent)`
+   - 获取cookie：使用@CookieValue注解，如`test(@CookieValue("JSESSIONID") String sessionId)`
+   - 获取session：使用@SessionAttribute注解，如`test(@SessionAttribute("user") User user)`
+3. 返回：
+   1. 视图：直接return 视图名，这里视图名加`/`在更目录找，不加在当前目录找
+   2. @RestController(这个注解是类的，是ReponseBody和Controller的组合)：直接return数据，这里返回的数据会自动转为json格式
+   3. 其他略
 # Spring Boot
+[参考](https://blog.csdn.net/cuiqwei/article/details/118188540?ops_request_misc=%257B%2522request%255Fid%2522%253A%25228981b59ad7bb535f1826580f08582080%2522%252C%2522scm%2522%253A%252220140713.130102334..%2522%257D&request_id=8981b59ad7bb535f1826580f08582080&biz_id=0&utm_medium=distribute.pc_search_result.none-task-blog-2~all~top_positive~default-1-118188540-null-null.142^v102^pc_search_result_base8&utm_term=springBoot&spm=1018.2226.3001.4187)
+## 一些配置可能的配置：
+这里可以用properties文件，也可以用yml文件，内容一样只是格式不一样，prop就不说了，下面用yml演示
+1. logback配置：
+```yml
+logging:
+  config: logback.xml  # 指定logback配置文件路径
+  level:
+    com.CloudWhite.SpringMvcTest.Dao: trace # 指定包路径下的日志级别
+```
+1. 配置微服务：
+```yml
+server: port=8080 # 端口号
+address: localhost # 地址
+url: http://localhost:8002 # 这里可以在分个层写别名
+# 微服务的地址,微服务如用户名，密码等等略
+```
+这里配置了的话，就可以在其他类里用`@Value("${url}")`来获取配置的url
+## 集成mybatis：**这里注意版本兼容，非常重要**
+1. 依赖：`org.mybatis.mybatis`和`org.mybatis.mybatis-spring `
+2. 配置(可以对照着xml理解)：
+```yml
+# 服务端口号
+server:
+  port: 8080
+ 
+# 数据库地址
+datasource:
+  url: localhost:3306/usermanage
+ 
+spring:
+  datasource: # 数据库配置
+    driver-class-name: com.mysql.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/usermanagesystem?useUnicode=true&characterEncoding=utf-8&useSSL=false&serverTimezone=Asia/Shanghai
+    username: root
+    password: 123456
+    hikari: #连接池，可不用
+      maximum-pool-size: 10 # 最大连接池数
+      max-lifetime: 1770000
+ 
+mybatis:
+  # 指定别名设置的包为所有entity
+  type-aliases-package: com.itcodai.course10.entity
+  configuration:
+    map-underscore-to-camel-case: true # 驼峰命名规范
+  mapper-locations: # mapper映射文件位置
+    - classpath:mapper/*.xml
+  config-location: classpath:mybatis-config.xml #可以导入mybits主配置文件来配置其他内容 
+```
+这里没有配置MapperScannerConfigurer，因为springBoot可以在启动类加@MapperScan("mapper所在的包")来扫描mapper，也可以在mapper层加@Mapper注解来扫描mapper，但这样要每个mapper写一遍
+此时整合了mybatis的springboot的控制器就可以直接调用service层的方法了，但注意此时不用getBean()了，所以只能用依赖注入了获取service层的方法，当然这样更简单。
+## 集成swagger：
+swagger主要是为了接口文档，便于代码理解和测试
+1. 依赖：
+2. 常用注解：
+   - 实体类的
+     - @ApiModel 注解用于实体类，表示对类进行说明，用于参数用实体类接收。
+     - @ApiModelProperty 注解用于类中属性，表示对 model 属性的说明或者数据操作更改。
+   - controller的:
+     - @Api 注解用于类上，表示标识这个类是 swagger 的资源。
+     - @ApiOperation 注解用于方法，表示一个 http 请求的操作。
+     - @ApiParam 注解用于参数上，用来标明参数信息。
+- 配置类：
+```java
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import springfox.documentation.builders.ApiInfoBuilder;
+import springfox.documentation.builders.PathSelectors;
+import springfox.documentation.builders.RequestHandlerSelectors;
+import springfox.documentation.service.ApiInfo;
+import springfox.documentation.spi.DocumentationType;
+import springfox.documentation.spring.web.plugins.Docket;
+import springfox.documentation.swagger2.annotations.EnableSwagger2;
+ 
+/**
+ * @author shengwu ni
+ */
+@Configuration
+@EnableSwagger2
+public class SwaggerConfig {
+ 
+    @Bean
+    public Docket createRestApi() {
+        return new Docket(DocumentationType.SWAGGER_2)
+                // 指定构建api文档的详细信息的方法：apiInfo()
+                .apiInfo(apiInfo())
+                .select()
+                // 指定要生成api接口的包路径，这里把controller作为包路径，生成controller中的所有接口
+                .apis(RequestHandlerSelectors.basePackage("com.itcodai.course06.controller"))
+                .paths(PathSelectors.any())
+                .build();
+    }
+ 
+    /**
+     * 构建api文档的详细信息
+     * @return
+     */
+    private ApiInfo apiInfo() {
+        return new ApiInfoBuilder()
+                // 设置页面标题
+                .title("Spring Boot集成Swagger2接口总览")
+                // 设置接口描述
+                .description("跟一起学Spring Boot第06课")
+                // 设置联系方式
+                .contact("测试，" + "www.baidu.com")
+                // 设置版本
+                .version("1.0")
+                // 构建
+                .build();
+    }
+}
+```
+但目前swagger2和springboot3.x版本不兼容，所以要把springboot版本降到2.x，不然会报错
+如果用springboot3.x,可以用Springdoc - OpenAPI，如上五个注解如api对应Tag、apimodel和apimodelproperties对应Schema，这些参数变成了name和description，ApiOperation对应Operation，参数变成了summary和description，ApiParam对应Parameter，参数变成了description和是否必填，yml可以加一些配置：
+```yml
+springdoc:
+  api-docs:
+    path: /api-docs
+  swagger-ui:
+    path: /swagger-ui.html
+```
+##  
 # Spring Data
 # Spring Security
 # Spring Cloud

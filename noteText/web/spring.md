@@ -527,7 +527,7 @@ public class SwaggerConfig {
 }
 ```
 但目前swagger2和springboot3.x版本不兼容，所以要把springboot版本降到2.x，不然会报错
-如果用springboot3.x,可以用Springdoc - OpenAPI，如上五个注解如api对应Tag、apimodel和apimodelproperties对应Schema，这些参数变成了name和description，ApiOperation对应Operation，参数变成了summary和description，ApiParam对应Parameter，参数变成了description和是否必填，yml可以加一些配置：
+如果用springboot3.x,可以用Springdoc - OpenAPI，如上五个注解如api对应Tag、apimodel和apimodelproperties对应Schema，这些参数变成了name和description，ApiOperation对应Operation，参数变成了summary和description，ApiParam对应Parameter，参数变成description和是否必填，yml可以加一些配置：
 ```yml
 springdoc:
   api-docs:

@@ -131,6 +131,9 @@ Person对象的属性是怎么设置的 ? Person对象的属性是由Spring容�
       - `<context:component-scan base-package="com.CloudWhite.Entity"/>`: 配置要扫描的包. 然后在指定包里的类加上注解@Component("可写的bean的id")，就相当于xml里的bean标签
       - @value("可选的默认赋值")：给属性赋值，这里就可以去掉基本数据类型的set方法
       - @Component有三个衍生注解，即@Controller、@Service、@Repository，分别对应控制层、业务层、持久层，使用了就将其交给spring管理。
+## ***一些重要使用说明***
+了解的自动注入，那我们注入的对象是什么呢？一般为了方便灵活实现方法，我们一般注入接口（击得给实现类注入bean）。当然如果该类已经稳定我们也可以注入实现类。  
+那么注入好处是什么？注入是将注入的对象交给spring管理，这样我们就不用自己去实例化了，我们可以直接声明被注入的对象，然后进行注入就能使用了。
 ## 基于Java类进行配置(配置类)：
 以下一个例子了解注解作用：
 ```java
@@ -315,7 +318,7 @@ class Client {
 # Spring MVC
 就是spring加mvc设计模式，主要是controller层，service层，dao层，model层，view层，其中controller层是核心，其他都是辅助。
 ## MVC：
-- 模型(Model)：模型是应用程序中用于处理数据的部分。即实体类。
+- 模型(Model)：模型是应用程序中用于处理数据的部分，主要有实体类。但除了实体类还有很多用处，可以封装各种bean，如统一json数据等等。
 - 视图(View)：视图是应用程序中处理数据的显示部分。
 - 控制器(Controller)：控制器作用于模型和视图上。它控制数据流向模型对象，并在数据变化时更新视图。它使视图与模型分离开。
 - DAO：数据访问对象
@@ -415,6 +418,24 @@ springBoot可以直接创建Spring MVC项目，即创建SpringBoot项目，勾�
    3. 其他略
 # Spring Boot
 [参考](https://blog.csdn.net/cuiqwei/article/details/118188540?ops_request_misc=%257B%2522request%255Fid%2522%253A%25228981b59ad7bb535f1826580f08582080%2522%252C%2522scm%2522%253A%252220140713.130102334..%2522%257D&request_id=8981b59ad7bb535f1826580f08582080&biz_id=0&utm_medium=distribute.pc_search_result.none-task-blog-2~all~top_positive~default-1-118188540-null-null.142^v102^pc_search_result_base8&utm_term=springBoot&spm=1018.2226.3001.4187)
+## 项目结构
+1. java: 存放后端java代码，满足mvc的结构并进行扩展，略
+2. resources: 存放配置文件以及静态资源和模板文件，重点说明这两个:
+   - 静态资源：如js、html、css等等，静态资源可被直接通过名字访问，不需要经过controller也无法通过controller返回。而要在后端获取静态资源要用到Resource接口，下面说。
+   - 模板文件：当你集成了类似thymeleaf这样的模板引擎时，模板文件会被放置在这个目录下。模板文件通常用于生成动态的HTML页面，当然也可以放其他类型模板。模板视图可以被控制器返回，无需后缀名且为类路径，然后由模板引擎进行渲染。
+   - Resource接口：  
+     - 常用实现类：
+       - ClassPathResource：用于加载类路径下的资源。
+       - FileSystemResource：用于加载文件系统中的资源。
+       - UrlResource：用于加载通过 URL 访问的资源，例如 HTTP、FTP 等。
+       - ServletContextResource：用于加载 Servlet 上下文相关的资源。
+     - 常用方法：
+       - exists()：检查资源是否存在。
+       - isReadable()：检查资源是否可读。
+       - 各种get方法：获取资源的各种信息，如文件名、URL、输入输出流、文件内容、文本长度等。
+       - ResourceLoader，spring常用的资源加载，用getResource()获取资源，其他用法类似上面。
+   - 另外这里说明一下RestController和Controller的注解，RestController实际上是Controller和ResponseBody的组合，即返回的数据包括视图名都会自动转为json格式，对于返回json的数据可以直接写这个而不用一个个写ResponeBody。但对于需要返回试图名的控制器需要要Controller。
+   - 返回视图加`/`是在当前目录找，不加是在更目录找
 ## 一些配置可能的配置：
 这里可以用properties文件，也可以用yml文件，内容一样只是格式不一样，prop就不说了，下面用yml演示
 1. logback配置：
@@ -478,19 +499,6 @@ swagger主要是为了接口文档，便于代码理解和测试
      - @ApiParam 注解用于参数上，用来标明参数信息。
 - 配置类：
 ```java
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import springfox.documentation.builders.ApiInfoBuilder;
-import springfox.documentation.builders.PathSelectors;
-import springfox.documentation.builders.RequestHandlerSelectors;
-import springfox.documentation.service.ApiInfo;
-import springfox.documentation.spi.DocumentationType;
-import springfox.documentation.spring.web.plugins.Docket;
-import springfox.documentation.swagger2.annotations.EnableSwagger2;
- 
-/**
- * @author shengwu ni
- */
 @Configuration
 @EnableSwagger2
 public class SwaggerConfig {
@@ -527,7 +535,7 @@ public class SwaggerConfig {
 }
 ```
 但目前swagger2和springboot3.x版本不兼容，所以要把springboot版本降到2.x，不然会报错
-如果用springboot3.x,可以用Springdoc - OpenAPI，如上五个注解如api对应Tag、apimodel和apimodelproperties对应Schema，这些参数变成了name和description，ApiOperation对应Operation，参数变成了summary和description，ApiParam对应Parameter，参数变成description和是否必填，yml可以加一些配置：
+如果用springboot3.x,可以用Springdoc - OpenAPI，如上五个注解如api对应Tag、apimodel和apimodelproperties对应Schema，这些参数变成了name和description，ApiOperation对应Operation，参数变成了summary和description，ApiParam对应Parameter，参数变成了description和是否必填，yml可以加一些配置：
 ```yml
 springdoc:
   api-docs:
@@ -535,7 +543,252 @@ springdoc:
   swagger-ui:
     path: /swagger-ui.html
 ```
-##  
+## 集成thymeleaf
+1. 依赖：
+另外，在html页面上如果要使用thymeleaf模板，需要在页面标签中引入：`<html xmlns:th="http://www.thymeleaf.org">`
+2. 配置：springboot已经默认级别配置好了，可能就一个受否开启页面缓存需要注意，默认是开启的，如要关闭：`spring.thymeleaf.cache=false #关闭缓存`
+3. 使用：
+访问静态界面，这里上面有说，一般由于写错误页面，如500、404等等，thymeleaf会自动识别并返回错误页面，当然也可以自己写。  
+然后就是一些thymeleaf操作了，我们用一个例子说明：
+```html
+<form action="" th:each="blogger : ${list}" >
+    用户编号：<input name="id" th:value="${blogger.id}"/><br>
+    用户姓名：<input type="text" name="password" th:value="${blogger.name}"/><br>
+    登录密码：<input type="text" name="username" th:value="${blogger.getPass()}"/>
+</form>
+```
+可以看出thymeleaf可以用th:操作类型来进行操作，${}替换参数
+以下是一些常见操作类型：
+- th:object: 获取传递的对象
+- th:属性名：设置属性 如value、style、src、on事件名、href、action等等
+- th:if	th:case th:default ：相当于java中的switch case default	
+- th:unless	条件判断和th:if相反	Login
+此外，thymeleaf还允许内嵌一些java代码，如三元表达式、字符串连接等等  
+除了`${}`可以替换参数，@{}可以替换url
+## 全局异常处理
+1. 配置：
+写一个配置类，只需在该类加上@ControllerAdvice注解即可检测全局异常，然后就可以写各种异常的处理方法，以下是一个请求缺失参数异常的例子：
+```java
+@ControllerAdvice
+@RestController
+public class GlobalException {
+    // 打印log
+    private static final Logger logger = LoggerFactory.getLogger(GlobalException.class);
+    @ExceptionHandler(MissingServletRequestParameterException.class)//这里是异常类型
+    @ResponseStatus(value = HttpStatus.BAD_REQUEST)//这里是返回状态码
+    public JsonResult handleHttpMessageNotReadableException(
+            MissingServletRequestParameterException ex) {
+        logger.error("缺少请求参数，{}", ex.getMessage());
+        return new JsonResult("400", "缺少必要的请求参数");
+    }
+}
+```
+然后当有控制器有异常就可以有logger打印出来你所配置的异常信息了。  
+***然后就是自定义异常，只需要把我们自定义的异常写进全局异常类即可。对于自定义异常，需要继承Throwable类，这样当你定义的异常被抛出时，就会被全局异常类捕获。  ***
+关于异常，以下是一些常见异常（指springboot的）：
+- 启动类：
+  - SpringApplicationRunException：启动异常
+  - IllegalStateException：非法状态异常，启动时可能因为配置冲突或者上下文状态异常导致
+- bean异常： 
+  - BeanCreationException：Bean创建异常，可能是因为Bean的配置错误或者依赖关系问题导致
+  - NoSuchBeanDefinitionException：找不到Bean定义异常，可能是因为Bean的名称或者类型错误导致
+- 数据库异常： 
+  - DataAccessException及其子类：数据访问异常，可能是因为数据库连接问题或者SQL语句错误导致
+  - TransactionSystemException：事务系统异常，可能是因为事务配置错误或者事务状态异常导致
+- 请求异常
+  - HttpRequestMethodNotSupportedException：HTTP请求方法不支持异常，可能是因为请求的HTTP方法不被支持导致
+  - HttpMediaTypeNotSupportedException：HTTP媒体类型不支持异常，可能是因为请求的媒体类型不被支持导致
+  - MethodArgumentNotValidException：方法参数无效异常，可能是因为请求参数无效导致
+  - MissingServletRequestParameterException：缺少请求参数异常，可能是因为请求缺少必要的参数导致
+## 集成AOP
+集成AOP方法在SpringAOP讲过，这里有一些新的注解
+- Pointcut(切入点表达式)：写切入点表达式，以后就不用再每个都写了，只需要写该注解标注的函数名带扩号即可
+- AfterReturning(切入点表达式，returning=返回的值)：在After之前，是After的增强注解，就是还能够获取返回值
+- AfterThrowing(切入点表达式，throwing=异常名)：在After之前,是After的增强注解，就是还能够获取异常
+## 事务：
+SpringBoot的事务管理非常简单，只需要在方法上加上@Transactional(rollbackFor=异常类型)注解即可，但由于是自动的不是手动通过sqlseeion更灵活来来提交回滚，所以这里有一些注意的问题：
+1. SpringBoot默认只有遇到RuntimeException和error才会回滚，比如遇到SQL异常就不会回滚了，所以一定要指定异常
+2. 当我们使用try-catch捕获异常但没有抛出时，会检测不到异常，所以要抛出异常
+3. 事务的有范围的，比如我们改一个方法锁，那此时事务的范围比锁大，此时方法被锁了事务检测不到异常自然也无法回滚，此时我们应该把锁定义到更大的范围如类上。故我们应该注意事务范围
+## 监听器及各种上下文
+### 我们先了解一下各种上下文：
+1. ApplicationContext接口：
+   1. 作用：
+      - Bean 管理：ApplicationContext负责创建、配置和管理应用中的所有 Bean 对象。
+      - 资源加载：可以加载各种资源，如文件、URL、类路径下的资源等。通过资源加载功能，应用可以方便地获取外部资源，如配置文件、图片等。
+      - 事件发布与监听：支持事件机制，允许应用程序发布和监听事件。当某个事件发生时ApplicationContext 会将事件通知给所有注册的监听器，从而实现组件之间的解耦。
+      - 国际化支持：提供国际化支持，允许应用根据不同的语言环境显示不同的文本信息。
+   2. 常用实现类：
+      - AnnotationConfigApplicationContext：用于加载基于注解的配置类，通常用于 Spring Boot 应用程序。
+      - ClassPathXmlApplicationContext：用于加载类路径下的 XML 配置文件。
+      - FileSystemXmlApplicationContext：用于加载文件系统中的 XML 配置文件。 
+   3. 常用方法：
+      - getBean()：通过bean名称、类名.class获取bean实例
+      - getResource(指定路径)：获取资源
+      - 以及各种get方法
+      - containsBean():判断是否包含bean 各种is方法
+      - publishEvent(事件)：发布事件 
+2. ServletContext类： 
+   1. 作用
+   - 共享数据：ServletContext 提供了一个在整个 Web 应用程序中共享数据的机制。多个 Servlet、Filter 或其他 Web 组件可以通过 ServletContext 来存储和获取共享数据，实现不同组件之间的信息传递和交互。
+   - 访问资源：它允许Servlet访问Web应用程序的资源，如配置文件、静态资源等。通ServletContext，可以获取资源的输入流，从而读取资源的内容。
+   - 获取服务器信息：ServletContext 提供了获取服务器相关信息的方法。
+   2. 常用方法：
+      - get/setAttribute()：获取/设置属性
+      - removeAttribute()：移除属性
+      - getRealPath()：获取资源的真实路径
+      - getResourceAsStream()：获取资源的输入流
+      - getInitParameter()：获取初始化参数
+      - getRequestDispatcher：获取请求调度器
+      - 等等  
+### 监听器    
+1. 监听servlet上下文，我们要实现ApplicationListener接口，然后重写onApplicationEvent方法，然后在方法里写我们要监听的事件。我们来举个例子，比如我们对于一些需要实时更新但不频繁的信息，我们在每次刷新时把当前页面信息存入ServletContext，即Aplication存储，这种机制叫缓存，之后我们直接从缓存中获取即可，这样大大减少了数据库到的开销。对应监听器如下：
+```java
+@Component
+public class ContextRefreshedEventListener implements ApplicationListener<ContextRefreshedEvent> {
+    @Override
+    public void onApplicationEvent(ContextRefreshedEvent event) {
+        ApplicationContext applicationContext = event.getApplicationContext();
+        userService userService = applicationContext.getBean(userService.class);
+        List<userInfo> userInfos = userService.showAllUserInfo();
+        ServletContext application = applicationContext.getBean(ServletContext.class);
+        application.setAttribute("userInfos",userInfos);
+    }
+}
+```
+**这里可以看到ApplicationListener是一个泛型，我们可以监听很多不同事件，还可以用来自定义监听器。**
+2. 自定义监听器：  
+显然我们只要自定义监听事件然后实现ApplicationListener接口即可。这里自定义事件只要继承ApplicationEvent类即可，这里构造函数有一个参数即数据源，即监听的对象。
+3. 监听sesion：
+当我们要监听session时，如需要session存储登录人数，我们需要实现HttpSessionListener接口，然后重写sessionCreated和sessionDestroyed方法，然后在方法里写我们要监听的事件。以下是一个例子：
+```java
+@Component
+public class SessionListener implements HttpSessionListener {
+    private static int OnlineCount;
+    @Override
+    public void sessionCreated(HttpSessionEvent event){
+        HttpSession session = event.getSession();
+        OnlineCount++;
+        session.getServletContext().setAttribute("我登陆了",OnlineCount);
+        //session.setAttribute("我登陆了",OnlineCount);
+    }
+
+    @Override
+    public void sessionDestroyed(HttpSessionEvent event){
+        HttpSession session = event.getSession();
+        OnlineCount--;
+        session.getServletContext().setAttribute("我下线了",OnlineCount);
+        //session.setAttribute("我登陆了",OnlineCount);
+    }
+}
+```
+4. 监听ServletRequest：
+都是一个道理，直接贴代码：
+```java
+@Component
+public class servletRequestListener implements ServletRequestListener {
+    @Override
+    public void requestInitialized(ServletRequestEvent event){
+        HttpServletRequest request = (HttpServletRequest) event.getServletRequest();
+        System.out.println("请求sessionId："+request.getRequestedSessionId());
+        System.out.println("请求url："+request.getRequestURL());
+        request.setAttribute("url",request.getRequestURL());
+    }
+
+    public void requestDestroyed(ServletRequestEvent event){
+        HttpServletRequest request = (HttpServletRequest) event.getServletRequest();
+        System.out.println("来自："+request.getAttribute("uel")+"请求已销毁");
+    }
+}
+```  
+***最后对于监听事件，有以下常见事件（可以额外了解一下生命周期）：***
+- ApplicationStartingEvent：应用程序启动事件，用于系统级别初始化
+- ApplicationEnvironmentPreparedEvent：应用程序的Environment（环境配置）准备好但上下文还未创建，用于在此时修改配置环境
+- ApplicationContextInitializedEvent：应用程序上下文初始化完成，但还未加载任何bean，用于在此时修改应用程序上下文
+- ApplicationPreparedEvent：应用程序准备好，此时可以访问bean，但还未刷新上下文，对上下文进行最后一次更改
+- ApplicationStartedEvent：应用程序启动完成，用于初始化
+- ApplicationReadyEvent：当 CommandLineRunner 和 ApplicationRunner 已经调用，应用程序已经准备好接收外部请求时触发。可以在这个阶段进行一些健康检查、发送通知等操作。
+- ContextRefreshedEvent：应用程序上下文刷新完成，所有bean都已加载并初始化
+- ContextClosedEvent：应用程序上下文关闭事件，在应用程序关闭时触发
+- ApplicationClosedEvent：应用程序关闭事件，在应用程序关闭时触发,比ContextClosedEvent先触发
+- RequestHandledEvent：在请求处理完成后触发，用于记录请求处理的详细信息
+- SessionCreatedEvent 和 SessionDestroyedEvent：用于处理会话创建和销毁事件
+## 拦截器及定义注解
+1. 定义拦截器，实现HandlerInterceptor接口，重写preHandle、postHandle、afterCompletion方法。  
+这里三个方法的区别：
+   - preHandle：该方法的执行时机是，当某个 url 已经匹配到对应的 Controller 中的某个方法，且在这个方法执行之前。此时可以做一些判断然后决定是否拦截。
+   - postHandle：在请求处理之后，视图渲染之前调用。
+   - afterCompletion：在整个请求处理完成之后调用，即在视图渲染完成之后。  
+那现在我们来举个例子： 
+```java
+public class MyInterceptor implements HandlerInterceptor{
+    @Override
+    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler){
+        HandlerMethod handlerMethod = (HandlerMethod) handler;
+        Method method = handlerMethod.getMethod();
+        System.out.println("方法执行前，确认是否拦截————");
+        //这里返回false则拦截，true就不拦截
+        return false;
+    }
+    @Override
+    public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler, ModelAndView modelAndView){
+        System.out.println("方法已经执行，准备渲染视图————");
+    }
+    @Override
+    public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex){
+        System.out.println("方法完成，抛出异常");
+    }
+}
+```
+这里时拦截的是请求故有request和response，而handler是拦截的对象，即拦截的方法。而postHandle在视图渲染之前，故有一个ModelAndView参数，即视图渲染之前的模型和视图。而afterCompletion在整个请求处理完成之后，故要抛出异常。  
+这里有个HandlerMethod类，里面封装了请求的各种方法信息。
+2. 配置拦截器：
+```java
+@Configuration
+public class interceptionConfig extends WebMvcConfigurationSupport {
+    @Override
+    protected void addInterceptors(InterceptorRegistry registry) {
+        registry.addInterceptor(new MyInterceptor()).addPathPatterns("/**");
+        super.addInterceptors(registry);
+    }}
+```
+**这里的addPathPatterns是拦截的路径，`/**`是拦截所有路径**，一般就是拦截所有请求，具体视情况而定。  
+但是这里有个问题，就是拦截器是全局的，即所有请求都会被拦截，静态资源也会被拦截，即视图都无法显示，所以即使我们拦截所有请求也要防止拦截静态资源。这里有两个方法：
+```java
+//方法一为重写addResourceHandlers方法，指定不拦截某些资源更灵活
+@Override
+    protected void addResourceHandlers(ResourceHandlerRegistry registry) {
+        registry.addResourceHandler("/**").addResourceLocations("classpath:/static/");
+        super.addResourceHandlers(registry);
+    }
+//方法二，直接改成实现WebMvcConfigurer接口，一劳永逸，对于没有额外要求的拦截器可以用这个
+@Configuration
+public class MyInterceptorConfig implements WebMvcConfigurer {
+    @Override
+    public void addInterceptors(InterceptorRegistry registry) {
+        // 实现WebMvcConfigurer不会导致静态资源被拦截
+        registry.addInterceptor(new MyInterceptor()).addPathPatterns("/**");
+    }
+}
+```
+3. 让特定方法不被拦截
+```java
+//定义这个注解，在不席位被拦截的方法上加上这个注解即可，这样更方便、更灵活，可与上面合使用
+@Target(ElementType.METHOD)
+@Retention(RetentionPolicy.RUNTIME)
+public @interface UnInterception {
+}
+```
+那么现在就可以来看如何定义注解：
+   1. @interface关键字修饰方法
+   2. 定义元注解，以下是常用元注解：
+      - @Target：指定注解的作用目标，如方法、类、接口等等 
+      - @Retention：指定注解的保留策略，如运行时、编译时、源文件等等
+      - @Documented：指定注解是否包含在 JavaDoc 文档中
+      - @Inherited：指定注解是否可继承
+      - @Repeatable：指定注解是否可重复使用
+      - 等等
+   3. 定义注解的属性，在方法里定义，格式为`属性名() default "默认值";`
 # Spring Data
 # Spring Security
 # Spring Cloud

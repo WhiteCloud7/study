@@ -4,41 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="1fc1baf3-f08a-4595-bc79-52e8cad428c4" name="更改" comment="">
-      <change afterPath="$PROJECT_DIR$/logs/application.log" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/logs/application_size.log" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/CloudWhite/Dao/testDao.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/CloudWhite/Log/Log.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/CloudWhite/Service/ServiceImpl/testImpl.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/CloudWhite/Service/testService.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/CloudWhite/model/Person.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/CloudWhite/model/Student.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/CloudWhite/model/Teacher.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/CloudWhite/model/UserInfo.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/CloudWhite/model/myConfig.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/resources/db.properties" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/resources/logback.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/resources/mapper/testMapper.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/resources/mybatis-config.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/CloudWhite/Entity/Person.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/CloudWhite/Entity/Student.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/CloudWhite/Service/serviceImpl/testImpl.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/CloudWhite/Service/test.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/CloudWhite/Controller/test.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/beans.xml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/beans.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../UserManageSystem/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../UserManageSystem/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../UserManageSystem/src/test/java/test.js" beforeDir="false" afterPath="$PROJECT_DIR$/../UserManageSystem/src/test/java/test.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../UserManageSystem/target/UserManagerSystem-1.0-SNAPSHOT/js/index.js" beforeDir="false" afterPath="$PROJECT_DIR$/../UserManageSystem/target/UserManagerSystem-1.0-SNAPSHOT/js/index.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../UserManageSystem/target/classes/com/WhiteCloud/Controller/addUser.class" beforeDir="false" afterPath="$PROJECT_DIR$/../UserManageSystem/target/classes/com/WhiteCloud/Controller/addUser.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../UserManageSystem/target/classes/com/WhiteCloud/Controller/updateUser.class" beforeDir="false" afterPath="$PROJECT_DIR$/../UserManageSystem/target/classes/com/WhiteCloud/Controller/updateUser.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../UserManageSystem/target/classes/com/WhiteCloud/UserDao/UserManage.class" beforeDir="false" afterPath="$PROJECT_DIR$/../UserManageSystem/target/classes/com/WhiteCloud/UserDao/UserManage.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../UserManageSystem/target/test-classes/test.js" beforeDir="false" afterPath="$PROJECT_DIR$/../UserManageSystem/target/test-classes/test.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../chatMax/bin/chatMax/test.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../chatMax/src/chatMax/test.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../noteText/java/基本知识杂烩.md" beforeDir="false" afterPath="$PROJECT_DIR$/../noteText/java/基本知识杂烩.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../noteText/web/spring.md" beforeDir="false" afterPath="$PROJECT_DIR$/../noteText/web/spring.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../noteText/web/其他常用的依赖.md" beforeDir="false" afterPath="$PROJECT_DIR$/../noteText/web/其他常用的依赖.md" afterDir="false" />
-    </list>
+    <list default="true" id="1fc1baf3-f08a-4595-bc79-52e8cad428c4" name="更改" comment="" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -68,23 +34,23 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "ASKED_ADD_EXTERNAL_FILES": "true",
-    "ASKED_SHARE_PROJECT_CONFIGURATION_FILES": "true",
-    "RunOnceActivity.OpenProjectViewOnStart": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
-    "WebServerToolWindowFactoryState": "false",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "spring.configuration.checksum": "a4d3fba6fefa3aa8a893cfd712f5eeb7",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;ASKED_ADD_EXTERNAL_FILES&quot;: &quot;true&quot;,
+    &quot;ASKED_SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
+    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;spring.configuration.checksum&quot;: &quot;a4d3fba6fefa3aa8a893cfd712f5eeb7&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
       <recent name="D:\GitHub\study\SpringTest\src\main\resources" />
@@ -122,6 +88,7 @@
       <workItem from="1742029402376" duration="12259000" />
       <workItem from="1742047596206" duration="1800000" />
       <workItem from="1742101747457" duration="19067000" />
+      <workItem from="1742448673754" duration="18000" />
     </task>
     <servers />
   </component>

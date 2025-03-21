@@ -421,7 +421,7 @@ springBoot可以直接创建Spring MVC项目，即创建SpringBoot项目，勾�
 ## 项目结构
 1. java: 存放后端java代码，满足mvc的结构并进行扩展，略
 2. resources: 存放配置文件以及静态资源和模板文件，重点说明这两个:
-   - 静态资源：如js、html、css等等，静态资源可被直接通过名字访问，不需要经过controller也无法通过controller返回。而要在后端获取静态资源要用到Resource接口，下面说。
+   - 静态资源：如js、html、css等等，静态资源可被直接通过名字访问，不需要经过controller，如果controller返回需要加后缀。而要在后端获取静态资源要用到Resource接口，下面说。
    - 模板文件：当你集成了类似thymeleaf这样的模板引擎时，模板文件会被放置在这个目录下。模板文件通常用于生成动态的HTML页面，当然也可以放其他类型模板。模板视图可以被控制器返回，无需后缀名且为类路径，然后由模板引擎进行渲染。
    - Resource接口：  
      - 常用实现类：
@@ -741,8 +741,9 @@ public class MyInterceptor implements HandlerInterceptor{
 }
 ```
 这里时拦截的是请求故有request和response，而handler是拦截的对象，即拦截的方法。而postHandle在视图渲染之前，故有一个ModelAndView参数，即视图渲染之前的模型和视图。而afterCompletion在整个请求处理完成之后，故要抛出异常。  
-这里有个HandlerMethod类，里面封装了请求的各种方法信息。
-2. 配置拦截器：
+这里有个HandlerMethod类，里面封装了请求的各种方法信息。  
+***这里重点说一下HandlerMethod：HandlerMethod类是在springmvc中用于表示处理程序方法的类。它封装了一个方法对象和一个控制器对象，提供了对方法的各种操作和信息的访问。也叫是说只要是springmvc请求，基本都会有一个HandlerMethod对象。*** 而如果只是普通方法，除非自定义否则是不会自动把方法信息封装成一对象的。
+1. 配置拦截器：
 ```java
 @Configuration
 public class interceptionConfig extends WebMvcConfigurationSupport {
@@ -771,14 +772,27 @@ public class MyInterceptorConfig implements WebMvcConfigurer {
     }
 }
 ```
-3. 让特定方法不被拦截
+1. 让特定方法不被拦截
 ```java
 //定义这个注解，在不席位被拦截的方法上加上这个注解即可，这样更方便、更灵活，可与上面合使用
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
 public @interface UnInterception {
 }
+```  
+但注意这里还要在拦截器里加上判断：
+```java
+if (handler instanceof HandlerMethod) {
+            HandlerMethod handlerMethod = (HandlerMethod) handler;
+            Method method = handlerMethod.getMethod();
+            // 检查方法是否有 @UnInterception 注解
+            if (method.isAnnotationPresent(UnInterception.class)) {
+                System.out.println("方法标记了 @UnInterception 注解，不进行拦截");
+                return true; // 有 @UnInterception 注解，不拦截
+            }
+        }
 ```
+这里有个isAnnotationPresent 方法，用于判断方法是否有指定注解。  
 那么现在就可以来看如何定义注解：
    1. @interface关键字修饰方法
    2. 定义元注解，以下是常用元注解：
@@ -789,6 +803,145 @@ public @interface UnInterception {
       - @Repeatable：指定注解是否可重复使用
       - 等等
    3. 定义注解的属性，在方法里定义，格式为`属性名() default "默认值";`
+## 集成redis
+### 介绍及使用场景
+Redis 是一种非关系型数据库（NoSQL），NoSQL 是以 key-value 的形式存储的，和传统的关系型数据库不一样，不一定遵循传统数据库的一些基本要求，比如说 SQL 标准，ACID 属性，表结构等等，这类数据库主要有以下特点：非关系型的、分布式的、开源的、水平可扩展的。
+NoSQL 使用场景有：对数据高并发读写、对海量数据的高效率存储和访问、对数据的高可扩展性和高可用性等等。
+Redis 的 key 可以是字符串、哈希、链表、集合和有序集合。value 类型很多，包括 String、list、set、zset。这些数据类型都支持 push/pop、add/remove、取交集和并集以及更多更丰富的操作，Redis 也支持各种不同方式的排序。为了保证效率，数据都是在缓存在内存中，它也可以周期性的把更新的数据写入磁盘或者把修改操作写入追加的记录文件中。
+Redis 集群和 Mysql 是同步的，首先会从 redis 中获取数据，如果 redis 挂了，再从 mysql 中获取数据，这样网站就不会挂掉。
+也就是说，对于一下短期热点数据，我们可以把它存到 redis 中，这样可以提高访问速度，减少数据库的访问量，从而提高网站的性能。对于需要长期保存的数据，我们可以把它存到 mysql 中，这样可以保证数据的安全性。两者之间的数据，我们两者都存，可以通过定时任务来同步。
+### 集成redis
+1. 下载配置redis，加上redis依赖：
+2. 配置：
+```yml
+spring:
+  #ridis配置
+  data:
+    redis:
+      database: 5
+      host: 192.168.202.1 #自己的地址
+      port: 6379 #redis监听端口，默认6379
+      password: 123456
+      jedis:
+        pool:
+          max-idle: 1000 # 连接池中的最大空闲连接，默认值是8。
+          min-idle: 0 # 连接池中的最小空闲连接，默认值是0
+          max-active: -1 #最大jedis是隶属，-1为不限制
+          max-wait: 5000 #最大连接等待时间，单位ms，默认-1为不限制
+```
+### redis使用（直介绍最常用的，其他自己去查）：
+有两个 redis 模板：RedisTemplate 和 StringRedisTemplate。我们不使用 RedisTemplate，RedisTemplate 提供给我们操作对象，操作对象的时候，我们通常是以 json 格式存储，但在存储的时候，会使用 Redis 默认的内部序列化器；导致我们存进里面的是乱码之类的东西。当然了，我们可以自己定义序列化，但是比较麻烦，所以使用 StringRedisTemplate 模板。StringRedisTemplate 主要给我们提供字符串操作，我们可以将实体类等转成 json 字符串即可，这里用jackson库等处理即可。  
+1. redis:string:
+```java
+@Resource //注入stringRedisTemplate
+private StringRedisTemplate stringRedisTemplate;
+//opsForValue来获取ValueOperations对象即可进行各种操作了
+public void setString(String key,String value){
+    ValueOperations<String,String> valueOperations = stringRedisTemplate.opsForValue();
+    valueOperations.set(key,value);
+}
+
+public String getString(String key){
+    ValueOperations valueOperations = stringRedisTemplate.opsForValue();
+    valueOperations.get(key);
+}
+```
+2. hash:这个就是上面的在加一个key（即hash的key）,将Operations换成HashOperations、opsForValue换成opsForHash即可，get和set变成了put和get 
+3. list：将Operations换成ListOperations、opsForValue换成opsForList即可，get和set变成了leftPush和rightPop  
+*这里注意之最后都会返回一个json字符串，所以要在设置时进行数值转换*
+## 集成jms
+### 作用：
+JMS 即 Java 消息服务（Java Message Service）应用程序接口，是一个Java平台中关于面向消息中间件（MOM）的 API，用于在两个应用程序之间，或分布式系统中发送消息，进行异步通信（即无需等接收端确认即可进行新的请求）。Java 消息服务是一个与具体平台无关的 API，绝大多数 MOM 提供商都对 JMS 提供支持。  
+举个例子，我们可以用JMS来实现消息队列，即当我们在电商网站下单时，我们可以把订单信息存入消息队列，之后库存系统就可以从消息队列中获取订单信息，然后进行相应操作。即它作为两个应用程序的一个中间层，并实现了异步通信。  
+而作为中间件坑定也有除了实现异步的更多优势如JMS的消息队列可以作为一个缓冲区，将大量的请求消息暂存起来，然后按照系统的处理能力逐步处理这些消息，从而提高系统的吞吐量和响应速度。另外还有着可靠传输、兼容性高等等优点。
+### 集成：
+1. 下载配置ActiveMQ，加相应依赖：
+2. 配置：
+```yml
+spring:
+  activemq:
+    # activemq url
+    broker-url: tcp://localhost:61616
+    in-memory: true
+    pool:
+      # 如果此处设置为true，需要添加activemq-pool的依赖包，否则会自动配置失败，无法注入JmsMessagingTemplate
+      enabled: false
+```
+3. 使用：  
+先写个配置类：
+```java
+@Configuration
+public class JMSConfig {
+    //发布/订阅队列
+    public static final String topicName = "MyTopic";
+    //点对点队列
+    public static final String queueName = "MyQueue";
+
+    @Bean
+    public Destination topic(){
+        return new ActiveMQTopic(topicName);
+    }
+
+    @Bean
+    public Destination queue(){
+        return new ActiveMQQueue(queueName);
+    }
+}
+```  
+在定义一个发送和接收消息的接口，下面是实现类：
+```java
+@Service
+public class JMSServiceImpl implements JMSService {
+    @Autowired //发送
+    private JmsMessagingTemplate jmsMessagingTemplate;
+    @Override
+    public void sendMessage(Destination destination, String messageContent){
+        jmsMessagingTemplate.convertAndSend(destination,messageContent);
+    }
+    //接受
+    @Override
+    @JmsListener(destination = JMSConfig.queueName)
+    public void receiveMessage(String msg){
+        System.out.println("收到的消息"+msg);
+    }
+}
+```
+这里的convertAndSend第一个参数是目的地第二个是消息内容，有多种数据类型，这里选一种。  
+这时点对点队列的使用，接下来介绍发布/订阅队列。  
+要用发布/订阅队列，需要在yml将`spring.jms.pub-sub-domain`设置为true，然后配置类加上：
+```java
+@Bean
+public JmsListenerContainerFactory topicListenerContainer(ConnectionFactory connectionFactory) {
+    DefaultJmsListenerContainerFactory factory = new DefaultJmsListenerContainerFactory();
+    factory.setConnectionFactory(connectionFactory);
+    // 相当于在application.yml中配置：spring.jms.pub-sub-domain=true
+    factory.setPubSubDomain(true);
+    return factory;
+}
+```
+然后接受消息的JMSListener多一个containerFactory参数，值为上面定义的topicListenerContainer。然后其他的和点对点队列一样。
+## 集成Shiro
+### 介绍：
+1. Shiro 三大核心组件：
+   1. Subject：认证主体。它包含两个信息：Principals和Credentials,这俩具体是：
+      - Principals：身份。可以是用户名，邮件，手机号码等等，用来标识一个登录主体身份；
+      - Credentials：凭证。常见有密码，数字证书等等。   
+    简单来说，就是用户的认证信息。
+   2. SecurityManager：安全管理员。这是 Shiro 架构的核心，它就像 Shiro 内部所有原件的保护伞一样。我们在项目中一般都会配置 SecurityManager，开发人员大部分精力主要是在 Subject 认证主体上面。我们在与 Subject 进行交互的时候，实际上是 SecurityManager 在背后做一些安全操作。
+   3. Realms：Realms 是一个域，它是连接 Shiro 和具体应用的桥梁，当需要与安全数据交互的时候，比如用户账户、访问控制等，Shiro 就会从一个或多个 Realms 中去查找。我们一般会自己定制 Realm，这在下文会详细说明。
+2. Shiro 身份和权限认证  
+![如图](../photo/5.png) 
+- Step1：应用程序代码在调用 Subject.login(token) 方法后，传入代表最终用户的身份和凭证的 AuthenticationToken 实例 token。
+- Step2：将 Subject 实例委托给应用程序的 SecurityManager（Shiro的安全管理）来开始实际的认证工作。这里开始真正的认证工作了。
+- Step3，4，5：然后 SecurityManager 就会根据具体的 realm 去进行安全认证了。 从图中可以看出，realm 可以自定义（Custom Realm）。
+3. Shiro 权限认证:  
+权限认证，也就是访问控制，即在应用中控制谁能访问哪些资源。在权限认证中，最核心的三个要素是：权限，角色和用户。
+   - 权限（permission）：即操作资源的权利，比如访问某个页面，以及对某个模块的数据的添加，修改，删除，查看的权利；
+   - 角色（role）：指的是用户担任的的角色，一个角色可以有多个权限；
+   - 用户（user）：在 Shiro 中，代表访问系统的用户，即上面提到的 Subject 认证主体
+![它们之间的的关系可以用下图来表示](../photo/6.png)   
+一个用户可以有多个角色，而不同的角色可以有不同的权限，也可由有相同的权限。比如说现在有三个角色，1是普通角色，2也是普通角色，3是管理员，角色1只能查看信息，角色2只能添加信息，管理员都可以，而且还可以删除信息，类似于这样。
+### 集成
 # Spring Data
 # Spring Security
 # Spring Cloud

@@ -1,29 +1,56 @@
 package com.WhiteCloud.SpringBootTest.Controller;
 import com.WhiteCloud.SpringBootTest.Entity.userInfo;
 import com.WhiteCloud.SpringBootTest.Model.MyException;
+import com.WhiteCloud.SpringBootTest.Model.redisService.*;
+import com.WhiteCloud.SpringBootTest.Service.JMSService;
 import com.WhiteCloud.SpringBootTest.Service.userService;
+import com.WhiteCloud.SpringBootTest.Utils.Config.JMSConfig;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.annotation.Resource;
+import jakarta.jms.Destination;
 import jakarta.servlet.ServletContext;
 import jakarta.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
-import org.springframework.core.io.Resource;
+import org.springframework.jms.annotation.JmsListener;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.StreamUtils;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 import java.nio.charset.StandardCharsets;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
-//@RestController
-@Controller
+@RestController
+//@Controller
 @Tag(name = "测试控制器")
 public class test {
+    @Target(ElementType.METHOD)
+    @Retention(RetentionPolicy.RUNTIME)
+    public @interface UnInterception {
+    }
+    @Resource
+    redisServiceString redisServiceString;
+    @Resource
+    redisServiceHash redisServiceHash;
+    @Resource
+    redisServiceList redisServiceList;
+    @Resource
+    private Destination queue;
+    @Autowired
+    private JMSService jmsService;
     userService userService;
     private static final Logger logger = LoggerFactory.getLogger(test.class);
 
@@ -60,11 +87,25 @@ public class test {
     }
 
     @GetMapping("/InterceptorTest")
-    public String InterceptorTest(HttpServletRequest request) throws IOException {
-        Resource resource = new ClassPathResource("static/test.html");
-        try (InputStream inputStream = resource.getInputStream()) {
-            // 将输入流中的内容读取为字符串
-            return StreamUtils.copyToString(inputStream, StandardCharsets.UTF_8);
+    //@UnInterception
+    public String InterceptorTest(){
+            return "test.html";
         }
+
+    @GetMapping("/redisTest")
+    public String redisTest() throws JsonProcessingException {
+//        String a[] = {"刘"};
+//        ObjectMapper objectMapper = new ObjectMapper();
+//        List<userInfo> userInfos = userService.showUserInfoBySomeCondition(a);
+//        String json = objectMapper.writeValueAsString(userInfos);
+//        redisServiceString.setString("1",json);
+        redisServiceHash.setHash("1","2",String.valueOf(2));
+        redisServiceHash.getHash("1","1");
+        return (String) redisServiceHash.getHash("1","2");
+    }
+
+    @GetMapping("JMSTest")
+    public void JMSTest(){
+        jmsService.sendMessage(queue,"hello,jms!");
     }
 }

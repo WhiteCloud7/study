@@ -1,10 +1,12 @@
 package com.WhiteCloud.SpringBootTest.Service;
 
 import com.WhiteCloud.SpringBootTest.Entity.userInfo;
+import jakarta.jms.Destination;
 
 import java.util.List;
 
 public interface userService {
+
     public List<userInfo> showAllUserInfo();
 
     public List<userInfo> showAllUserInfo2();

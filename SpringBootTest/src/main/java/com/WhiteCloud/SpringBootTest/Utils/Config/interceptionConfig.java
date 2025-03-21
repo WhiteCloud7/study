@@ -1,12 +1,12 @@
-package com.WhiteCloud.SpringBootTest.Utils.Config;
-
-import com.WhiteCloud.SpringBootTest.Utils.Interceptor.MyInterceptor;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
-import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurationSupport;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
-
+//package com.WhiteCloud.SpringBootTest.Utils.Config;
+//
+//import com.WhiteCloud.SpringBootTest.Utils.Interceptor.MyInterceptor;
+//import org.springframework.context.annotation.Configuration;
+//import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
+//import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
+//import org.springframework.web.servlet.config.annotation.WebMvcConfigurationSupport;
+//import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+//
 //@Configuration
 //public class interceptionConfig extends WebMvcConfigurationSupport {
 //    @Override
@@ -21,7 +21,6 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 //        super.addResourceHandlers(registry);
 //    }
 //}
-//
 //@Configuration
 //public class interceptionConfig implements WebMvcConfigurer {
 //    @Override

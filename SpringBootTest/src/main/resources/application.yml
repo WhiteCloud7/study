@@ -9,10 +9,13 @@ logging:
   config: classpath:logback.xml  # ??logback??????
   level:
     com.WhiteCloud.SpringBootTest.Dao: trace # ???????????
-# mybatis
+server:
+  port: 8080
+
 spring:
   application:
     name: SpringBootTest
+  #mybatis数据源
   datasource:
     driver: com.mysql.cj.driver
     url: jdbc:mysql://localhost:3306/usermanagesystem?useUnicode=true&characterEncoding=utf-8&useSSL=false&serverTimezone=Asia/Shanghai
@@ -21,9 +24,31 @@ spring:
     hikari: #???????
       maximum-pool-size: 10 # ??????
       max-lifetime: 1770000
-  mvc:
-    static-path-pattern: /static/**
+  #ridis配置
+  data:
+    redis:
+      database: 0
+      host: 192.168.74.1 #自己的地址
+      port: 6379 #redis监听端口，默认6379
+      password: 123456
+      jedis:
+        pool:
+          max-idle: 1000 # 连接池中的最大空闲连接，默认值是8。
+          min-idle: 0 # 连接池中的最小空闲连接，默认值是0
+          max-active: -1 #最大jedis实例，-1为不限制
+          max-wait: 5000 #最大连接等待时间，单位ms，默认-1为不限制
+  #JMS
+  jms:
+    pub-sub-domain: true
+  activemq:
+    # activemq url
+    broker-url: tcp://localhost:61616
+    in-memory: true
+    pool:
+      # 如果此处设置为true，需要添加activemq-pool的依赖包，否则会自动配置失败，无法注入JmsMessagingTemplate
+      enabled: false
 
+# mybatis
 mybatis:
   mapper-locations: classpath:mapper/*.xml
   type-aliases-package: com/WhiteCloud/SpringBootTest/Entity

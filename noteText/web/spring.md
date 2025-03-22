@@ -934,7 +934,7 @@ public JmsListenerContainerFactory topicListenerContainer(ConnectionFactory conn
 - Step1：应用程序代码在调用 Subject.login(token) 方法后，传入代表最终用户的身份和凭证的 AuthenticationToken 实例 token。
 - Step2：将 Subject 实例委托给应用程序的 SecurityManager（Shiro的安全管理）来开始实际的认证工作。这里开始真正的认证工作了。
 - Step3，4，5：然后 SecurityManager 就会根据具体的 realm 去进行安全认证了。 从图中可以看出，realm 可以自定义（Custom Realm）。
-3. Shiro 权限认证:  
+1. Shiro 权限认证:  
 权限认证，也就是访问控制，即在应用中控制谁能访问哪些资源。在权限认证中，最核心的三个要素是：权限，角色和用户。
    - 权限（permission）：即操作资源的权利，比如访问某个页面，以及对某个模块的数据的添加，修改，删除，查看的权利；
    - 角色（role）：指的是用户担任的的角色，一个角色可以有多个权限；
@@ -942,6 +942,123 @@ public JmsListenerContainerFactory topicListenerContainer(ConnectionFactory conn
 ![它们之间的的关系可以用下图来表示](../photo/6.png)   
 一个用户可以有多个角色，而不同的角色可以有不同的权限，也可由有相同的权限。比如说现在有三个角色，1是普通角色，2也是普通角色，3是管理员，角色1只能查看信息，角色2只能添加信息，管理员都可以，而且还可以删除信息，类似于这样。
 ### 集成
+有上面的介绍，第一步自然是自定义域，我们可以继承AuthorizingRealm类，然后重写doGetAuthenticationInfo和doGetAuthorizationInfo方法，这里有一个例子：
+```java
+public class loginRealm extends AuthorizingRealm {
+    @Autowired
+    private userService userService;
+
+    public static StringBuffer remindMessage;
+    //用来登录前验证用户，获取认值信息
+    @Override
+    protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken authenticationToken) throws AuthenticationException {
+        //用authenticationToken.getPrincipal获取用户名
+        String username = (String) authenticationToken.getPrincipal();
+        //有用户名判断是否有该用户
+        userInfo userInfo = userService.getUserInfoByUsername(username);
+        if(userInfo!=null){
+            //用SecurityUtils获取认证主体并将该用户存入session
+            SecurityUtils.getSubject().getSession().setAttribute(userInfo.getUsername(),userInfo);
+            //传入用户信息进行认证
+            AuthenticationInfo  authenticationInfo = new SimpleAuthenticationInfo(userInfo.getUsername(),userInfo.getPassword(),"loginRealm");
+            return authenticationInfo;
+        }else {
+            remindMessage.append("账号或密码错误！");
+            return null;
+        }
+    }
+    //用来登录后授予角色和权限
+    @Override
+    protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principalCollection){
+        //用principalCollection.getPrimaryPrincipal()得到用户名
+        String username = (String) principalCollection.getPrimaryPrincipal();
+        SimpleAuthorizationInfo authorizationInfo = new SimpleAuthorizationInfo();
+        //给该用户设置角色和权限
+        authorizationInfo.setRoles(userService.getRoleNameByUsername(username));
+        authorizationInfo.setStringPermissions(userService.getPremissionInfoByUsername(username));
+        return authorizationInfo;
+    }
+}
+```
+然后在配置类将所有域传上去：
+```java
+@Configuration
+public class RealmConfig {
+    @Bean
+    public loginRealm loginRealm() {
+        loginRealm loginRealm = new loginRealm();
+        System.out.println("Auth域注册完成————");
+        return loginRealm;
+    }}
+```
+在配置安全管理器托管域：
+```java
+@Bean
+    public DefaultWebSecurityManager securityManager() {
+        // 将自定义realm加进来
+        DefaultWebSecurityManager securityManager = new DefaultWebSecurityManager(loginRealm());
+        System.out.println("====securityManager注册完成====");
+        return securityManager;
+    }
+```
+最后配置shiroFilter：
+```java
+@Bean
+    public ShiroFilterFactoryBean shiroFilter(DefaultWebSecurityManager securityManager) {
+        // 定义shiroFactoryBean
+        ShiroFilterFactoryBean shiroFilterFactoryBean=new ShiroFilterFactoryBean();
+
+        // 设置自定义的securityManager
+        shiroFilterFactoryBean.setSecurityManager(securityManager);
+
+        // 设置默认登录的url，身份认证失败会访问该url
+        shiroFilterFactoryBean.setLoginUrl("/login");
+        // 设置成功之后要跳转的链接
+        shiroFilterFactoryBean.setSuccessUrl("/index");
+        // 设置未授权界面，权限认证失败会访问该url
+        shiroFilterFactoryBean.setUnauthorizedUrl("/unauthorized");
+
+        // LinkedHashMap是有序的，进行顺序拦截器配置
+        Map<String,String> filterChainMap = new LinkedHashMap<>();
+
+        // 配置可以匿名访问的地址，可以根据实际情况自己添加，放行一些静态资源等，anon表示放行
+        filterChainMap.put("/css/**", "anon");
+        filterChainMap.put("/imgs/**", "anon");
+        filterChainMap.put("/js/**", "anon");
+        filterChainMap.put("/swagger-*/**", "anon");
+        filterChainMap.put("/swagger-ui.html/**", "anon");
+        // 登录url 放行
+        filterChainMap.put("/login", "anon");
+
+        // “/user/admin” 开头的需要身份认证，authc表示要身份认证
+        filterChainMap.put("/user/admin*", "authc");
+        // “/user/student” 开头的需要角色认证，是“admin”才允许
+        filterChainMap.put("/user/student*/**", "roles[admin]");
+        // “/user/teacher” 开头的需要权限认证，是“user:create”才允许
+        filterChainMap.put("/user/teacher*/**", "perms[\"user:create\"]");
+
+        // 配置logout过滤器
+        filterChainMap.put("/logout", "logout");
+
+        // 设置shiroFilterFactoryBean的FilterChainDefinitionMap
+        shiroFilterFactoryBean.setFilterChainDefinitionMap(filterChainMap);
+        System.out.println("====shiroFilterFactoryBean注册完成====");
+        return shiroFilterFactoryBean;
+    }
+```
+可以看出要配置：
+- 默认登录的 url：身份认证失败会访问该 url
+- 认证成功之后要跳转的 url
+- 权限认证失败会访问该 url
+- 需要拦截或者放行的 url：这些都放在一个 map 中
+在 map 中，针对不同的 url，有不同的权限要求，这里总结一下常用的几个权限：
+- anon	开放权限，可以理解为匿名用户或游客，可以直接访问的
+- authc	需要身份认证的
+- logout	注销，执行后会直接跳转到 shiroFilterFactoryBean.setLoginUrl(); 设置的 url，即登录页面
+- roles[admin]	参数可写多个，表示是某个或某些角色才能通过，多个参数时写 roles[“admin，user”]，当有多个参数时必须每个参数都通过才算通过
+- perms[user]	参数可写多个，表示需要某个或某些权限才能通过，多个参数时写 perms[“user, admin”]，当有多个参数时必须每个参数都通过才算通过  
+***特别注意：Springboot3.x和目前的Shiro的兼容性非常差，所以要用shiro要使用SpringBoot2.x版本。***
+## 集成Lucence
 # Spring Data
 # Spring Security
 # Spring Cloud

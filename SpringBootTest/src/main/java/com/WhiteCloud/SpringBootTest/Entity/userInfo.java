@@ -1,6 +1,7 @@
 package com.WhiteCloud.SpringBootTest.Entity;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import org.springframework.beans.factory.annotation.Autowired;
 
 @Schema(name="用户实体类",description = "")
 public class userInfo {
@@ -8,6 +9,10 @@ public class userInfo {
     private int userId;
     @Schema(name = "用户名")
     private String username;
+    @Schema(name="密码")
+    private String password;
+    @Schema(name="昵称")
+    private String nikename;
     @Schema(name = "用户性别")
     private String sex;
     @Schema(name = "用户电话")
@@ -15,23 +20,34 @@ public class userInfo {
     @Schema(name = "用户邮箱")
     private String email;
 
+    @Autowired
+    private role role;
+
+    @Autowired
+    private premission premission;
+
+    public role getRole() {
+        return role;
+    }
+
+    public premission getPremission() {
+        return premission;
+    }
+
     public userInfo() {
     }
 
-    public userInfo(int userId) {
-        this.userId = userId;
-    }
-
-    public userInfo(String username, String sex, String phone, String email) {
-        this.userId = userId;
-    }
-
-    public userInfo(int userId, String username, String sex, String phone, String email) {
-        this.userId = userId;
+    public userInfo(String username, String nikename, String sex, String phone, String email) {
         this.username = username;
+        this.nikename = nikename;
         this.sex = sex;
         this.phone = phone;
         this.email = email;
+    }
+
+    public userInfo(String username, String password) {
+        this.username = username;
+        this.password = password;
     }
 
     public int getUserId() {
@@ -72,5 +88,20 @@ public class userInfo {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+    public String getPassword() {
+        return password;
+    }
+
+    public String getNikename() {
+        return nikename;
+    }
+
+    public void setNikename(String nikename) {
+        this.nikename = nikename;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
     }
 }

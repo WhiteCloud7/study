@@ -61,9 +61,9 @@ public class Indexer {
     //测试主类
     public static void main(String[] args) {
         //索引保存到的路径
-        String indexDir = "D:\\GitHub\\study\\SpringBootTest\\src\\main\\java\\com\\WhiteCloud\\SpringBootTest\\Utils\\LucenceTest\\index";
+        String indexDir = "D:\\GitHub\\study\\SpringBootTest\\src\\main\\java\\com\\WhiteCloud\\SpringBootTest\\Utils\\LucenceTest\\EnglishIndex";
         //需要索引的文件数据存放的目录
-        String dataDir = "D:\\GitHub\\study\\SpringBootTest\\src\\main\\java\\com\\WhiteCloud\\SpringBootTest\\Utils\\LucenceTest\\article";
+        String dataDir = "D:\\GitHub\\study\\SpringBootTest\\src\\main\\java\\com\\WhiteCloud\\SpringBootTest\\Utils\\LucenceTest\\EnglishArticle";
         Indexer indexer = null;
         int indexedNum = 0;
         //记录索引开始时间

@@ -1,7 +1,16 @@
 package com.WhiteCloud.SpringBootTest.Entity;
 
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.PrimaryKeyJoinColumn;
+
+@Entity
 public class premission {
+    @Id
+    @PrimaryKeyJoinColumn(name = "premissionId")
     private int premissionId;
+    @Column(name = "premissionInfo")
     private String premissionInfo;
 
     public premission() {

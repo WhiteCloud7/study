@@ -1,10 +1,25 @@
 <!DOCTYPE html>
-<html lang="en">
+<!DOCTYPE html>
+<html lang="zh">
 <head>
     <meta charset="UTF-8">
-    <title>login</title>
+    <title>登录</title>
 </head>
 <body>
-    这是登录界面
+<h2>用户登录</h2>
+<!-- 表单提交到 /login，使用 POST 方式 -->
+<form action="/login" method="post">
+    <label>用户名：</label>
+    <input type="text" name="username" placeholder="输入账号" required><br><br>
+    <label>密码：</label>
+    <input type="password" name="password" placeholder="输入密码" required><br><br>
+    <input type="submit" value="登录">
+</form>
+
+<!-- 显示登录错误信息 -->
+<p style="color: red;">
+    <span th:if="${param.error}">用户名或密码错误，请重试！</span>
+    <span th:if="${param.logout}">已成功注销！</span>
+</p>
 </body>
 </html>

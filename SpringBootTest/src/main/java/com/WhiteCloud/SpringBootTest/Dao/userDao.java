@@ -1,14 +1,15 @@
 package com.WhiteCloud.SpringBootTest.Dao;
 
 import com.WhiteCloud.SpringBootTest.Entity.userInfo;
+import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.Update;
-
+import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.List;
 import java.util.Set;
-
-public interface userDao {
+@Mapper
+public interface userDao{
     @Select("select * from userinfo")
     public List<userInfo> selectAll();
     @Select("select * from userinfo where username = #{username}")

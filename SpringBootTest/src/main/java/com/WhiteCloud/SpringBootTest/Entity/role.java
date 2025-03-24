@@ -1,17 +1,35 @@
 package com.WhiteCloud.SpringBootTest.Entity;
 
-public class role {
-    private int roleId;
-    private String roleName;
-    private int premissionId;
+import jakarta.persistence.*;
+import org.springframework.beans.factory.annotation.Autowired;
 
+@Entity
+public class role {
+    @Id
+    @Column(name = "roleId")
+    private int roleId;
+    @Column(name = "roleName")
+    private String roleName;
+    @PrimaryKeyJoinColumn(name = "premissionId")
+    @OneToOne
+    @JoinColumn(name = "premissionId")
+    private premission premission;
     public role() {
     }
 
-    public role(int roleId, String roleName, int premissionId) {
+    public role(int roleId, String roleName) {
         this.roleId = roleId;
         this.roleName = roleName;
-        this.premissionId = premissionId;
+    }
+    public role(int roleId) {
+        this.roleId = roleId;
+    }
+    public com.WhiteCloud.SpringBootTest.Entity.premission getPremission() {
+        return premission;
+    }
+
+    public void setPremission(com.WhiteCloud.SpringBootTest.Entity.premission premission) {
+        this.premission = premission;
     }
 
     public int getRoleId() {
@@ -28,13 +46,5 @@ public class role {
 
     public void setRoleName(String roleName) {
         this.roleName = roleName;
-    }
-
-    public int getPremissionId() {
-        return premissionId;
-    }
-
-    public void setPremissionId(int premissionId) {
-        this.premissionId = premissionId;
     }
 }

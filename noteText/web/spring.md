@@ -1059,7 +1059,325 @@ public class RealmConfig {
 - perms[user]	参数可写多个，表示需要某个或某些权限才能通过，多个参数时写 perms[“user, admin”]，当有多个参数时必须每个参数都通过才算通过  
 ***特别注意：Springboot3.x和目前的Shiro的兼容性非常差，所以要用shiro要使用SpringBoot2.x版本。***
 ## 集成Lucence
+1. 依赖
+2. 使用：直接看例子
+```java
+public class Indexer {
+    private IndexWriter indexWriter;
+    //这里参数是存放索引的目录不是文件目录
+    public Indexer(String indexDir) throws IOException {
+        //建立索引目录
+        Directory dir = FSDirectory.open(Paths.get(indexDir));
+        //实现标准分词器，会自动去掉空格啊，is a the等单词
+        Analyzer analyzer = new StandardAnalyzer();
+        //将分词器放到写索引配置中
+        IndexWriterConfig indexWriterConfig = new IndexWriterConfig(analyzer);
+        //实例化写索引对象
+        indexWriter = new IndexWriter(dir,indexWriterConfig);
+    }
+    //这是获取该目录下所有索引的方法
+    public int indexAll(String dir) throws Exception {
+        //获取目录下所以文件
+        File[] files = new File(dir).listFiles();
+        if (null != files) {
+            for (File file : files) {
+                //调用下面的indexFile方法，对每个文件进行索引
+                indexFile(file);
+            }
+        }
+        //返回索引的文件数
+        return indexWriter.numDocs();
+    }
+
+    private void indexFile(File file) throws Exception {
+        System.out.println("索引文件的路径：" + file.getCanonicalPath());
+        //调用下面的getDocument方法，获取该文件的document
+        Document doc = getDocument(file);
+        //将doc添加到索引中
+        indexWriter.addDocument(doc);
+    }
+
+    private Document getDocument(File file) throws IOException {
+        Document document = new Document();
+        //开始添加字段，先添加内容
+        document.add(new TextField("contents", new FileReader(file)));
+        //添加文件名，并把这个字段存到索引文件里
+        document.add(new TextField("fileName", file.getName(), Field.Store.YES));
+        //添加文件路径
+        document.add(new TextField("fullPath", file.getCanonicalPath(), Field.Store.YES));
+        return document;
+    }
+    //测试主类，略
+```
+```java
+class Searcher {
+    public static void search(String searchDir,String str) throws IOException, ParseException {
+        //获取搜素目录，即索引目录
+        Directory dir = FSDirectory.open(Paths.get(searchDir));
+        //用IndexReader读取索引
+        IndexReader indexReader = DirectoryReader.open(dir);
+        //构建IndexSearcher
+        IndexSearcher indexSearcher = new IndexSearcher(indexReader);
+        //标准分词器
+        Analyzer analyzer = new StandardAnalyzer();
+        //查询解析器
+        QueryParser queryParser = new QueryParser("contents",analyzer);
+        //通过解析要查询的String，获取查询对象，str为传进来的待查的字符串
+        Query query = queryParser.parse(str);
+
+        long startTime = System.currentTimeMillis();
+        //开始搜素,这里查询前十条记录
+        TopDocs docs = indexSearcher.search(query,10);
+        long endTime = System.currentTimeMillis();
+        long searchTime = endTime - startTime;
+        System.out.println("匹配" + str + "共耗时" + searchTime + "毫秒");
+        System.out.println("查询到" + docs.totalHits + "条记录");
+
+        //取出每条查询结果
+        for(ScoreDoc scoreDoc : docs.scoreDocs) {
+            //scoreDoc.doc相当于docID,根据这个docID来获取文档
+            Document doc = indexSearcher.doc(scoreDoc.doc);
+            //fullPath是刚刚建立索引的时候我们定义的一个字段，表示路径。也可以取其他的内容，只要我们在建立索引时有定义即可。
+            System.out.println(doc.get("fullPath"));
+        }
+        indexReader.close();
+    }
+    //测试主类，略
+```
 # Spring Data
+## 概述：
+Spring Data 它主要是用于做数据存储的，用在数据持久层。mybatis主要是用来操作像mysql这种关系型数据库，而除了这些外，**Spring Data 还可以操作非关系型数据库**，如Redis、MongoDB、Elasticsearch、Neo4j等。随着时代发展单一数据库已经无法满足实际开发需求了，因为用户量越来越大了。这时候项目就需要多种数据库，可每种数据库都有自己的语言，学习成本大，而**Spring Data将不同的这个数据存储进行了统一 提升了我们的开发效率，降低了我们的学习成本**，这就是我们学习Spring Data的原因。而常用的springdata模块如下：
+- Spring Data common - 用于支持每个Spring Data模块的核心公共模块。
+- Spring Data JDBC - 对 JDBC 的 Spring Data 存储库支持。
+- Spring Data JPA - 对 JPA 的 Spring Data 存储库支持。
+- Spring Data MongoDB - 基于 Spring 的对象文档支持和 MongoDB 存储库。
+- Spring Data Redis - 从 Spring 应用程序轻松配置和访问 Redis。
+- spring Data REST - 将 Spring Data 存储库导出为超媒体驱动的 RESTful 资源。
+其中常用的是Spring Data JPA和Spring Data Redis。
+## Spring Data JPA
+先导入依赖  
+***然后这里特别注意：要使用jpa，实体类需要用@Entity注解标注，主键用@Id注解标注，表名用@Table注解标注，字段用@Column注解标注，外键用@JoinColumn注解标注（除了主键和实体类其他为选择标记），这里当你没有用@Column注解标注时，jpa会自动将驼峰命名法转换为下划线命名法，如`userId`会自动转为`user_id`，如果想用其他名字就要我前面说到的注解。***  
+***然后关于外键，常在封装其他实体类时使用，对于封装的其实体类，应该用像一对一（@OneToOne）这样的关系注解标注且需要标注外键。另外，如果有外键就不能用@Column注解标注，要用@JoinColumn注解标注，这里用了封装实体类就不需要再加封装实体类里有的字段，不然会映射冲突，最后外键主键也不能用@Column注解标注,而用@PrimaryKeyJoinColumn注解标注。***  
+spring data jpa有以下核心接口：
+- Repository接口
+- CrudRepository接口
+- PagingAndSortingRepository接口
+- JpaRepository接口
+- JPASpecificationExecutor接口
+这里Repository、CrudRepository、PagingAndSortingRepository、JpaRepository、JPASpecificationExecutor接口是继承关系，所以我们可以直接使用JpaRepository接口，它集合了上面所有的接口。
+1. jpaRepository接口
+我们可以通过继承jpaRepository<T,ID>接口来创建自定义的jpaRepository接口，这里的T泛型是实体类类型，ID是主键类型。  
+接下来看常用方法：
+- save(entity) saveAll(entitySet)：保存实体对象和实体对象集合，当保存数据库没有的数据时，即为插入，此时实体无需写主键。保存有的即主键相同的数据时，即为更新，自然必须写主键。
+- findById(id) findAll() findAllById(id)：根据主键查询实体对象、查询所有实体对象和根据主键集合
+查询实体对象集合
+- findBy...(属性名) findAllBy...(属性名) findBy...(属性名)And...(属性名)：根据属性名查询实体对象、查询所有实体对象和根据属性名查询实体对象集合
+- findAll(Sort) findAll(Pageable)：根据排序规则查询实体对象集合和根据分页信息查询实体对象集合，**下面删改查基本都是这个格式，略了**
+- deleteById(id) deleteAll() deleteAll(entitySet)：根据主键删除实体对象、删除所有实体对象和根据实体对象集合删除实体对象集合
+- count()：查询实体对象的数量
+- existsById(id)：判断是否存在指定主键的实体对象
+- delete(entity) deleteById()：删除指定的实体对象和根据主键删除实体对象
+- update(entity)：更新实体对象 更新实体对象集合 根据主键更新实体对象  
+以上自定义方法需要在dao层定义，而非自定义方法可以直接调用，但其实又是我们需要封装是非自定义方法也要在dao层封装
+1. JPASpecificationExecutor接口
+它提供了多条件查询的复杂查询，但建议还是用mybatis的动态sql来实现。但注意两个接口要分开使用，不然会报错。
+## Spring Data Redis
+就是上面的集成redis
 # Spring Security
+基本概念参考shrio，这里直接介绍原理
+## 原理
+1. 先来看一下常用过滤器
+   1. **SecurityContextPersistenceFilter**：将Security上下文信息保存到Session中，在每次请求时，将Security上下文信息从Session中加载出来，这样就可以在整个请求过程中保持Security上下文信息的一致性。
+   2. **UsernamePasswordAuthenticationFilter**：用于处理基于表单的登录请求，从表单获取用户名和密码。默认处理来自/login的请求，默认表单name值为username和password，可通过设置过滤器的usernameParameter和passwordParameter参数修改。
+   3. **ExceptionTranslationFilter**：用于处理AccessDeniedException和AuthenticationException异常。
+   ![工作机理如图](../photo/7.png)  
+2. 然后看常见过滤器：
+   - **WebAsyncManagerIntegrationFilter**：将Security上下文与Spring Web中用于处理异步请求映射的WebAsyncManager进行集成。
+   - **SecurityContextPersistenceFilter**：在每次请求处理之前将该请求相关的安全上下文信息加载到SecurityContextHolder中，请求处理完成后，将SecurityContextHolder中此次请求信息存储到“仓储”，并清除其中信息，比如Session中维护用户安全信息由该过滤器处理。 
+   - **HeaderWriterFilter**：用于将头信息加入响应中。 
+   - **CsrfFilter**：用于处理跨站请求伪造。 
+   - **LogoutFilter**：用于处理退出登录。 
+   -  **UsernamePasswordAuthenticationFilter**：用于处理基于表单的登录请求，从表单获取用户名和密码。默认处理来自/login的请求，默认表单name值为username和password，可通过设置过滤器的usernameParameter和passwordParameter参数修改。 
+   - **DefaultLoginPageGeneratingFilter**：若未配置登录页面，系统初始化时配置此过滤器，用于在需要登录时生成登录表单页面。 
+   - **BasicAuthenticationFilter**：检测和处理http basic认证。 
+   - **RequestCacheAwareFilter**：用来处理请求的缓存。 
+   - **SecurityContextHolderAwareRequestFilter**：主要包装请求对象request。 
+   - **AnonymousAuthenticationFilter**：检测SecurityContextHolder中是否存在Authentication对象，若不存在则提供匿名Authentication。 
+   - **SessionManagementFilter**：管理session的过滤器。 
+   - **ExceptionTranslationFilter**：处理AccessDeniedException和AuthenticationException异常。 
+   - **FilterSecurityInterceptor**：可看作过滤器链的出口。 
+   - **RememberMeAuthenticationFilter**：当用户未登录访问资源时，从cookie找用户信息，若Spring Security能识别remember me cookie，用户无需填写用户名和密码直接登录，该过滤器默认不开启。 
+3. 基本流程  
+![如图](../photo/8.png)  
+绿色部分是认证过滤器 ，需要自行配置，可配置多个。既可以选用 Spring Security 提供的认证过滤器，也能自定义（如短信验证过滤器 ）。必须在configure(HttpSecurity http)方法中进行配置，否则不生效。
+1. 认证流程  
+![如图](../photo/9.png)
+## springboot集成spring security
+1. 导入依赖
+2. yml配置
+```yml
+#  security:
+#    user:
+#      name: root
+#      password: 123456
+```
+3. 然后正式开始
+   1. 写一个服务类实现UserDetailsService接口重写loadUserByUsername方法
+   ```java
+   @Component
+   public class userSecurityServiceImpl implements UserDetailsService {
+       public static String remindMessage;
+       @Autowired
+       private jpaUserService jpaUserService;
+       @Override
+       public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException{
+           //通过用户名得到用户信息
+           userInfo userInfo = jpaUserService.findByUsername(username);
+           if(userInfo!=null){
+               //获取角色
+               String role = userInfo.getRole().getRoleName();
+               //角色集合
+               List<GrantedAuthority> authorities = new ArrayList<>();
+               //角色必须加ROLE_，数据库没有就代码加
+               authorities.add(new SimpleGrantedAuthority("ROLE_"+role));
+               //这里User时spring security里面的
+               return new User(userInfo.getUsername(),userInfo.getPassword(),authorities);
+           }else{
+               remindMessage = "用户不存在！";
+               return null;}}}
+   ```
+    2. 写一个配置类加密密码并构建AuthenticationManager
+   ```java
+   @EnableWebSecurity//开启spring security
+    @Configuration
+    @EnableMethodSecurity//开启方法级别的权限控制
+    public class SpringSecurityConfig{
+        private UserDetailsService userDetailsService;
+        @Autowired
+        public SpringSecurityConfig(UserDetailsService userDetailsService) {
+            this.userDetailsService = userDetailsService;
+        }
+
+        @Bean
+        public PasswordEncoder PasswordEncoder(){
+            //使用BCrypt方式加密
+            return new BCryptPasswordEncoder();
+        }
+
+        @Bean
+        public AuthenticationManager authenticationManager(HttpSecurity httpSecurity) throws Exception {
+            AuthenticationManagerBuilder authenticationManagerBuilder = httpSecurity.getSharedObject(AuthenticationManagerBuilder.class);
+            authenticationManagerBuilder.userDetailsService(userDetailsService)
+                    .passwordEncoder(PasswordEncoder());
+            return authenticationManagerBuilder.build();
+        }}
+   ```
+   3. 最后再配置类配置过滤器链，一下列出常用配置    
+   ```java
+   @Bean
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+        // 开启跨域配置 (如需前后端分离，请启用)
+        // 直接配置跨域，无需额外方法返回 CorsConfigurationSource
+        http.cors(cors -> cors.configurationSource(request -> {
+            CorsConfiguration config = new CorsConfiguration();
+            config.setAllowedOrigins(Arrays.asList("http://localhost:3000"));  // 允许的前端地址
+            config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE"));
+            config.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type"));
+            config.setAllowCredentials(true);  // 允许携带 Cookie 进行跨域
+            return config;
+        }));
+
+        // 关闭 CSRF 保护（默认关闭，可选开启）
+        http.csrf(AbstractHttpConfigurer::disable);
+
+        // 开启 CSRF 保护，如果需要则注释掉上面的关闭
+        /*
+        http.csrf(csrf -> csrf
+                .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
+        );
+        */
+
+        // 会话管理（无状态，用于 JWT 认证时）
+        http.sessionManagement(session ->
+                session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+        );
+
+        // 默认会话管理（有状态，如需 session 认证请启用）
+        /*
+        http.sessionManagement(session -> session
+                .sessionFixation().migrateSession()
+                .maximumSessions(1)
+                .expiredUrl("/login?expired")
+        );
+        */
+
+        // 认证授权配置
+        http.authorizeHttpRequests(authz -> authz
+                .requestMatchers("/admin/**").hasRole("ADMIN")        // 管理员权限
+                .requestMatchers("/user/**").hasAnyRole("USER", "ADMIN") // 用户或管理员权限
+                .requestMatchers("/api/auth/**").permitAll()           // 认证接口无需登录
+                .anyRequest().authenticated()                           // 其他请求需要认证
+        );
+
+        // 表单登录配置
+        http.formLogin(form -> form
+                .loginPage("/login")                // 自定义登录页面
+                .defaultSuccessUrl("/home", true)   // 登录成功重定向
+                .permitAll()                        // 登录页面允许访问
+        );
+
+        // Basic 认证配置（如需要 Basic 认证启用）
+        /*
+        http.httpBasic(Customizer.withDefaults());
+        */
+
+        // JWT 认证过滤器（如有自定义 JWT 认证，请启用并配置过滤器）
+        /*
+        http.addFilterBefore(new JwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
+        */
+
+        // 登出配置
+        http.logout(logout -> logout
+                .logoutUrl("/logout")
+                .logoutSuccessUrl("/login?logout")
+                .permitAll()
+        );
+
+        // 认证异常处理
+        http.exceptionHandling(exception -> exception
+                .authenticationEntryPoint((request, response, authException) ->
+                        response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "未认证，请登录"))
+                .accessDeniedHandler((request, response, accessDeniedException) ->
+                        response.sendError(HttpServletResponse.SC_FORBIDDEN, "权限不足，禁止访问"))
+        );
+
+        return http.build();
+    }
+   ```
+这里关于UserDetails：  
+1. 获取用户信息：` UserDetails userDetails = (UserDetails) authentication.getPrincipal();`,然后getUsername()和getPassword()获取用户名和密码
+2. 检查用户权限：`userDetails.getAuthorities().stream().anyMatch(authority -> authority.getAuthority().equals("ROLE_ADMIN")`
+3. 获取用户权限等：
+    1. ```java
+        UserDetails userDetails = // 获取当前用户的UserDetails对象
+        Collection<? extends GrantedAuthority> authorities = userDetails.getAuthorities();
+        for (GrantedAuthority authority : authorities) {
+            System.out.println("用户权限: " + authority.getAuthority());
+        }
+       ```
+    2. 控制器里用如下：
+    ```java
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication != null && authentication.getPrincipal() instanceof UserDetails) {
+            UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+            Collection<? extends GrantedAuthority> authorities = userDetails.getAuthorities();
+            return authorities.stream().map(GrantedAuthority::getAuthority).collect(Collectors.toList());
+        }
+        ```    
+关于权限控制：  
+1. 基于注解的权限控制：
+    1. @PreAuthorize 和 @PostAuthorize：用于方法级别，用于在方法执行前和执行后进行权限检查。参数有 permitAll、hasRole、hasAnyRole、hasPermission、hasAnyPermission等，表示允许所有用户、具有特定角色、具有满足任一角色、具有特定权限、具有满足任一权限。
+    2. @Secured：用于方法级别，用于指定方法的访问权限,这个要加上ROLE_前缀，可以不用1的参数直接写权限
+2. 代码自定义，略（不代表不重要） 
 # Spring Cloud
 # Spring webflux

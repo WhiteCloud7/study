@@ -1,6 +1,6 @@
 # 微服务
 # server:
-#  port: 8080 # 微服务占用的端口
+#  port: 8081 # 微服务占用的端口
 #  address: localhost # 微服务地址
 #url: http://localhost:8002 # 微服务的url
 # 等等
@@ -15,7 +15,16 @@ server:
 spring:
   application:
     name: SpringBootTest
-  #mybatis数据源
+  jpa:
+    hibernate:
+      naming:
+        physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
+        implicit-strategy: org.hibernate.boot.model.naming.ImplicitNamingStrategyLegacyJpaImpl
+#  security:
+#    user:
+#      name: root
+#      password: 123456
+
   datasource:
     driver: com.mysql.cj.driver
     url: jdbc:mysql://localhost:3306/usermanagesystem?useUnicode=true&characterEncoding=utf-8&useSSL=false&serverTimezone=Asia/Shanghai
@@ -58,4 +67,3 @@ springdoc:
     path: /api-docs
   swagger-ui:
     path: /swagger-ui.html
-

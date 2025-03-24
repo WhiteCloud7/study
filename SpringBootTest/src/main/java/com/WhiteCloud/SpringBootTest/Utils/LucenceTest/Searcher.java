@@ -17,7 +17,7 @@ import org.apache.lucene.store.FSDirectory;
 import java.io.IOException;
 import java.nio.file.Paths;
 
-public class Searcher {
+class Searcher {
     public static void search(String searchDir,String str) throws IOException, ParseException {
         //获取搜素目录，即索引目录
         Directory dir = FSDirectory.open(Paths.get(searchDir));
@@ -52,9 +52,9 @@ public class Searcher {
 
     //测试主类
     public static void main(String[] args) {
-        String indexDir = "D:\\GitHub\\study\\SpringBootTest\\src\\main\\java\\com\\WhiteCloud\\SpringBootTest\\Utils\\LucenceTest\\index";
+        String indexDir = "D:\\GitHub\\study\\SpringBootTest\\src\\main\\java\\com\\WhiteCloud\\SpringBootTest\\Utils\\LucenceTest\\EnglishIndex";
         //查询这个字符串
-        String str = "has";
+        String str = "你";
         try {
             search(indexDir, str);
         } catch (Exception e) {

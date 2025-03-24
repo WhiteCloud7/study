@@ -1,11 +1,18 @@
 package com.WhiteCloud.SpringBootTest.Entity;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.persistence.*;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.util.List;
+
 @Schema(name="用户实体类",description = "")
+@Entity
+@Table(name = "userinfo")
 public class userInfo {
     @Schema(name="用户唯一标识符")
+    @Id
+    @Column(name = "userId")
     private int userId;
     @Schema(name = "用户名")
     private String username;
@@ -20,22 +27,10 @@ public class userInfo {
     @Schema(name = "用户邮箱")
     private String email;
 
-    @Autowired
+    @Schema(name = "角色Id")
+    @OneToOne
+    @JoinColumn(name = "roleId")
     private role role;
-
-    @Autowired
-    private premission premission;
-
-    public role getRole() {
-        return role;
-    }
-
-    public premission getPremission() {
-        return premission;
-    }
-
-    public userInfo() {
-    }
 
     public userInfo(String username, String nikename, String sex, String phone, String email) {
         this.username = username;
@@ -50,6 +45,23 @@ public class userInfo {
         this.password = password;
     }
 
+    public userInfo(int userId, String username, String password, com.WhiteCloud.SpringBootTest.Entity.role role) {
+        this.userId = userId;
+        this.username = username;
+        this.password = password;
+        this.role = role;
+    }
+
+    public com.WhiteCloud.SpringBootTest.Entity.role getRole() {
+        return role;
+    }
+
+    public void setRole(com.WhiteCloud.SpringBootTest.Entity.role role) {
+        this.role = role;
+    }
+
+    public userInfo() {
+    }
     public int getUserId() {
         return userId;
     }

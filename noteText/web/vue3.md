@@ -17,7 +17,7 @@
 ### createApp
 createApp是vue3的新特性，用于创建vue应用的根组件。它是整个 Vue 应用的起点，负责管理和协调应用中的所有组件、状态、路由等。从这个根实例开始，Vue 会根据组件的嵌套关系和路由配置，逐步渲染出整个应用的各个页面和组件，包括首页以及其他所有相关的页面和功能模块。以下是一个例子：
 ### 普通组件创建
-#### defineComponent函数：
+#### defineComponent函数（选项api）：
 语法为`export default defineComponent({组件配置})` 其中会有以下选项（这里这时理出，具体我们可以再例子看道，例子没有可能在单独的一个点）：
 - data()：data 是一个函数，其返回值是一个对象，该对象包含了组件的数据 ***将其存储并赋初值***。这些数据是响应式的，当数据发生变化时，Vue 会自动更新与之绑定的 DOM 元素。而 ***进行动态更新的逻辑通常在方法里面实现。***
 - methods：methods 是一个对象，其中的每个属性都是一个函数，这些函数用于定义组件的方法。可以在模板中通过事件绑定（如 @click）来调用这些方法，也可以在组件的其他方法中调用。方法用于处理用户交互、执行逻辑操作等。
@@ -25,6 +25,7 @@ createApp是vue3的新特性，用于创建vue应用的根组件。它是整个 
 - watch 用于监听数据的变化，并在数据变化时执行相应的操作。当需要在数据变化时执行异步操作或者复杂的逻辑时，使用 watch 比较合适。
 - props：props 用于在组件之间传递数据。父组件可以通过 props 向子组件传递数据，子组件可以接收并使用这些数据。
 - components：components 用于注册子组件。在父组件中，可以通过 components 选项来注册子组件，然后在模板中使用这些子组件(用自定标签，标签名为组件名)
+- mounted：mounted 是一个生命周期钩子函数，在组件实例挂载到 DOM 后调用。可以在 mounted 中执行一些初始化操作，如发送网络请求、初始化第三方库等。即在组件初始化时执行的操作（***选项api直接要this.函数名挂载，语法糖用mounted() 的匿名内部类实现***）
 ## 插值表达式
 `{{ 变量名/对象.属性名 }}` 用于简单的展示数据及动态更新数据。
 ## v-text和v-html
@@ -141,7 +142,6 @@ export default defineComponent({
     };
   }})
 ```
-## 表单
 ## main.js
 main.js是Vue应用的入口文件(根js文件)，用于创建Vue应用实例并挂载到指定的DOM元素上，vue3用的是createApp，格式为`const app = createApp(App);app.mount('#app')`，对于这个对象有以下常用方法：
 - component：全局注册或获取组件。当传入两个参数时，用于全局注册组件；仅传入一个参数时，用于获取已注册的组件。
@@ -181,6 +181,48 @@ watch:{
 这里对象可以用`deep：true`来开启深度监听，*深度监听监听对象所有属性的变化，而浅度监听只监听对象本身的变化。*
 ### props
 props是Vue3中新增的一个属性，用于在组件之间传递数据。父组件可以通过props向子组件传递数据，子组件可以接收并使用这些数据。
+如下：
+```html
+<!-- 父组件 -->
+<template>
+  <MyTest2 :message="message"></MyTest2>  <!-- 这里用传递的数据就变成了自定义标签属性 -->
+</template>
+<script>
+import { defineComponent } from 'vue';
+export default defineComponent({
+  data() {
+    message:"nini"   //初始化数据，将其传递给子组件
+    };
+  },
+  components:{
+    MyTest2
+  });
+</script>
+<!-- 子组件 -->
+<template>
+  <p>我是你爹:{{message}}</p>
+</template>
+<script>
+export default defineComponent({
+  props:{   //接收父组件的数据，用props来接收
+    message:{
+      type:String,  //类型
+      required:true //是否一定需要
+    }
+  }
+});
+</script>
+```
+语法糖里是这样的：
+```js
+import { defineProps } from 'vue';
+const props = defineProps({
+  message:{
+    type:String,
+    required:true
+  }
+})//这样就可以了 但会提示未使用props，其实不用管，因为语法糖会自动使用props。可以用控制台输出一下去掉提示
+```
 # Composition API
 ## setup函数
 setup函数是Vue3中新增的一个函数，组件中用到的数据，方法计算属性，事件方法，监听函数，都可以配置在setup中。即defineComponent的data、methods、computed、watch、生命周期钩子函数都可以配置在setup中，**但注意尽量不要和data、methods、computed、watch、生命周期钩子函数混用，因为setup无法访问data、methods等**。  
@@ -189,7 +231,14 @@ setup可以定义数据（这里直接let或其他）、方法（function）、r
 setup语法糖是Vue3中新增的一个语法糖，用于简化代码，直接定义属性、方法、计算属性、监听函数等。可以 ***更方便写setup函数或defineComponent。***
 ## 响应式
 先说一下前端的响应式，**响应式是指当数据发生变化时，视图会自动更新。这个作用是为了让用户在不刷新页面的情况下，看到数据的变化，同时不刷新，也无需从数据库中获取数据，而是从缓存中获取数据，从而提高了用户体验。**
+### ref
+ref是Vue3中新增的一个函数，用于创建一个响应式的引用类型数据。ref函数接受一个参数，即初始值，返回一个包含value属性的对象。value属性是响应式的，当value属性发生变化时，视图会自动更新。它一般用于将基本类型数据处理成响应式数据。**注意需要要value对数据操作**（*注意那个是响应式数据，如`const nn = { name: 'num', value: 0 };const n = reactive(nn);`，这里nn不是，n才是，所以注意显示数据用n而不是nn*）
+### reactive
+和ref类似，只不过一班用于处理对象。另外，这个不是用value操作数据，而是用对象的key操作数据。
+### toRef和toRefs
+也一样，它是处理对象的单个属性或多个属性，toref接收对象(或reactive)和属性，而torefs接收多个属性组成的对象（或reactive）。它返回其实就是一个ref对象。
 # 页面跳转（vue-router路由配置）
+vue的跳转主要是通过路由实现的，它能在不刷新页面的情况下，实现页面的跳转。这时由于vue在页面加载时就已经将所有的组件加载到内存中了。
 要使用vue-router，需要先安装vue-router（npm install @你的vue-router及版本），然后再进行以下：  
 首先看怎么在mian.js中引入vue-router：
 ```js
@@ -224,6 +273,11 @@ const router = createRouter({
     routes
 });
 export default router;
+//vue.config.js中配置
+//默认生成的略
+publicPath: process.env.NODE_ENV === 'production'
+      ? '/PersonalBlog/' // 生产环境下的基础路径，可按需修改
+      : '/' // 开发环境下的基础路径
 ```
 最后可以再模板页面里使用，比如再app.vue里：
 ```html
@@ -243,4 +297,50 @@ export default router;
 - push：用于导航到指定的路由路径，可以是一个字符串或一个对象（即路由对象）。
 - replace：用于替换当前路由路径，对应上面的repalce属性，属性里决定是否启用替换模式，这个指定替换的路由路径，启**用后替换了当前路由路径同时用户也无法通过浏览器的后退按钮返回上一个页面**。
 - go：用于在浏览器历史记录中前进或后退指定的步数。  
-但这里注意，**在methods里定义是无法通过useRouter()获取到的，它用this.$router来直接获取当前路由**。
+但这里注意，**在methods里定义是无法通过useRouter()获取到的，它用this.$router来直接获取当前路由**。  
+那其实就有个问题，当项目很大时就要加载所有组件就会导致性能问题，vue提供了懒加载来解决，即当路由被访问时才加载懒加载组件。实现就是在路由配置的组件属性：`component: () => import('组件位置')`，然后js里通过异步方法来加载组件，如下：
+```html
+<template>
+  <button @click="loadDynamicComponent">加载动态组件</button>
+  <!-- 使用动态组件渲染,用:is来绑定组件来更换到不同组件，v-if只是辅助来判断是否显示组件 -->
+  <component :is="dynamicComponent" v-if="dynamicComponent" />
+</template>
+<script setup> 
+import { ref } from 'vue';
+const dynamicComponent = ref(null); // 用于存储动态加载的组件,选项式不需要因为用data
+const loadDynamicComponent = async () => {   // 异步加载组件的方法
+//省略了data
+  try {
+    const { default: 组件名 } = await import('组件位置');// 动态加载组件
+    dynamicComponent.value = 组件名;
+  } catch (error) {
+    console.error('加载组件出错:', error);
+  }
+};
+</script>  
+```
+如果只是**跳转到单独页面**，无需异步方法，直接用上述的push或router-link标签即可。
+# axios异步请求
+axios异步请求是Vue3中常用的一个库，用于发送HTTP请求。它可以用于发送GET、POST、PUT、DELETE等请求，并且可以设置请求头、请求参数、响应拦截器等。vue2后作者就不再更新ajax了，因为作者推荐使用axios。axios是promise的封装。  
+1. get请求
+```js
+axios.get(url{
+  Params{
+    参数名：参数值
+  },
+  Headers{
+    参数名：参数值
+  }
+  }).then(respone => { 
+    //操作接收到的数据
+  }).catch(err => {
+    //操作错误信息
+  });
+```
+这里处理操作数据有以下常用方法：
+- data：获取服务器返回的响应数据。数据的格式取决于服务器的设置和请求的类型，可能是 JSON 数据、字符串、Blob 等。例如：const data = response.data;
+- status：获取响应的 HTTP 状态码，如 200 表示成功，404 表示未找到，500 表示服务器内部错误等。例如：const statusCode = response.status;
+- statusText：获取与状态码对应的状态文本，如 OK、Not Found、Internal Server Error 等。例如：const statusText = response.statusText;
+- headers：获取响应头信息，是一个包含所有响应头字段的对象。例如：const headers = response.headers;
+- config：获取用于生成此响应的请求配置对象，其中包含了请求的各种参数，如 url、method、headers、data 等。例如：const config = response.config;
+2. post请求: 和get一样只不过传参不需要要Params而是直接写或在data里写即可。

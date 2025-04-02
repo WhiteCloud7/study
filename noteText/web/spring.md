@@ -459,12 +459,7 @@ url: http://localhost:8002 # 这里可以在分个层写别名
 ```yml
 # 服务端口号
 server:
-  port: 8080
- 
-# 数据库地址
-datasource:
-  url: localhost:3306/usermanage
- 
+  port: 8080 
 spring:
   datasource: # 数据库配置
     driver-class-name: com.mysql.jdbc.Driver
@@ -564,7 +559,8 @@ springdoc:
 - th:if	th:case th:default ：相当于java中的switch case default	
 - th:unless	条件判断和th:if相反	Login
 此外，thymeleaf还允许内嵌一些java代码，如三元表达式、字符串连接等等  
-除了`${}`可以替换参数，@{}可以替换url
+除了`${}`可以替换参数，@{}可以替换url  
+现在前端框架很成熟的进行动态渲染页面，**所以thymeleaf主要是用于静态页面的渲染**。
 ## 全局异常处理
 1. 配置：
 写一个配置类，只需在该类加上@ControllerAdvice注解即可检测全局异常，然后就可以写各种异常的处理方法，以下是一个请求缺失参数异常的例子：

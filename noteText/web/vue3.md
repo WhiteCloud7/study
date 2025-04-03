@@ -170,7 +170,7 @@ computed: {
 ```  
 其实和data里的变量差不多，只是不能在data里定义，因为data里定义的变量是响应式的，而计算属性是根据已有数据计算得出的属性，其值会根据依赖的数据自动更新。 
 ### watch
-watch是Vue3中新增的一个监听函数，用于监听数据的变化，并在数据变化时执行相应的操作。当需要在数据变化时执行异步操作或者复杂的逻辑时，使用watch比较合适。简单例子（语法糖里是`watch(对象名或数据名,(newValue, oldValue)=>{方法体}`来简化的）
+watch是Vue3中新增的一个监听函数，用于监听数据的变化，并在数据变化时执行相应的操作。当需要在数据变化时执行异步操作或者复杂的逻辑时，使用watch比较合适。简单例子（语法糖里是`watch(对象名或数据名,(newValue, oldValue)=>{方法体})`来简化的）
 ```js
 watch:{
       监听的数据名或对象名(newValue, oldValue) {
@@ -223,6 +223,38 @@ const props = defineProps({
   }
 })//这样就可以了 但会提示未使用props，其实不用管，因为语法糖会自动使用props。可以用控制台输出一下去掉提示
 ```
+这里能看出这是**父组件传递数据给子组件**。
+## 自定义事件来传递数据
+例如下：
+```js
+//子组件自定义事件并点击
+export default defineComponent({
+  emits: ['sentData'],   //定义事件名，参数可以是数组亦可以是对象，这里是数组
+  //data里初始化chlidMessage，略
+  methods: {   
+    sendDataEvent() {   //让子组件绑定该事件，子组件触发
+      this.$emit('sentData', this.childMessage);   //触发事件，参数1为事件名，参数2为传递的数据
+    },}})
+//然后是父组件接收
+//首先在父组件的component（懒加载一般用）里或自定义子组件标签（直接显示的常用）里绑定自定义的事件，组件标签会在下面的路由配置一栏说明，用组件表前绑定事件如：<component :is="Form" v-if="Form" @sentData="handleSentData"></component>
+//然后父组件是指函数接收
+function handleSentData(data) { //接收数据，对应emit里的参数2
+  childMessage = data;  
+}
+```
+语法糖里的emits是由defineEmits代替，其他流程一样。
+## provide 和 inject
+provide和inject是Vue3中新增的两个API，用于在组件之间（***它可以跨层级传输，但注意只能向下传递***）传递数据。前面只是在createApp介绍了一下全局的，这里详细说明。这里为方便，就举一个父子组件的例子：
+```js
+//父组件提供数据
+ provide() {
+    return {
+      //提供的数据，任意类型，类似data，注意要使用响应数据记得放data里
+    }}
+//子组件接收
+inject: ['providedData'],  //接收/注入数据
+```
+语法糖里的provide是个函数，参数是数据名和值。inject也是函数，参数是接受的数据名。
 # Composition API
 ## setup函数
 setup函数是Vue3中新增的一个函数，组件中用到的数据，方法计算属性，事件方法，监听函数，都可以配置在setup中。即defineComponent的data、methods、computed、watch、生命周期钩子函数都可以配置在setup中，**但注意尽量不要和data、methods、computed、watch、生命周期钩子函数混用，因为setup无法访问data、methods等**。  
@@ -293,7 +325,7 @@ publicPath: process.env.NODE_ENV === 'production'
 - replace：是否使用替换模式进行导航。如果为true，则不会在浏览器历史记录中添加新的记录，而是替换当前记录。
 - active-class：指定激活时的类名。当路由匹配成功时，对应的`<router-link>`元素会添加该类名。
 - exact-active-class：指定精确匹配时的类名。当路由路径完全匹配成功时，对应的`<router-link>`元素会添加该类名。
-还有很多属性再router4.x已经被弃用了，而vue3则对应引入了useRouter()对象，在方法里获取，从而在组件内部进行路由导航、访问路由信息等操作。而useRouter()有一些常用方法：
+还有很多属性再router4.x已经被弃用了，而vue3则对应引入了useRouter()对象，在方法里获取，从而在组件内部进行路由导航、访问路由信息等操作。而useRouter()有一些常用方法：(注意**userouter只能在setup里且在方法外定义才有效**)
 - push：用于导航到指定的路由路径，可以是一个字符串或一个对象（即路由对象）。
 - replace：用于替换当前路由路径，对应上面的repalce属性，属性里决定是否启用替换模式，这个指定替换的路由路径，启**用后替换了当前路由路径同时用户也无法通过浏览器的后退按钮返回上一个页面**。
 - go：用于在浏览器历史记录中前进或后退指定的步数。  
@@ -303,6 +335,7 @@ publicPath: process.env.NODE_ENV === 'production'
 <template>
   <button @click="loadDynamicComponent">加载动态组件</button>
   <!-- 使用动态组件渲染,用:is来绑定组件来更换到不同组件，v-if只是辅助来判断是否显示组件 -->
+  <!-- 这里的componet标签是用来动态切换组建的，不止辅助懒加载，通过:is来实现 -->
   <component :is="dynamicComponent" v-if="dynamicComponent" />
 </template>
 <script setup> 
@@ -343,4 +376,31 @@ axios.get(url{
 - statusText：获取与状态码对应的状态文本，如 OK、Not Found、Internal Server Error 等。例如：const statusText = response.statusText;
 - headers：获取响应头信息，是一个包含所有响应头字段的对象。例如：const headers = response.headers;
 - config：获取用于生成此响应的请求配置对象，其中包含了请求的各种参数，如 url、method、headers、data 等。例如：const config = response.config;
-2. post请求: 和get一样只不过传参不需要要Params而是直接写或在data里写即可。
+2. post请求: 和get一样只不过传参不一样，post三个参数，就是把get的参数单独设置到了的第二个参数。
+## 表单提交
+例子：
+```js
+//template已经用v-model绑定了数据，这里略
+import {reactive} from "vue";
+import axios from "axios";
+let formData = reactive({
+  userId: 0,
+  nikename: "",
+  sex: "",
+  phone: "",
+  email: ""
+});
+function updateForm() {
+  let form = new FormData();  //用表单数据来提交
+  for(let key in formData){   
+    form.append(key,formData[key]);
+  }
+  axios.post("http://localhost:8081/form/updateUserInfo", form, {
+  })
+//还可以用json提交
+const form = JSON.stringify(formData);
+axios.post("http://localhost:8081/form/updateUserInfo", form, {
+  headers: {
+    'Content-Type': 'application/json'   //这里注意，一定要设置请求头，因为默认是表单提交，所以要设置为json提交，同时后端也别忘了设置接收json数据@RequestBody，不然也默认接收表单数据
+  }})
+```

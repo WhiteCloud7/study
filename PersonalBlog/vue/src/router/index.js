@@ -12,6 +12,14 @@ const routes = [
         path: '/about',
         name: 'About',
         component: MyTest2
+    },
+    {
+        path:'/form',
+        component: ()=> import("@/components/myForm")
+    },
+    {
+        path:'/updateForm',
+        component: ()=> import("@/components/updateForm")
     }
 ];
 

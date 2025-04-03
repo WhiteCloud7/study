@@ -406,7 +406,7 @@ springBoot可以直接创建Spring MVC项目，即创建SpringBoot项目，勾�
 2. 路由获取参数：
    - 单个普通参数：当路由地址前加了一个value属性时就代表指定参数值，路由地址就变成了`路由地址?参数值=参数值`，此时的参数就是方法里定义的参数。如果想指定参数值则可用@RequestParam，如`test(@RequestParam("username") String name)`
    - 普通对象参数：同上
-   - json对象：用@RequestBody注解标注对应对象即可，spring会自动将json转为对象
+   - json对象：用@RequestBody注解标注对应对象即可，spring会自动将json转为对象，**当你不用时，它默认接受的表单数据**。
    - 获取url参数：即获取路由地址里的参数，如`路由地址/{参数名}`，此时的参数就是方法里定义的参数，用@PathVariable注解标注参数即可，如`test(@PathVariable("username") String name)`
    - 获取上传文件参数：使用@RequestParam注解，如`test(@RequestParam("file") MultipartFile file)`
    - 获取请求头：使用@RequestHeader注解，如`test(@RequestHeader("User-Agent") String userAgent)`
@@ -799,6 +799,45 @@ if (handler instanceof HandlerMethod) {
       - @Repeatable：指定注解是否可重复使用
       - 等等
    3. 定义注解的属性，在方法里定义，格式为`属性名() default "默认值";`
+## 跨域
+当接收请求的接口和请求的页面不在同一个域名下时，就会出现跨域问题，除了微服务、使用第三方API外，现代的前后端分离也经常需要跨域，所以我们要解决跨域问题。
+在局部情况下，我们用`@CrossOrigin`注解来解决跨域问题，该注解参数如下（都为可选参数）：
+- origins：指定允许访问的源地址列表，默认为 *。你可以指定一个或多个允许的跨域请求的源地址（多个逗号隔开即可）。
+- methods：指定允许的 HTTP 方法列表，默认为 *。你可以指定一个或多个允许的 HTTP 方法（RequestMethod.Get、Post、Put等等）。
+- allowedHeaders：指定允许的请求头列表，默认为 *。你可以指定一个或多个允许的请求头。
+- exposedHeaders：指定允许暴露给客户端的响应头列表，默认为 *。你可以指定一个或多个允许暴露给客户端的响应头
+- allowCredentials：指定是否允许发送凭据（如 Cookies），默认为 false。
+- maxAge：指定预检请求的最大有效时间（以秒为单位），默认为 1800 秒（30 分钟）。
+当需要较多配置时，我们可以使用@Configuration注解来创建一个配置类，然后在配置类上加上@EnableWebMvc注解来开启WebMvc，然后在配置类里加上@CrossOrigin注解来解决跨域问题，如下：
+```java
+@Configuration
+public class CorsConfig {
+    @Bean
+    public CorsFilter corsFilter() {
+        // 创建 CORS 配置对象
+        CorsConfiguration config = new CorsConfiguration();
+        // 允许的跨域请求源，可以使用具体的域名，也可以使用通配符 "*" 允许所有源
+        // 注意：在生产环境中，建议使用具体的域名，避免使用通配符，以增强安全性
+        config.addAllowedOriginPattern("*");
+        // 允许的请求方法，如 GET、POST、PUT、DELETE 等
+        config.addAllowedMethod("*");
+        // 允许的请求头，如 Content-Type、Authorization 等
+        config.addAllowedHeader("*");
+        // 允许浏览器获取的响应头
+        config.addExposedHeader("*");
+        // 是否允许携带凭证，如 Cookie、HTTP 认证信息等
+        config.setAllowCredentials(true);
+        // 预检请求的缓存时间（秒），在此时间内，相同的预检请求将不再发送
+        config.setMaxAge(3600L);
+        // 创建基于 URL 的 CORS 配置源
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        // 对所有接口都应用 CORS 配置
+        source.registerCorsConfiguration("/**", config);
+        // 创建并返回 CORS 过滤器
+        return new CorsFilter(source);
+    }
+}    
+```
 ## 集成redis
 ### 介绍及使用场景
 Redis 是一种非关系型数据库（NoSQL），NoSQL 是以 key-value 的形式存储的，和传统的关系型数据库不一样，不一定遵循传统数据库的一些基本要求，比如说 SQL 标准，ACID 属性，表结构等等，这类数据库主要有以下特点：非关系型的、分布式的、开源的、水平可扩展的。

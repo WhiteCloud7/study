@@ -6,5 +6,4 @@ const app = createApp(App);
 const clickCount = ref(0);
 app.config.globalProperties.$clickCount=clickCount;
 app.use(router);
-app.provide();
 app.mount('#app');

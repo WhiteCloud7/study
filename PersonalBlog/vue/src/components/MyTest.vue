@@ -25,12 +25,18 @@
     <router-link :to="{ name: 'About' }" >跳转到 About 页面</router-link><br>
     <span @mouseenter="mouseenter()">鼠标移入就跳转到 About 页面</span><br>
     <input :value="birth">
+    <MyTest2 :message="message"></MyTest2>
+    <button @click="loadForm">懒加载</button>
+    <myForm :is="myForm" v-if="myForm"></myForm><br>
+    <button @click="loadFormForSingle">直接跳！</button>
+    <p>这时子消息：{{childMessage}}</p>
   </div>
 </template>
 
 <script>
 import {defineComponent} from 'vue';
-import {MyTest2} from './MyTest2';
+import MyTest2 from './MyTest2';
+import myForm from './myForm';
 // import {useRouter} from 'vue-router';
 //setup 语法糖更简单 如下是重写的一些内容
 // let name = "刘文杰";
@@ -58,6 +64,8 @@ export default defineComponent({
         names:[{id:1,name:"刘文杰",phone:"18671551575"}
           ,{id:2,name:"冯杰伟",phone:"186715ds"}
           ,{id:3,name:"张俊伟",phone:"18671551ds5"}],
+        message:"xs",
+        myForm:null
     };
   },
   computed: {
@@ -73,9 +81,6 @@ export default defineComponent({
       names(newValue, oldValue) {
         console.log('对象发生变化', newValue, oldValue);
       },
-  },
-  props:{
-    
   },
   methods:{
     click(){
@@ -99,10 +104,22 @@ export default defineComponent({
     },
     mouseenter(){
       this.$router.push({ name: 'About' });
+    },
+    async loadForm(){
+      try{
+        const {default:myForm} = await import("@/components/myForm");
+        this.myForm=myForm;
+      }catch (error){
+        console.log("加载表单异常");
+      }
+    },
+    loadFormForSingle(){
+      this.$router.push('/form');
     }
   },
   components:{
-    MyTest2
+    MyTest2,
+    myForm
   }
 });
 </script>

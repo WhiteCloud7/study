@@ -610,7 +610,7 @@ p.catch((error) => {
   - 常用方法：
     - javaEnabled(): 判断浏览器是否支持Java
     - cookieEnabled(): 判断浏览器是否支持Cookie
-3. **Location对**象:以下方法都是window.location.方法名来调用
+3. **Location**对象:以下方法都是window.location.方法名来调用
   - 常用属性：
     - href: 当前页面的URL  (改变相当于跳转，以下都可以改变)
     - origin: 当前页面的源

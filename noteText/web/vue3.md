@@ -180,12 +180,12 @@ watch:{
 ```
 这里对象可以用`deep：true`来开启深度监听，*深度监听监听对象所有属性的变化，而浅度监听只监听对象本身的变化。*
 ### props
-props是Vue3中新增的一个属性，用于在组件之间传递数据。父组件可以通过props向子组件传递数据，子组件可以接收并使用这些数据。
+props是Vue3中新增的一个属性，用于在组件之间传递数据。父组件可以通过props向子组件传递数据，子组件可以接收并使用这些数据。（**数据包括属性和方法，下同**）
 如下：
 ```html
 <!-- 父组件 -->
 <template>
-  <MyTest2 :message="message"></MyTest2>  <!-- 这里用传递的数据就变成了自定义标签属性 -->
+  <MyTest2 :message="message"></MyTest2>  <!-- 这里用传递的数据就变成了自定义标签属性，这里只有在这里绑定了传递的数据子组件才能进行更改，否则只能获取值 -->
 </template>
 <script>
 import { defineComponent } from 'vue';
@@ -243,6 +243,38 @@ function handleSentData(data) { //接收数据，对应emit里的参数2
 }
 ```
 语法糖里的emits是由defineEmits代替，其他流程一样。
+## defineExpose将子组件的方法暴露给父组件
+```js
+//这是语法糖的新概念
+import { defineExpose } from 'vue';
+// 子组件的方法
+const childMethod = () => {
+  console.log('子组件方法被调用');
+};
+// 暴露方法给父组件
+defineExpose({
+  childMethod
+});  
+//父组件接收
+//先在自定义标签或组件标签里绑定ref属性，如`<ChildComponent ref="childComponentRef" />`
+const childComponentRef = ref(null); // 创建对子组件的引用
+childComponentRef.value.childMethod( // 父组件调用子组件的方法,这里是一个简单判断使用
+ if (childRef.value) {
+    childRef.value.childMethod();
+  }
+)
+```
+选项api如下
+```js
+//这时vue2里选项api的方法
+//子组件只需定义方法即可
+//同样先在自定义标签或组件标签里绑定ref属性，如`<ChildComponent ref="childRef" />`
+//然后通过$refs访问子组件实例访问其属性和方法
+callChildMethod() {
+      // 通过 $refs 访问子组件实例并调用其方法
+      this.$refs.childRef.childMethod();
+    }
+```
 ## provide 和 inject
 provide和inject是Vue3中新增的两个API，用于在组件之间（***它可以跨层级传输，但注意只能向下传递***）传递数据。前面只是在createApp介绍了一下全局的，这里详细说明。这里为方便，就举一个父子组件的例子：
 ```js
@@ -288,7 +320,8 @@ import MyTest2 from '../components/MyTest2';
 // 定义路由规则
 const routes = [//路由对象
     {
-        path: '/about', //路由路径
+        path: '/about', //路由路径  当路径的值前面有一个':'时，它表示这是一个动态路由参数，它会匹配任意值。如:id,它会匹配id为任意值的路由。当前路径最后有一个？时，它表示这是一个可选的路由参数，即可以匹配也可以不匹配。如:id?，它会匹配id为任意值的路由，也可以不匹配。这两个用于构建动态路由。
+
         name: 'About', //路由名称
         component: MyTest2 //引入的组件
         params:{ } //传递参数,如果需要的话
@@ -296,7 +329,7 @@ const routes = [//路由对象
         children：[ ] //子路由，用于定义嵌套的路由。子路由会被作为父路由的子组件进行渲染。
         meta：{ } //元信息，用于存储路由的额外信息，如标题、权限等。
         beforeEnter：(to, from, next) => { } //这是一个函数，路由守卫，用于在进入路由之前进行一些操作，如权限验证、数据加载等。to是目标路由对象，from是当前路由对象，next是一个函数，用于控制路由的导航行为，即判断是否继续导航。
-        props：true //这是一个布尔值或函数，用于将路由参数传递给组件。如果为true，则会将路由参数作为组件的props进行传递。如果为函数，则可以自定义传递的参数。
+        props：true //这是一个布尔值或函数，用于将路由参数传递给组件。如果为true，则会将路由参数作为组件的props进行传递。如果为函数，则可以自定义传递的参数。这用于动态路由参数的传递。
     }
 ];
 // 创建路由实例
@@ -310,6 +343,47 @@ export default router;
 publicPath: process.env.NODE_ENV === 'production'
       ? '/PersonalBlog/' // 生产环境下的基础路径，可按需修改
       : '/' // 开发环境下的基础路径
+``` 
+但注意最终只能在mian.js里引入一个路由，那么分开文件管理路由呢？**我们通过一个主路由文件来管理所有的子路由**，如下：
+```js
+//主路由文件
+import { createRouter, createWebHistory, RouteRecordRaw } from 'vue-router'  //只有主路由文件需要引入这些
+import index from '@/views/BlogIndex.vue' //引入组件
+
+import indexRouter from '@/router/index'  //这里就是子路由文件的引入
+import projectRouter from '@/router/project'
+
+const routes: Array<RouteRecordRaw> = [
+    {
+        path: '/',
+        name: 'home',
+        component: index
+    },
+    ...indexRouter,    //这里就是子路由文件，及用...加上引入的子路由文件名
+    ...projectRouter
+]
+
+const router = createRouter({   //这里也只有主路由文件有
+    history: createWebHistory(process.env.BASE_URL),
+    routes
+})
+
+export default router
+//子路由文件
+import myProjects from "@/components/project/MyProjects.vue"  //子路由只需要引入组件
+
+export default [   //子路由只需要定义路由对象即可，然后导出
+    {
+        path: '/project',
+        name: 'project',
+        component: myProjects
+    },
+    {
+        path: '/project/:first?/:second?/:third?/:fourth?/:fifth?/:sixth?/:seventh?',
+        name: 'projectPath',
+        component: myProjects
+    }
+]
 ```
 最后可以再模板页面里使用，比如再app.vue里：
 ```html
@@ -357,7 +431,7 @@ const loadDynamicComponent = async () => {   // 异步加载组件的方法
 axios异步请求是Vue3中常用的一个库，用于发送HTTP请求。它可以用于发送GET、POST、PUT、DELETE等请求，并且可以设置请求头、请求参数、响应拦截器等。vue2后作者就不再更新ajax了，因为作者推荐使用axios。axios是promise的封装。  
 1. get请求
 ```js
-axios.get(url{
+axios.get(url,{
   Params{
     参数名：参数值
   },
@@ -404,3 +478,10 @@ axios.post("http://localhost:8081/form/updateUserInfo", form, {
     'Content-Type': 'application/json'   //这里注意，一定要设置请求头，因为默认是表单提交，所以要设置为json提交，同时后端也别忘了设置接收json数据@RequestBody，不然也默认接收表单数据
   }})
 ```
+# 弹窗
+实现弹窗可以用我上面懒加载组件方法，同时vue提供了一个 <teleport> 标签，使用很简单用该标签包围懒加载或其他形式实现弹窗的组件即可，还可搭配 <transition>标签（包围在teleport内弹窗组件外）实现弹窗的淡入淡出的动画效果。它和直接用组件标签的区别是，它不会影响页面的布局，而是将组件渲染到指定的位置。  
+而实现渲染到指定位置用的是to属性，它的值可以是一个字符串或一个对象，就是渲染的位置，如：`<teleport to="body">`，这样就会将组件渲染到body标签内。  
+使用<teleport>的好处是：
+- 避免了组件的布局影响：使用<teleport>可以将组件渲染到指定的位置，而不会影响页面的布局。这在创建弹窗时非常实用，因为弹窗往往需要脱离当前组件的 DOM 结构，避免受到父元素样式（如 overflow: hidden）的限制，确保弹窗能在页面任意位置正常显示。
+- 提高了组件的可维护性：使用<teleport>可以将组件的逻辑和样式与页面的其他部分解耦，使得组件的维护更加方便。
+- 支持动态渲染：使用<teleport>可以动态地渲染组件到不同的位置，而不需要在每个位置都重新编写组件的代码。

@@ -8,9 +8,10 @@
 		<version>3.4.4</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
-	<groupId>com.WhiteCloud</groupId>
+	<groupId>com.example</groupId>
 	<artifactId>PersonalBlog</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
+	<packaging>war</packaging>
 	<name>PersonalBlog</name>
 	<description>PersonalBlog</description>
 	<url/>

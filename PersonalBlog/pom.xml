@@ -58,6 +58,7 @@
 			<scope>runtime</scope>
 		</dependency>
 		<!--  springdoc-openapi 依赖  -->
+		<!-- 网址为http://你的地址/swagger-ui/index.html -->
 		<dependency>
 			<groupId>org.springdoc</groupId>
 			<artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>

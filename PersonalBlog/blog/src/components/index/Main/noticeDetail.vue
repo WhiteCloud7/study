@@ -1,66 +1,123 @@
 <template>
   <div class="notice">
     <div class="notice-article">
-      <p>哈哈哈</p>
+      <h1>{{title}}</h1>
+      <p v-for="message in messageArray" :key="message">&emsp;&emsp;{{ message }}</p>
     </div>
     <div class="iconGroup2">
       <el-icon class="icon2" @click="toggleLike">
         <img :src="likeIcon" class="icon-img" />
       </el-icon>
-      <label class="iconLabel2">{{ likeCount }}</label>
+      <label class="iconLabel2">{{ getLabelFormat(likeCount) }}</label>
+
       <el-icon class="icon2" @click="toggleStar">
         <component :is="isStar ? StarFilled : Star" />
       </el-icon>
-      <label class="iconLabel2">{{ starCount }}</label>
+      <label class="iconLabel2">{{ getLabelFormat(starCount) }}</label>
       <el-icon class="icon2"><ChatDotRound /></el-icon>
-      <el-button class="back" @click="back">返回</el-button>
+      <el-button class="back" @click="emit('back')">返回</el-button>
     </div>
   </div>
 </template>
 
 <script setup>
-import {computed, defineProps, ref, defineEmits} from "vue";
-import { Star, StarFilled, ChatDotRound } from '@element-plus/icons-vue';
+import {ref, computed, watch, onMounted, nextTick} from "vue";
+import { defineProps, defineEmits } from "vue";
+import { Star, StarFilled, ChatDotRound } from "@element-plus/icons-vue";
+import axios from "axios";
 
-const emit = defineEmits(["back","updateLike","updateStar"])
 const props = defineProps({
+  noticeId: Number,
   likeCount: Number,
   starCount: Number,
-  isLiked : Boolean,
-  isStarred : Boolean
-})
+  isLiked: Boolean,
+  isStarred: Boolean,
+  messageArray: Array,
+  title: String
+});
+
+const emit = defineEmits(["updateLike", "updateStar", "back"]);
 
 const likeCount = ref(props.likeCount);
 const starCount = ref(props.starCount);
-
 const isLike = ref(props.isLiked);
 const isStar = ref(props.isStarred);
 
-const likeIcon = computed(() => {
-  return require(`@/assets/photo/${isLike.value ? 'likefill.png': 'like.png'}`);
-});
+// 防止 prop 更新失效
+watch(() => props.likeCount, val => (likeCount.value = val));
+watch(() => props.starCount, val => (starCount.value = val));
+watch(() => props.isLiked, val => (isLike.value = val));
+watch(() => props.isStarred, val => (isStar.value = val));
 
-const toggleLike = () =>{
-  if(isLike.value)
-    likeCount.value--;
-  else
-    likeCount.value++;
+const likeIcon = computed(() =>
+    require(`@/assets/photo/${isLike.value ? "likefill.png" : "like.png"}`)
+);
+
+function toggleLike() {
   isLike.value = !isLike.value;
-  emit("updateLike",likeCount.value,isLike.value)
-};
+  likeCount.value += isLike.value ? 1 : -1;
 
-const toggleStar = () =>{
-  if(isStar.value)
-    starCount.value--;
-  else
-    starCount.value++;
+  axios.get("http://localhost:8081/updateLikeCount", {
+    params: { noticeId: props.noticeId, userId: 1 }
+  }).catch(console.log);
+
+  emit("updateLike", props.noticeId, likeCount.value, isLike.value);
+}
+
+function toggleStar() {
   isStar.value = !isStar.value;
-  emit("updateStar",starCount.value,isStar.value)
+  starCount.value += isStar.value ? 1 : -1;
+
+  axios.get("http://localhost:8081/updateStarCount", {
+    params: { noticeId: props.noticeId, userId: 1 }
+  }).catch(console.log);
+
+  emit("updateStar", props.noticeId, starCount.value, isStar.value);
+}
+
+const getLabelFormat = (count) => {
+    if(count>9999&&count<99999999){
+      return (count/10000).toString().concat("W");
+    }else if(count>99999999){
+      return "1亿+";
+    }else{
+      return count;
+    }
 };
 
-const back = () =>{
-  emit("back");
-};
+function getLabelStyle(){
+  const iconLabels = document.querySelectorAll(".iconLabel2");
+  for (let iconLabel of iconLabels) {
+    let text = getLabelFormat(iconLabel.textContent);
+    let fontsize;
+    let marginTop;
+    switch (text.length) {
+      case 7:
+        fontsize = "18px";marginTop = "9px"
+        break;
+      case 8:
+        fontsize = "16px";marginTop = "8px"
+        break;
+      case 9:
+        fontsize = "14px";marginTop = "7px"
+        break;
+      case 10:
+        fontsize = "13px";marginTop = "6px"
+        break;
+      default:
+        marginTop = "10px"
+        fontsize = "21px";
+        break;
+    }
+    iconLabel.style.fontSize = fontsize;
+    iconLabel.style.marginTop = "10px";
+  }
+}
+
+onMounted(async () => {
+  await nextTick();
+  getLabelStyle();
+});
 </script>
 
 <style>
@@ -79,14 +136,19 @@ const back = () =>{
 }
 
 .notice-article {
-  padding-left: 8px;
-  padding-right: 8px;
+  font-family: "PingFang SC";
+  font-weight: 100;
+  padding: 8px;
+  margin-left: 8px;
   width: 100%;
   min-height: 90%;
   overflow-y: auto;
+  overflow-x: hidden;
   background-color: rgb(216.8, 235.6, 255);
   box-shadow: var(--el-box-shadow);
+  word-break: break-word;
 }
+
 .iconGroup2{
   background-color: rgba(255, 255, 255, 0.65);
   display: flex;
@@ -101,18 +163,24 @@ const back = () =>{
   cursor: pointer;
   font-size: 2em !important;
   margin-right: 6px;
+  margin-left: 10px;
 }
 .icon-img{
   width: 1em;
   height: 1em;
 }
 .iconLabel2{
-  font-size: 2em;
+  display: inline-flex;
+  max-height: 30px;
+  width: 160px;
+  align-items: center;
+  justify-items: center;
   margin-right: 20px;
+  overflow: hidden;
 }
 .back{
   width: 20%;
   margin-top: 1%;
-  margin-left: 420px;
+  margin-left: 460px;
 }
 </style>

@@ -89,7 +89,7 @@ export default defineComponent({
 - v-if与v-show可以根据条件的结果,来决定是否显示指定内容.
   - v-if: 条件不满足时, 元素不会存在.
   - v-show: 条件不满足时, 元素不会显示(但仍然存在).
-以下是一个例子，包含了动态更新、v-if、ref（响应式）、全局变量注册的用法：
+  以下是一个例子，包含了动态更新、v-if、ref（响应式）、全局变量注册的用法：
 ```js
 //mian.js中
 const app = createApp(App);
@@ -167,7 +167,7 @@ computed: {
       return `${year}-${month}-${day}`;
     }
   },
-```  
+```
 其实和data里的变量差不多，只是不能在data里定义，因为data里定义的变量是响应式的，而计算属性是根据已有数据计算得出的属性，其值会根据依赖的数据自动更新。 
 ### watch
 watch是Vue3中新增的一个监听函数，用于监听数据的变化，并在数据变化时执行相应的操作。当需要在数据变化时执行异步操作或者复杂的逻辑时，使用watch比较合适。简单例子（语法糖里是`watch(对象名或数据名,(newValue, oldValue)=>{方法体})`来简化的）
@@ -296,7 +296,7 @@ setup语法糖是Vue3中新增的一个语法糖，用于简化代码，直接�
 ## 响应式
 先说一下前端的响应式，**响应式是指当数据发生变化时，视图会自动更新。这个作用是为了让用户在不刷新页面的情况下，看到数据的变化，同时不刷新，也无需从数据库中获取数据，而是从缓存中获取数据，从而提高了用户体验。**
 ### ref
-ref是Vue3中新增的一个函数，用于创建一个响应式的引用类型数据。ref函数接受一个参数，即初始值，返回一个包含value属性的对象。value属性是响应式的，当value属性发生变化时，视图会自动更新。它一般用于将基本类型数据处理成响应式数据。**注意需要要value对数据操作**（*注意那个是响应式数据，如`const nn = { name: 'num', value: 0 };const n = reactive(nn);`，这里nn不是，n才是，所以注意显示数据用n而不是nn*）
+ref是Vue3中新增的一个函数，用于创建一个响应式的引用类型数据。ref函数接受一个参数，即初始值，返回一个包含value属性的对象。value属性是响应式的，当value属性发生变化时，视图会自动更新。它一般用于将基本类型数据处理成响应式数据。***注意需要要value对数据操作，很多时候出错都是由于少了value***（*注意那个是响应式数据，如`const nn = { name: 'num', value: 0 };const n = reactive(nn);`，这里nn不是，n才是，所以注意显示数据用n而不是nn*）
 ### reactive
 和ref类似，只不过一班用于处理对象。另外，这个不是用value操作数据，而是用对象的key操作数据。
 ### toRef和toRefs
@@ -343,7 +343,7 @@ export default router;
 publicPath: process.env.NODE_ENV === 'production'
       ? '/PersonalBlog/' // 生产环境下的基础路径，可按需修改
       : '/' // 开发环境下的基础路径
-``` 
+```
 但注意最终只能在mian.js里引入一个路由，那么分开文件管理路由呢？**我们通过一个主路由文件来管理所有的子路由**，如下：
 ```js
 //主路由文件
@@ -432,7 +432,7 @@ axios异步请求是Vue3中常用的一个库，用于发送HTTP请求。它可�
 1. get请求
 ```js
 axios.get(url,{
-  Params{
+  params{
     参数名：参数值
   },
   Headers{
@@ -451,6 +451,8 @@ axios.get(url,{
 - headers：获取响应头信息，是一个包含所有响应头字段的对象。例如：const headers = response.headers;
 - config：获取用于生成此响应的请求配置对象，其中包含了请求的各种参数，如 url、method、headers、data 等。例如：const config = response.config;
 2. post请求: 和get一样只不过传参不一样，post三个参数，就是把get的参数单独设置到了的第二个参数。
+
+   另外这里补充一些，***对于所有异步，可能需要严格注意顺序否则由于异步可能你新加的功能如果依赖得异步方法没有完成导致该功能失效，这是你要注意顺序，以及可能要用到nextTick()函数来等异步方法完成在进行新的方法***
 ## 表单提交
 例子：
 ```js
@@ -477,6 +479,14 @@ axios.post("http://localhost:8081/form/updateUserInfo", form, {
   headers: {
     'Content-Type': 'application/json'   //这里注意，一定要设置请求头，因为默认是表单提交，所以要设置为json提交，同时后端也别忘了设置接收json数据@RequestBody，不然也默认接收表单数据
   }})
+//如果后端请求的参数而不是对象，用URLSearchParams
+const params = new URLSearchParams();
+params.append("参数名",参数值) //添加所需参数即可
+axios.post("http://localhost:8081/form/updateUserInfo", params, {
+  headers: {
+    'Content-Type': "application/x-www-form-urlencoded" //这里请求也要更改
+  }})
+//当然如果请求的参数后端也可以接收前端得json数据，用map来接收
 ```
 # 弹窗
 实现弹窗可以用我上面懒加载组件方法，同时vue提供了一个 <teleport> 标签，使用很简单用该标签包围懒加载或其他形式实现弹窗的组件即可，还可搭配 <transition>标签（包围在teleport内弹窗组件外）实现弹窗的淡入淡出的动画效果。它和直接用组件标签的区别是，它不会影响页面的布局，而是将组件渲染到指定的位置。  

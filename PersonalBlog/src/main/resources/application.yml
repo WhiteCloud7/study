@@ -1,0 +1,45 @@
+#logback
+logging:
+  config: classpath:logback.xml
+  level:
+    com.CloudWhite.PersonalBlog.Dao: trace  # ???????????
+#    org.hibernate.sql: DEBUG
+#????
+server:
+  port: 8081
+
+spring:
+  application:
+    name: PersonalBlog
+  #???
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/personalblog?useUnicode=true&characterEncoding=utf-8&useSSL=false&serverTimezone=Asia/Shanghai
+    username: root
+    password: 123456
+    hikari:
+      max-lifetime: 1770000
+      maximum-pool-size: 4
+  #redis
+  data:
+    redis:
+      database: 5
+      host: 127.0.0.1
+      port: 6379
+      password: 123456
+      jedis:
+        pool:
+          max-idle: 1000
+          min-idle: 0
+          max-active: -1
+          max-wait: 5000
+#  jpa:
+#    show-sql: true
+#    properties:
+#      hibernate:
+#        format_sql: true
+
+#mybatis
+mybatis:
+  type-aliases-package: com.CloudWhite.PersonalBlog.Entity
+  mapper-locations: classpath:mapper/*.xml

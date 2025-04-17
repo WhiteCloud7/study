@@ -1,4 +1,4 @@
-package com.example.personalblog;
+package com.CloudWhite.PersonalBlog;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;

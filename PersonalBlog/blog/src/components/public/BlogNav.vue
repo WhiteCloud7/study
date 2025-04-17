@@ -12,11 +12,11 @@
         popper-class="menu"
         router
     >
-      <el-menu-item index="index" >首页</el-menu-item>
-      <el-menu-item index="resume">个人简历</el-menu-item>
-      <el-menu-item index="project">项目</el-menu-item>
-      <el-menu-item index="article">文章</el-menu-item>
-      <el-menu-item index="contactMe">与我联系</el-menu-item>
+      <el-menu-item index="/index" >首页</el-menu-item>
+      <el-menu-item index="/resume">个人简历</el-menu-item>
+      <el-menu-item index="/project">项目</el-menu-item>
+      <el-menu-item index="/article">文章</el-menu-item>
+      <el-menu-item index="/contactMe">与我联系</el-menu-item>
     </el-menu>
   </el-affix>
 </template>

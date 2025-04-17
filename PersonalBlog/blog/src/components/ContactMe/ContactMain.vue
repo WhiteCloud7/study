@@ -4,7 +4,26 @@
       <p class="contact-chatDetailContent">云白</p>
     </header>
     <main class="contact-chatRecord">
-      <send-message-content v-for="(msg, index) in messages" :key="index" :message="msg"></send-message-content>
+      <send-message-content
+          v-for="(msg, index) in messages"
+          :key="index"
+          :message-id="msg[0]"
+          :message="msg[1]"
+          :send-time="msg[2]"
+          :active-send-time="activeSendTime"
+          @updateActiveSendTime="val => activeSendTime = val"
+          @deleteSendMessage="deleteSendMessage"
+      ></send-message-content>
+      <receive-message-content
+          v-for="(msg, index) in receiveMessages"
+          :key="index"
+          :message-id="msg[0]"
+          :message="msg[1]"
+          :re="msg[2]"
+          :active-receive-time="activeReceiveTime"
+          @updateActiveReceiveTime="val => activeReceiveTime = val"
+          @deleteReceiveMessage="deleteReceiveMessage"
+      ></receive-message-content>
     </main>
     <footer class="contact-editMessage">
       <el-input
@@ -13,6 +32,7 @@
           v-model="sendMessage"
           :autosize="{ minRows: 1, maxRows: 20}"
           :style="{ height: '80%', marginTop: '7px', resize: 'none', flex: 1, marginLeft: '4px' }"
+          :active-send-time="activeSendTime"
           @keydown="handleKeyDown"
       ></el-input>
       <el-button class="contact-sendMessage" @click="sendMessageHandler">发送</el-button>
@@ -21,17 +41,18 @@
 </template>
 
 <script setup>
-// 导入 Vue 的响应式函数 ref
-import { ref } from "vue";
-// 导入发送消息内容组件
+import {onMounted, ref} from "vue";
+import axios from "axios";
 import SendMessageContent from "@/components/ContactMe/SendMessageContent";
-// 导入接收消息内容组件（虽然当前未使用，但保持导入顺序清晰）
 import ReceiveMessageContent from "@/components/ContactMe/ReceiveMessageContent";
 
-// 定义响应式变量 sendMessage，用于存储用户输入的消息
 const sendMessage = ref("");
 // 定义响应式变量 messages，用于存储聊天记录
 const messages = ref([]);
+const receiveMessages = ref([]);
+
+const activeSendTime = ref("");
+const activeReceiveTime = ref("");
 
 // 键盘按下事件处理函数
 const handleKeyDown = (event) => {
@@ -49,13 +70,97 @@ const handleKeyDown = (event) => {
   }
 };
 
-// 发送消息处理函数
+function formatDateToMySQL(date) {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+  const hours = String(date.getHours()).padStart(2, '0');
+  const minutes = String(date.getMinutes()).padStart(2, '0');
+  const seconds = String(date.getSeconds()).padStart(2, '0');
+  return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+}
+
 const sendMessageHandler = () => {
-  if (sendMessage.value.trim()!== "") {
-    messages.value.push(sendMessage.value);
-    sendMessage.value = "";
-  }
+  if (sendMessage.value.trim() !== "") {
+    const sendTime = new Date();
+    const params = {senderId: 1, receiverId: 2, message: sendMessage.value, sendTime: sendTime.toLocaleString()}
+    axios.post("http://localhost:8081/sendMessage", JSON.stringify(params), {
+      headers:{
+        "Content-Type":"application/json"
+      },
+      responseType: "text"
+    }).then(res => {
+      if(res.data == "发送成功") {
+        axios.get("http://localhost:8081/getSendMessageId",{
+          params:{
+            userId:1,
+            friendId:2,
+            Time:formatDateToMySQL(sendTime)
+          },
+          responseType: "json"
+        }).then(res=>{
+          const messageId = res.data;
+          messages.value.push([messageId,sendMessage.value, params.sendTime]);
+          sendMessage.value = "";
+        }).catch(err=>{
+          console.log(err);
+        });
+      }
+    else
+      alert("发送失败");
+    }).catch(err => {
+      console.log(err)
+    });
+  }else
+    confirm("消息不能为空！");
 };
+
+function receiveMessage(){
+  axios.get("http://localhost:8081/getReceiveMessage",{
+    params:{
+      friendId:2,
+      userId:1
+    },
+    responseType: "json"
+  }).then(res=>{
+    const gotMessages = res.data;
+    console.log(gotMessages);
+    receiveMessages.value = gotMessages;
+  }).catch(err=>{
+    console.log(err);
+  });
+}
+
+function deleteSendMessage(sendTime){
+  const deletedIndex = messages.value.indexOf(sendTime);
+  messages.value.splice(deletedIndex,1);
+}
+function deleteReceiveMessage(sendTime){
+  const deletedIndex = messages.value.indexOf(sendTime);
+  receiveMessages.value.splice(deletedIndex,1);
+}
+
+function initMessage(){
+  axios.get("http://localhost:8081/getSentMessage",{
+    params:{
+      userId:1,
+      friendId:2
+    },
+    responseType: "json"
+  }).then(res=>{
+    const gotMessages = res.data;
+    console.log(gotMessages);
+    messages.value = gotMessages;
+  }).catch(err=>{
+    console.log(err);
+  });
+  receiveMessage();
+}
+
+onMounted(()=>{
+  initMessage();
+  setInterval(receiveMessage,1000)
+});
 </script>
 
 <style>

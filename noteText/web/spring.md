@@ -22,7 +22,7 @@
         <property name="age" value="18"></property>
     </bean>
 </beans>
-``` 
+```
 - 然后写个测试类：
 ```java
 //解析beam文件
@@ -67,14 +67,14 @@ Person对象的属性是怎么设置的 ? Person对象的属性是由Spring容�
              <value>水浒传</value>
          </array>
      </property>
-  ``` 
+  ```
   - Map注入：
   ```xml
   <map>
         <entry key="中国邮政" value="456456456465456"/>
         <entry key="建设" value="1456682255511"/>
     </map>
-  ```  
+  ```
   - null注入:`<property name="wife"><null/></property>`
   - props注入：
   ```xml
@@ -112,13 +112,13 @@ Person对象的属性是怎么设置的 ? Person对象的属性是由Spring容�
    ```xml
    <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-
+   
        xmlns:context="http://www.springframework.org/schema/context"
-
+   
        xsi:schemaLocation="
        http://www.springframework.org/schema/context
        http://www.springframework.org/schema/context/spring-context.xsd
-
+   
        http://www.springframework.org/schema/beans
        http://www.springframework.org/schema/beans/spring-beans.xsd">
    ```
@@ -258,14 +258,14 @@ class Client {
    <?xml version="1.0" encoding="UTF-8"?>
    <beans xmlns="http://www.springframework.org/schema/beans"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-
+   
          xmlns:context="http://www.springframework.org/schema/context"
          xmlns:aop="http://www.springframework.org/schema/aop"
-
+   
          xsi:schemaLocation="
          http://www.springframework.org/schema/context
          http://www.springframework.org/schema/context/spring-context.xsd
-
+   
          http://www.springframework.org/schema/beans
          http://www.springframework.org/schema/beans/spring-beans.xsd
          http://www.springframework.org/schema/aop
@@ -696,7 +696,7 @@ public class servletRequestListener implements ServletRequestListener {
         System.out.println("来自："+request.getAttribute("uel")+"请求已销毁");
     }
 }
-```  
+```
 ***最后对于监听事件，有以下常见事件（可以额外了解一下生命周期）：***
 - ApplicationStartingEvent：应用程序启动事件，用于系统级别初始化
 - ApplicationEnvironmentPreparedEvent：应用程序的Environment（环境配置）准备好但上下文还未创建，用于在此时修改配置环境
@@ -775,7 +775,7 @@ public class MyInterceptorConfig implements WebMvcConfigurer {
 @Retention(RetentionPolicy.RUNTIME)
 public @interface UnInterception {
 }
-```  
+```
 但注意这里还要在拦截器里加上判断：
 ```java
 if (handler instanceof HandlerMethod) {
@@ -873,7 +873,7 @@ private StringRedisTemplate stringRedisTemplate;
 //opsForValue来获取ValueOperations对象即可进行各种操作了
 public void setString(String key,String value){
     ValueOperations<String,String> valueOperations = stringRedisTemplate.opsForValue();
-    valueOperations.set(key,value);
+    valueOperations.set(key,value);  //这里set方法还可以设置过期时间和时间单位，不设置的话默认不过期
 }
 
 public String getString(String key){
@@ -922,7 +922,7 @@ public class JMSConfig {
         return new ActiveMQQueue(queueName);
     }
 }
-```  
+```
 在定义一个发送和接收消息的接口，下面是实现类：
 ```java
 @Service
@@ -961,7 +961,7 @@ public JmsListenerContainerFactory topicListenerContainer(ConnectionFactory conn
    1. Subject：认证主体。它包含两个信息：Principals和Credentials,这俩具体是：
       - Principals：身份。可以是用户名，邮件，手机号码等等，用来标识一个登录主体身份；
       - Credentials：凭证。常见有密码，数字证书等等。   
-    简单来说，就是用户的认证信息。
+       简单来说，就是用户的认证信息。
    2. SecurityManager：安全管理员。这是 Shiro 架构的核心，它就像 Shiro 内部所有原件的保护伞一样。我们在项目中一般都会配置 SecurityManager，开发人员大部分精力主要是在 Subject 认证主体上面。我们在与 Subject 进行交互的时候，实际上是 SecurityManager 在背后做一些安全操作。
    3. Realms：Realms 是一个域，它是连接 Shiro 和具体应用的桥梁，当需要与安全数据交互的时候，比如用户账户、访问控制等，Shiro 就会从一个或多个 Realms 中去查找。我们一般会自己定制 Realm，这在下文会详细说明。
 2. Shiro 身份和权限认证  
@@ -1189,10 +1189,57 @@ Spring Data 它主要是用于做数据存储的，用在数据持久层。mybat
 - Spring Data Redis - 从 Spring 应用程序轻松配置和访问 Redis。
 - spring Data REST - 将 Spring Data 存储库导出为超媒体驱动的 RESTful 资源。
 其中常用的是Spring Data JPA和Spring Data Redis。
-## Spring Data JPA
+## Spring Data JPA（内含DTO和VO）
 先导入依赖  
 ***然后这里特别注意：要使用jpa，实体类需要用@Entity注解标注，主键用@Id注解标注，表名用@Table注解标注，字段用@Column注解标注，外键用@JoinColumn注解标注（除了主键和实体类其他为选择标记），这里当你没有用@Column注解标注时，jpa会自动将驼峰命名法转换为下划线命名法，如`userId`会自动转为`user_id`，如果想用其他名字就要我前面说到的注解。***  
 ***然后关于外键，常在封装其他实体类时使用，对于封装的其实体类，应该用像一对一（@OneToOne）这样的关系注解标注且需要标注外键。另外，如果有外键就不能用@Column注解标注，要用@JoinColumn注解标注，这里用了封装实体类就不需要再加封装实体类里有的字段，不然会映射冲突，最后外键主键也不能用@Column注解标注,而用@PrimaryKeyJoinColumn注解标注。***  
+当你只是用到引入对象只需要其主键时，我们就可以只保存主键。如果特殊情况需要访问user表的其他字段，我们可以引入他并且用如@OneToOne这样的关系注解标注，**我们加上参数`fetch = FetchType.LAZY`，这样只有当你需要访问其他字段时才会访问user表，否则不会访问user表，**这样就可以减少数据库的访问次数，提高效率。其默认值是`FetchType.EAGER`，即立即加载，适用于一定需要访问其他字段的情况。当你使用了懒加载时，**如果你用的Jackson，那么你需要忽略懒加载属性，因为Jackson不知道怎么对懒加载属性进行序列化**，会报错。方法有以下三中：
+1. 在实体类上添加`@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})`注解，参数也可以直接是参数列表
+2. 在属性上添加`@JsonIgnore`注解
+3. 通过自定义序列化器来实现，如果项目无特殊要求一律忽略懒加载属性，那可以将自定义序列化器封装到配置类里，如下：
+```java
+// 自定义序列化器
+class LazyAwareSerializer extends JsonSerializer<Object> {
+    @Override
+    public void serialize(Object value, JsonGenerator gen, SerializerProvider serializers) throws IOException {
+        if (Hibernate.isInitialized(value)) {
+            gen.writeObject(value);
+        } else {
+            gen.writeNull();
+        }}}
+// 配置类
+@Configuration
+public class JacksonConfig {
+    @Bean
+    public ObjectMapper objectMapper() {
+        ObjectMapper mapper = new ObjectMapper();
+        SimpleModule module = new SimpleModule();
+        // 注册自定义序列化器
+        module.addSerializer(Object.class, new LazyAwareSerializer());
+        mapper.registerModule(module);
+        return mapper;
+    }}    
+```
+那么该怎么使用栏加载的属性呢，有以下几种方法：
+1. 直接使用，如`user.getOrder().getOrderId()`，这是加载整个order对象，简单好用，但对于大量数据来说，这是非常不划算的。
+2. 使用Hibernate.initialize()方法，如`Hibernate.initialize(user.getOrder())`，这样会更灵活的使用懒加载属性而不是整个对象，对于大量数据更推荐，如下例：
+```java
+user user = entityManager.find(com.CloudWhite.PersonalBlog.Entity.user.class, userId);
+        if (user != null) { //如果之前发起过包含懒加载属性的查询就不为空了
+            if (user.getRole() != null) {  //如果想访问角色
+                Hibernate.initialize(user.getRole());  // 初始化角色
+                // 若角色关联了权限，继续初始化权限
+                if (user.getRole().getPermission() != null) {  
+                    Hibernate.initialize(user.getRole().getPermission());
+                }
+            }
+        }
+        return user;
+```
+3. 用mybatis进行精细查询，但这样会封装太多方法
+其实懒加载就是为了对不必要的数据进行懒加载，即只有当你需要访问其他字段时才会访问user表，否则不会访问user表，这样就可以减少数据库的访问次数，提高效率。那其实就对应到了我们的DTO和VO设计模式，相对实体类，***DTO和VO就是对实体类的封装，实体类对应数据库的所有信息，但我们实际功能可能不需要这些所有信息，即封装只封装实体类中我们需要的字段，而不需要的字段我们就不封装。这样就可以减少数据库的访问次数，提高效率***。DTO和VO的区别在于：
+- DTO：数据传输对象，用于在不同层之间传输数据，比如前端和后端。
+- VO：值对象，用于在业务逻辑中封装数据，比如在Service层中。 
 spring data jpa有以下核心接口：
 - Repository接口
 - CrudRepository接口
@@ -1214,8 +1261,12 @@ spring data jpa有以下核心接口：
 - delete(entity) deleteById()：删除指定的实体对象和根据主键删除实体对象
 - update(entity)：更新实体对象 更新实体对象集合 根据主键更新实体对象  
 以上自定义方法需要在dao层定义，而非自定义方法可以直接调用，但其实又是我们需要封装是非自定义方法也要在dao层封装
-1. JPASpecificationExecutor接口
-它提供了多条件查询的复杂查询，但建议还是用mybatis的动态sql来实现。但注意两个接口要分开使用，不然会报错。
+
+2. JPASpecificationExecutor接口
+   它提供了多条件查询的复杂查询，但建议还是用mybatis的动态sql来实现。但注意两个接口要分开使用，不然会报错。
+
+最后，***JPA也又类似mybatis的注解形式，即`@Query`,这个就不区分是什么操作类型了直接写sql语句即可***。
+
 ## Spring Data Redis
 就是上面的集成redis
 # Spring Security
@@ -1256,7 +1307,7 @@ spring data jpa有以下核心接口：
 #      name: root
 #      password: 123456
 ```
-3. 然后正式开始
+1. 然后正式开始
    1. 写一个服务类实现UserDetailsService接口重写loadUserByUsername方法
    ```java
    @Component
@@ -1292,13 +1343,13 @@ spring data jpa有以下核心接口：
         public SpringSecurityConfig(UserDetailsService userDetailsService) {
             this.userDetailsService = userDetailsService;
         }
-
+   
         @Bean
         public PasswordEncoder PasswordEncoder(){
             //使用BCrypt方式加密
             return new BCryptPasswordEncoder();
         }
-
+   
         @Bean
         public AuthenticationManager authenticationManager(HttpSecurity httpSecurity) throws Exception {
             AuthenticationManagerBuilder authenticationManagerBuilder = httpSecurity.getSharedObject(AuthenticationManagerBuilder.class);
@@ -1307,7 +1358,7 @@ spring data jpa有以下核心接口：
             return authenticationManagerBuilder.build();
         }}
    ```
-   3. 最后再配置类配置过滤器链，一下列出常用配置    
+   2. 最后再配置类配置过滤器链，一下列出常用配置    
    ```java
    @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -1321,22 +1372,22 @@ spring data jpa有以下核心接口：
             config.setAllowCredentials(true);  // 允许携带 Cookie 进行跨域
             return config;
         }));
-
+   
         // 关闭 CSRF 保护（默认关闭，可选开启）
         http.csrf(AbstractHttpConfigurer::disable);
-
+   
         // 开启 CSRF 保护，如果需要则注释掉上面的关闭
         /*
         http.csrf(csrf -> csrf
                 .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
         );
         */
-
+   
         // 会话管理（无状态，用于 JWT 认证时）
         http.sessionManagement(session ->
                 session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
         );
-
+   
         // 默认会话管理（有状态，如需 session 认证请启用）
         /*
         http.sessionManagement(session -> session
@@ -1345,7 +1396,7 @@ spring data jpa有以下核心接口：
                 .expiredUrl("/login?expired")
         );
         */
-
+   
         // 认证授权配置
         http.authorizeHttpRequests(authz -> authz
                 .requestMatchers("/admin/**").hasRole("ADMIN")        // 管理员权限
@@ -1353,31 +1404,31 @@ spring data jpa有以下核心接口：
                 .requestMatchers("/api/auth/**").permitAll()           // 认证接口无需登录
                 .anyRequest().authenticated()                           // 其他请求需要认证
         );
-
+   
         // 表单登录配置
         http.formLogin(form -> form
                 .loginPage("/login")                // 自定义登录页面
                 .defaultSuccessUrl("/home", true)   // 登录成功重定向
                 .permitAll()                        // 登录页面允许访问
         );
-
+   
         // Basic 认证配置（如需要 Basic 认证启用）
         /*
         http.httpBasic(Customizer.withDefaults());
         */
-
+   
         // JWT 认证过滤器（如有自定义 JWT 认证，请启用并配置过滤器）
         /*
         http.addFilterBefore(new JwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
         */
-
+   
         // 登出配置
         http.logout(logout -> logout
                 .logoutUrl("/logout")
                 .logoutSuccessUrl("/login?logout")
                 .permitAll()
         );
-
+   
         // 认证异常处理
         http.exceptionHandling(exception -> exception
                 .authenticationEntryPoint((request, response, authException) ->
@@ -1385,11 +1436,11 @@ spring data jpa有以下核心接口：
                 .accessDeniedHandler((request, response, accessDeniedException) ->
                         response.sendError(HttpServletResponse.SC_FORBIDDEN, "权限不足，禁止访问"))
         );
-
+   
         return http.build();
     }
    ```
-这里关于UserDetails：  
+   这里关于UserDetails：  
 1. 获取用户信息：` UserDetails userDetails = (UserDetails) authentication.getPrincipal();`,然后getUsername()和getPassword()获取用户名和密码
 2. 检查用户权限：`userDetails.getAuthorities().stream().anyMatch(authority -> authority.getAuthority().equals("ROLE_ADMIN")`
 3. 获取用户权限等：
@@ -1408,8 +1459,8 @@ spring data jpa有以下核心接口：
             Collection<? extends GrantedAuthority> authorities = userDetails.getAuthorities();
             return authorities.stream().map(GrantedAuthority::getAuthority).collect(Collectors.toList());
         }
-        ```    
-关于权限控制：  
+    ```
+    关于权限控制：  
 1. 基于注解的权限控制：
     1. @PreAuthorize 和 @PostAuthorize：用于方法级别，用于在方法执行前和执行后进行权限检查。参数有 permitAll、hasRole、hasAnyRole、hasPermission、hasAnyPermission等，表示允许所有用户、具有特定角色、具有满足任一角色、具有特定权限、具有满足任一权限。
     2. @Secured：用于方法级别，用于指定方法的访问权限,这个要加上ROLE_前缀，可以不用1的参数直接写权限

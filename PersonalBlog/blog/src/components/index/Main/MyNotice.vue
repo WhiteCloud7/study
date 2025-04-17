@@ -1,125 +1,251 @@
 <template>
   <div class="article-container">
-    <article class="article">
-      <h1 style="margin-top: 0;margin-bottom: 5px;">欢迎访问！</h1>
-      <p class="passage">欢迎访问我的博客！在校大学生一枚，在这里我会分享一些我学习过程中的一些总结和开源项目，欢迎各位和我一起交流学习！</p>
-      <div style="font-size: 1.5em">
-        <el-icon class="icon" id="view"><View></View></el-icon>
-        <label for="view" class="iconLabel" >{{ visitCount }}</label>
-        <el-icon class="icon" @click="toggleLike">
-          <img :src="likeIcon" class="icon-img" />
-        </el-icon>
-        <label for="like" class="iconLabel">{{ likeCount }}</label>
-        <el-icon class="icon" @click="toggleStar">
-          <component :is="isStarred ? StarFilled : Star" />
-        </el-icon>
-        <label for="star" class="iconLabel">{{ starCount }}</label>
-        <el-button @click="edit" class="button">编辑</el-button>
-        <el-button @click="detail" class="button">查看详细</el-button>
+    <article class="article" v-for="notice in notices" :key="notice.noticeId">
+      <h1 style="margin-top: 0;margin-bottom: 5px;">{{notice.title}}</h1>
+      <div class="passage">
+        <p v-for="subNotice in sub(messageContent(notice.noticeMessage))" :key="subNotice">{{ subNotice }}</p>
       </div>
-      <!-- detail 弹窗 -->
+      <div style="font-size: 1.5em">
+        <el-icon class="icon"><View /></el-icon>
+        <label class="iconLabel">{{ formatCount(notice.visitCount) }}</label>
+
+        <el-icon class="icon" @click="toggleLike(notice.noticeId)">
+          <img :src="getIcon(notice.noticeId)" class="icon-img" />
+        </el-icon>
+        <label class="iconLabel">{{ formatCount(notice.likeCount) }}</label>
+
+        <el-icon class="icon" @click="toggleStar(notice.noticeId)">
+          <component :is="isStarred[notice.noticeId] ? StarFilled : Star" />
+        </el-icon>
+        <label class="iconLabel">{{ formatCount(notice.starCount) }}</label>
+
+        <el-button @click="edit(notice.noticeId)" class="button">编辑</el-button>
+        <el-button @click="detail(notice.noticeId)" class="button">查看详细</el-button>
+      </div>
+
       <teleport to="body">
         <transition name="fade">
           <notice-detail
-              :is="noticeDetail"
               v-if="noticeDetail"
-              :like-count="likeCount"
-              :star-count="starCount"
-              :is-liked="isLike"
-              :is-starred="isStarred"
-              @updateStar="updateStar"
+              :notice-id="currentNoticeId"
+              :like-count="currentLike"
+              :star-count="currentStar"
+              :is-liked="currentIsLike"
+              :is-starred="currentIsStarred"
+              :message-array="messageContent(currentMessage)"
+              :title="currentNoticeTitle"
               @updateLike="updateLike"
+              @updateStar="updateStar"
               @back="back"
           />
         </transition>
       </teleport>
+
       <teleport to="body">
         <transition name="fade">
           <edit-notice
-              :is="editNotice"
               v-if="editNotice"
               @editBack="editBack"
-          />
-        </transition>
+              :message="currentMessage"
+              :title="currentNoticeTitle"
+              :notice-id="currentNoticeId"
+          /></transition>
       </teleport>
     </article>
   </div>
-  <global-mask v-if="isMask"></global-mask>
+  <global-mask v-if="isMask" />
 </template>
 
 <script setup>
-import {ref, computed} from 'vue';
-import { Star, StarFilled,View} from '@element-plus/icons-vue';
-import GlobalMask from "@/components/public/GlobalMask";
-import EditNotice from "@/components/index/Main/EditNotice";
-import NoticeDetail from "@/components/index/Main/noticeDetail"
+import {ref, onMounted, nextTick} from 'vue';
+import axios from 'axios';
+import { Star, StarFilled, View } from '@element-plus/icons-vue';
+import GlobalMask from '@/components/public/GlobalMask.vue';
+import EditNotice from '@/components/index/Main/EditNotice.vue';
+import NoticeDetail from '@/components/index/Main/noticeDetail.vue';
 
-const isLike = ref(false);
-const isStarred = ref(false);
+const notices = ref([]);
+const isLike = ref({});
+const isStarred = ref({});
 
-const likeCount = ref(0);
-const starCount = ref(0);
-const visitCount = ref(0);
-
-// 计算likeIcon的路径
-const likeIcon = computed(() => {
-  return require(`@/assets/photo/${isLike.value ? 'likefill.png' : 'like.png'}`);
-});
-
-const toggleLike = () => {
-  if (isLike.value)
-    likeCount.value--;
-  else
-    likeCount.value++;
-
-  isLike.value = !isLike.value;
-};
-
-const toggleStar = () => {
-  if (isStarred.value) {
-    starCount.value--;
-  } else {
-    starCount.value++;
-  }
-  isStarred.value = !isStarred.value;
-};
-
-const updateLike = (newLikeCount,newIsLiked) =>{
-  likeCount.value = newLikeCount;
-  isLike.value = newIsLiked;
-};
-
-const updateStar = (newStarCount,newIsStarred) =>{
-  starCount.value = newStarCount;
-  isStarred.value = newIsStarred;
-};
+const currentLike = ref(0);
+const currentStar = ref(0);
+const currentIsLike = ref(false);
+const currentIsStarred = ref(false);
+const currentMessage = ref('');
+const currentNoticeId = ref(null);
+const currentNoticeTitle = ref('');
 
 const isMask = ref(false);
-
 const editNotice = ref(null);
-async function edit() {
-  const { default: edit } = await import("@/components/index/Main/EditNotice.vue");
-  editNotice.value = edit;
-  isMask.value = true;
-}
-
 const noticeDetail = ref(null);
-async function detail() {
-  const { default: notice } = await import("@/components/index/Main/noticeDetail.vue");
-  visitCount.value++;
-  noticeDetail.value = notice;
+
+function messageContent(message) {
+  return message ? message.split('\r\n') : [];
+}
+
+function sub(messageArray) {
+  let currentRow = 0;
+  const messageArraySub = [];
+  for (let i = 0; i < messageArray.length; i++) {
+    const rows = Math.ceil((messageArray[i].length + 2) / 20);
+    if (rows + currentRow >= 8) {
+      const maxRow = 8 - currentRow;
+      let maxContent = messageArray[i].substr(0, 20 * maxRow - 4) + '..';
+      messageArraySub.push(maxContent);
+      break;
+    } else {
+      messageArraySub.push(messageArray[i]);
+      currentRow += rows;
+    }
+  }
+  return messageArraySub;
+}
+
+function getIcon(noticeId) {
+  return require(`@/assets/photo/${isLike.value[noticeId] ? 'likefill.png' : 'like.png'}`);
+}
+
+function getCurrentNotice(noticeId) {
+  return notices.value.find(n => n.noticeId === noticeId);
+}
+
+function formatCount(count){
+  return count > 9999 ? '9999+' : count;
+}
+
+function toggleLike(noticeId) {
+  const notice = getCurrentNotice(noticeId);
+  if (!notice) return;
+  notice.likeCount += isLike.value[noticeId] ? -1 : 1;
+  isLike.value[noticeId] = !isLike.value[noticeId];
+
+  axios.get("http://localhost:8081/updateLikeCount", {
+    params: { noticeId, userId: 1 }
+  }).catch(console.log);
+}
+
+function toggleStar(noticeId) {
+  const notice = getCurrentNotice(noticeId);
+  if (!notice) return;
+  notice.starCount += isStarred.value[noticeId] ? -1 : 1;
+  isStarred.value[noticeId] = !isStarred.value[noticeId];
+
+  axios.get("http://localhost:8081/updateStarCount", {
+    params: { noticeId, userId: 1 }
+  }).catch(console.log);
+}
+
+function updateLike(id, count, liked) {
+  const notice = getCurrentNotice(id);
+  if (notice) {
+    notice.likeCount = count;
+    isLike.value[id] = liked;
+  }
+}
+
+function updateStar(id, count, starred) {
+  const notice = getCurrentNotice(id);
+  if (notice) {
+    notice.starCount = count;
+    isStarred.value[id] = starred;
+  }
+}
+
+async function detail(noticeId) {
+  const notice = getCurrentNotice(noticeId);
+  if (!notice) return;
+
+  notice.visitCount++;
+  await axios.get("http://localhost:8081/updateVisitCount", {
+    params: { noticeId }
+  }).catch(console.log);
+
+  currentNoticeId.value = noticeId;
+  currentMessage.value = notice.noticeMessage;
+  currentLike.value = notice.likeCount;
+  currentStar.value = notice.starCount;
+  currentIsLike.value = isLike.value[noticeId];
+  currentIsStarred.value = isStarred.value[noticeId];
+  currentNoticeTitle.value = notice.title;
+  noticeDetail.value = NoticeDetail;
   isMask.value = true;
 }
 
-const back = () => {
+async function edit(noticeId) {
+  const notice = getCurrentNotice(noticeId);
+  if (!notice) return;
+
+  currentNoticeId.value = noticeId;
+  currentMessage.value = notice.noticeMessage;
+  currentNoticeTitle.value = notice.title;
+
+  editNotice.value = EditNotice;
+  isMask.value = true;
+}
+
+function back() {
   noticeDetail.value = null;
   isMask.value = false;
 }
 
-const editBack = () => {
+function editBack() {
   editNotice.value = null;
   isMask.value = false;
 }
+
+async function initNotice() {
+  try {
+    const res = await axios.get("http://localhost:8081/getNotice");
+    notices.value = res.data;
+
+    for (let notice of notices.value) {
+      const id = notice.noticeId;
+      const info = await axios.get("http://localhost:8081/getNoticeInfo", {
+        params: { noticeId: id, userId: 1 }
+      });
+      isLike.value[id] = info.data.like;
+      isStarred.value[id] = info.data.star;
+    }
+  } catch (err) {
+    console.log(err);
+  }
+}
+
+const getLabelFontSize = () => {
+  const iconLabels = document.querySelectorAll(".iconLabel");
+  for (let iconLabel of iconLabels) {
+    let text = iconLabel.textContent;
+    let fontsize;
+    let bottom;
+    switch (text.length) {
+      case 1:
+        fontsize = "22px";bottom = "3px"
+        break;
+      case 2:
+        fontsize = "18px";bottom = "4px"
+        break;
+      case 3:
+        fontsize = "12px";bottom = "6px"
+        break;
+      case 4:
+        fontsize = "8px";bottom = "8px"
+        break;
+      default:
+        iconLabel.textContent = "9999+";bottom = "10px"
+        fontsize = "7px";
+        break;
+    }
+    iconLabel.style.fontSize = fontsize;
+    iconLabel.style.bottom = bottom;
+  }
+};
+
+onMounted(async () => {
+  await initNotice();
+  await nextTick();
+  getLabelFontSize();
+});
 </script>
 
 <style>
@@ -148,11 +274,12 @@ const editBack = () => {
   text-indent: 2em;
   color: rgba(164, 181, 197, 0.84);
   margin-top: 0;
+  height: 200px;
+  word-break: break-word;
 }
-
 .icon {
   display: inline-block;
-  margin-top: 95px;
+  margin-top: 0;
   margin-right: 4px;
   cursor: pointer;
   position: relative;
@@ -165,17 +292,28 @@ const editBack = () => {
 }
 
 .iconLabel {
-  font-size: 20px;
+  display: inline-flex;
   margin-right: 8px;
+  width: 20px;
+  min-height: 10px;
+  max-height: 25px;
+  flex: 1;
   position: relative;
   bottom: 3px;
+  align-items: center;
+  justify-items: center;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 20px;
 }
 
 .button {
   position: relative;
   bottom: 3px;
-  left: 24px;
+  left: 10px;
   width: 68px;
+  border: 1px solid black;
 }
 
 /* 动画淡入淡出 */

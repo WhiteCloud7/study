@@ -9,7 +9,9 @@ import java.sql.Timestamp;
 import java.util.List;
 
 public interface messageDao extends JpaRepository<message,Integer> {
-    @Query(value = "SELECT message_id,message,send_time FROM message WHERE sender_id = :senderId AND receiver_id = :receiverId;",nativeQuery = true)
+    @Query(value = "SELECT * FROM message WHERE sender_id = :senderId AND receiver_id = :receiverId OR sender_id = :receiverId AND receiver_id = :senderId",nativeQuery = true)
+    public List<message> getAllMessages(@Param("senderId") int senderId, @Param("receiverId") int receiverId);
+    @Query(value = "SELECT message_id,message,send_time FROM message WHERE sender_id = :senderId AND receiver_id = :receiverId",nativeQuery = true)
     public List<String[]> getSentMessages(@Param("senderId") int senderId, @Param("receiverId") int receiverId);
 
     public message findByMessageId(int messageId);

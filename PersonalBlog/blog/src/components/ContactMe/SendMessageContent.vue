@@ -6,7 +6,7 @@
        @mousedown.right="showOptions"
     >{{message}}</p>
     <div v-if="props.activeSendTime === props.sendTime" class="contact-messageOption">
-      <el-button style="font-size: 12px;width: 30px;height: 20px;">复制</el-button>
+      <el-button style="font-size: 12px;width: 30px;height: 20px;" @click="copyMessage">复制</el-button>
       <el-button type="danger" style="font-size: 12px;width: 30px;height: 20px" @click="dialogVisible = true;
 ">删除</el-button>
     </div>
@@ -29,6 +29,7 @@
 <script setup>
 import {defineProps, onMounted, ref, defineEmits, onUnmounted} from "vue";
 import axios from 'axios';
+import {ElMessage} from "element-plus";
 
 const props = defineProps({
   messageId:Number,
@@ -50,12 +51,21 @@ function deleteMessage(){
       messageId:props.messageId,
     },
   }).then(() => {
-    emit("deleteSendMessage", props.sendTime);
+    emit("deleteSendMessage", props.messageId);
     emit("updateActiveSendTime", "");
     dialogVisible.value = false;
   }).catch(err => {
     console.log(err);
     alert("删除失败，建议刷新重试");
+  });
+}
+
+function copyMessage() {
+  navigator.clipboard.writeText(props.message).then(() => {
+    ElMessage.success("已复制到剪贴板");
+  }).catch(err => {
+    console.error("复制失败:", err);
+    ElMessage.error("复制失败，请手动复制");
   });
 }
 

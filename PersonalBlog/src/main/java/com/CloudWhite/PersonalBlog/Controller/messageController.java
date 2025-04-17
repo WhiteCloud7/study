@@ -36,6 +36,11 @@ public class messageController {
         return messageService.getSentMessage(userId,friendId);
     }
 
+    @GetMapping("/getAllMessages")
+    public List<message> getAllMessages(int userId, int friendId){
+        return messageService.getAllMessages(userId,friendId);
+    }
+
     @GetMapping("/deleteMessage")
     public void deleteMessage(@RequestParam int messageId){
         messageService.deleteMessage(messageId);

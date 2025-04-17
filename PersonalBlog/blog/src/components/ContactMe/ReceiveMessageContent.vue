@@ -50,7 +50,7 @@ function deleteMessage(){
       messageId:props.messageId,
     },
   }).then(() => {
-    emit("deleteReceiveMessage", props.receiveTime);
+    emit("deleteReceiveMessage", props.messageId);
     emit("updateActiveReceiveTime", "");
     dialogVisible.value = false;
   }).catch(err => {

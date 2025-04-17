@@ -4,27 +4,23 @@
       <p class="contact-chatDetailContent">云白</p>
     </header>
     <main class="contact-chatRecord">
-      <send-message-content
-          v-for="(msg, index) in messages"
-          :key="index"
-          :message-id="msg[0]"
-          :message="msg[1]"
-          :send-time="msg[2]"
+      <component
+          v-for="msg in allMessages"
+          :key="msg.messageId"
+          :is="msg.senderId === currentUserId ? SendMessageContent : ReceiveMessageContent"
+          :message-id="msg.messageId"
+          :message="msg.message"
+          :send-time="msg.sendTime"
+          :receive-time="msg.sendTime"
           :active-send-time="activeSendTime"
-          @updateActiveSendTime="val => activeSendTime = val"
-          @deleteSendMessage="deleteSendMessage"
-      ></send-message-content>
-      <receive-message-content
-          v-for="(msg, index) in receiveMessages"
-          :key="index"
-          :message-id="msg[0]"
-          :message="msg[1]"
-          :re="msg[2]"
           :active-receive-time="activeReceiveTime"
+          @updateActiveSendTime="val => activeSendTime = val"
           @updateActiveReceiveTime="val => activeReceiveTime = val"
-          @deleteReceiveMessage="deleteReceiveMessage"
-      ></receive-message-content>
+          @deleteSendMessage="deleteMessage"
+          @deleteReceiveMessage="deleteMessage"
+      />
     </main>
+
     <footer class="contact-editMessage">
       <el-input
           placeholder="输入信息"
@@ -48,8 +44,9 @@ import ReceiveMessageContent from "@/components/ContactMe/ReceiveMessageContent"
 
 const sendMessage = ref("");
 // 定义响应式变量 messages，用于存储聊天记录
-const messages = ref([]);
 const receiveMessages = ref([]);
+const allMessages = ref([]);
+const currentUserId = 1;
 
 const activeSendTime = ref("");
 const activeReceiveTime = ref("");
@@ -91,19 +88,23 @@ const sendMessageHandler = () => {
       responseType: "text"
     }).then(res => {
       if(res.data == "发送成功") {
-        axios.get("http://localhost:8081/getSendMessageId",{
-          params:{
-            userId:1,
-            friendId:2,
-            Time:formatDateToMySQL(sendTime)
-          },
-          responseType: "json"
-        }).then(res=>{
+        axios.get("http://localhost:8081/getSendMessageId", {
+          params: {
+            userId: 1,
+            friendId: 2,
+            Time: formatDateToMySQL(sendTime)
+          }
+        }).then(res => {
           const messageId = res.data;
-          messages.value.push([messageId,sendMessage.value, params.sendTime]);
+          allMessages.value.push({
+            messageId,
+            senderId: 1,
+            receiverId: 2,
+            message: sendMessage.value,
+            sendTime: params.sendTime
+          });
+          allMessages.value.sort((a, b) => a.messageId - b.messageId);
           sendMessage.value = "";
-        }).catch(err=>{
-          console.log(err);
         });
       }
     else
@@ -118,43 +119,50 @@ const sendMessageHandler = () => {
 function receiveMessage(){
   axios.get("http://localhost:8081/getReceiveMessage",{
     params:{
-      friendId:2,
-      userId:1
+      friendId: 2,
+      userId: 1
     },
     responseType: "json"
-  }).then(res=>{
+  }).then(res => {
     const gotMessages = res.data;
-    console.log(gotMessages);
-    receiveMessages.value = gotMessages;
-  }).catch(err=>{
-    console.log(err);
+
+    for (const message of gotMessages) {
+      if (!allMessages.value.some(m => m.messageId === message[0])) {
+        allMessages.value.push({
+          messageId: message[0],
+          senderId: 2,
+          receiverId: 1,
+          message: message[1],
+          sendTime: message[2]
+        });
+      }
+    }
+    allMessages.value.sort((a, b) => a.messageId - b.messageId);
+  }).catch(err => {
+    console.log("接收消息出错", err);
   });
 }
 
-function deleteSendMessage(sendTime){
-  const deletedIndex = messages.value.indexOf(sendTime);
-  messages.value.splice(deletedIndex,1);
-}
-function deleteReceiveMessage(sendTime){
-  const deletedIndex = messages.value.indexOf(sendTime);
-  receiveMessages.value.splice(deletedIndex,1);
+function deleteMessage(messageId) {
+  const index = allMessages.value.findIndex(msg => msg.messageId === messageId);
+  if (index !== -1) {
+    allMessages.value.splice(index, 1);
+  }
 }
 
-function initMessage(){
-  axios.get("http://localhost:8081/getSentMessage",{
-    params:{
-      userId:1,
-      friendId:2
+function initMessage() {
+  axios.get("http://localhost:8081/getAllMessages", {
+    params: {
+      userId: 1,
+      friendId: 2
     },
     responseType: "json"
-  }).then(res=>{
+  }).then(res => {
     const gotMessages = res.data;
-    console.log(gotMessages);
-    messages.value = gotMessages;
-  }).catch(err=>{
+    allMessages.value = gotMessages.sort((a, b) => a.messageId - b.messageId);
+  }).catch(err => {
     console.log(err);
   });
-  receiveMessage();
 }
 
 onMounted(()=>{

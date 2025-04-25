@@ -12,6 +12,8 @@ public class article {
     @Id
     @Schema(name = "文章ID")
     private int articleId;
+    @Schema(name = "文章标题")
+    private String title;
     @Schema(name = "文章内容")
     private String articleContent;
     @Schema(name = "文章访问数")
@@ -35,8 +37,9 @@ public class article {
     public article() {
     }
 
-    public article(int articleId, String articleContent, int visitCount, int likeCount, int starCount, int commentCount, int userId) {
+    public article(int articleId, String title, String articleContent, int visitCount, int likeCount, int starCount, int commentCount, int userId) {
         this.articleId = articleId;
+        this.title = title;
         this.articleContent = articleContent;
         this.visitCount = visitCount;
         this.likeCount = likeCount;
@@ -45,8 +48,9 @@ public class article {
         this.userId = userId;
     }
 
-    public article(int articleId, String articleContent, int visitCount, int likeCount, int starCount, int commentCount, com.CloudWhite.PersonalBlog.Entity.user user) {
+    public article(int articleId, String title, String articleContent, int visitCount, int likeCount, int starCount, int commentCount, com.CloudWhite.PersonalBlog.Entity.user user) {
         this.articleId = articleId;
+        this.title = title;
         this.articleContent = articleContent;
         this.visitCount = visitCount;
         this.likeCount = likeCount;
@@ -117,5 +121,13 @@ public class article {
 
     public void setUser(user user) {
         this.user = user;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
     }
 }

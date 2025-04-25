@@ -145,7 +145,7 @@ export default defineComponent({
 ## main.js
 main.js是Vue应用的入口文件(根js文件)，用于创建Vue应用实例并挂载到指定的DOM元素上，vue3用的是createApp，格式为`const app = createApp(App);app.mount('#app')`，对于这个对象有以下常用方法：
 - component：全局注册或获取组件。当传入两个参数时，用于全局注册组件；仅传入一个参数时，用于获取已注册的组件。
-- use: 注册插件。用于注册Vue插件，例如Vue Router、Vuex等。
+- use: 注册插件。用于注册Vue插件，例如Vue Router、Vue等。
 - provide：提供依赖注入。用于在组件树中提供依赖，使得子组件可以注入依赖。有两个参数，第一个参数是提供的依赖的键名，第二个参数是提供的依赖的值。然后在子组件中使用inject对象来注入依赖，可以通过键名来获取注入的值。
 - config：全局配置。用于配置Vue应用的全局选项，例如全局指令、全局过滤器等,有以下常用配置
   - errorHandler：全局错误处理函数。用于捕获Vue应用中的错误，并进行相应的处理，有三个参数，第一个参数是错误对象，第二个参数是Vue实例，第三个参数是一个包含错误信息的字符串。可以用匿名函数来处理逻辑，**以下配置都可以**。
@@ -170,15 +170,22 @@ computed: {
 ```
 其实和data里的变量差不多，只是不能在data里定义，因为data里定义的变量是响应式的，而计算属性是根据已有数据计算得出的属性，其值会根据依赖的数据自动更新。 
 ### watch
-watch是Vue3中新增的一个监听函数，用于监听数据的变化，并在数据变化时执行相应的操作。当需要在数据变化时执行异步操作或者复杂的逻辑时，使用watch比较合适。简单例子（语法糖里是`watch(对象名或数据名,(newValue, oldValue)=>{方法体})`来简化的）
+watch是Vue3中新增的一个监听函数，用于监听数据的变化，并在数据变化时执行相应的操作。当需要在数据变化时执行异步操作或者复杂的逻辑时，使用watch比较合适。简单例子（语法糖里是`watch(对象名或数据名,(newValue, oldValue)=>{监控方法体}，可选配置参数)=>{方法体})`来简化的）
 ```js
 watch:{
       监听的数据名或对象名(newValue, oldValue) {
         console.log('对象发生变化', newValue, oldValue);
       },
+      //可选的配置参数
   },
 ```
-这里对象可以用`deep：true`来开启深度监听，*深度监听监听对象所有属性的变化，而浅度监听只监听对象本身的变化。*
+关于配置参数，常用的有：  
+
+1. immediate: 布尔类型，为true时会再watch创建时就调用一次（可以理解为挂载）
+2. deep: 布尔类型，true开启深监听，即此时还会监听对象的属性更新而不是单纯对象更新
+3. flush: 用于控制监听器的回调函数，为pre会在组件更新之前调用，为post会在组件更新之后调用，为sync则载监听数据变化时调用，显然第三种是默认情况
+4. onTrack和onTrigger：这是用于调式的两个可重写函数，分别在监听数据被追踪和触发时调用
+
 ### props
 props是Vue3中新增的一个属性，用于在组件之间传递数据。父组件可以通过props向子组件传递数据，子组件可以接收并使用这些数据。（**数据包括属性和方法，下同**）
 如下：
@@ -305,6 +312,7 @@ ref是Vue3中新增的一个函数，用于创建一个响应式的引用类型�
 vue的跳转主要是通过路由实现的，它能在不刷新页面的情况下，实现页面的跳转。这时由于vue在页面加载时就已经将所有的组件加载到内存中了。
 要使用vue-router，需要先安装vue-router（npm install @你的vue-router及版本），然后再进行以下：  
 首先看怎么在mian.js中引入vue-router：
+
 ```js
 import {createApp, ref} from 'vue'
 import App from './App.vue'
@@ -495,3 +503,138 @@ axios.post("http://localhost:8081/form/updateUserInfo", params, {
 - 避免了组件的布局影响：使用<teleport>可以将组件渲染到指定的位置，而不会影响页面的布局。这在创建弹窗时非常实用，因为弹窗往往需要脱离当前组件的 DOM 结构，避免受到父元素样式（如 overflow: hidden）的限制，确保弹窗能在页面任意位置正常显示。
 - 提高了组件的可维护性：使用<teleport>可以将组件的逻辑和样式与页面的其他部分解耦，使得组件的维护更加方便。
 - 支持动态渲染：使用<teleport>可以动态地渲染组件到不同的位置，而不需要在每个位置都重新编写组件的代码。
+
+# 配置请求头自动携带token（jwt风格）：
+
+单独建一个axios.js（方便管理）或在直接在mian.js里配置如下：
+```js
+import axios, { AxiosInstance,AxiosResponse } from 'axios' 
+import { ElMessage } from 'element-plus'  //这个只是一个警告对话，没有用原生alert也行，下面的axios也是进行逻辑处理用到的，重要的是上面
+import { useRouter } from 'vue-router'
+
+// 创建 axios 实例
+const axiosInstance: AxiosInstance = axios.create({
+    baseURL: 'http://localhost:8080',  //设置基础路径
+    timeout: 10000  
+})
+
+// 请求拦截器
+axiosInstance.interceptors.request.use(
+    config => {
+        const token = localStorage.getItem('token')  //从localStorage或其他获取token
+        if (token) {
+            config.headers.Authorization = `Bearer ${token}`
+        }else{ //没有token时的逻辑，如下面的转到登录
+            router.push("/login");
+        }
+        return config
+    },
+    error => Promise.reject(error)
+)
+
+// 响应拦截器
+axiosInstance.interceptors.response.use(
+    (response: AxiosResponse) => {
+        // 可以根据后台接口返回结构统一处理
+        if (response.data?.code !== 200) {
+            ElMessage.error(response.data?.message || '请求失败')
+            return Promise.reject(response.data)
+        }
+        return response // 或 return response.data 视情况而定
+    },
+    (error) => {
+        const status = error.response?.status
+        switch (status) {
+            case 401:
+                ElMessage.warning('登录过期，请重新登录')
+                // 你可以执行清除 token 并跳转登录页等逻辑
+                localStorage.removeItem('token')
+                router.push("/login");
+                break
+            case 403:
+                ElMessage.error('没有权限访问')
+                break
+            case 500:
+                ElMessage.error('服务器错误')
+                break
+            default:
+                ElMessage.error(error.response?.data?.message || '请求出错')
+                break
+        }
+        return Promise.reject(error)
+    }
+)
+
+export default axiosInstance
+```
+
+上面的响应拦截器也只是简单拦截转到登录，如果想自动刷新token，下面是一个简单实例：
+```js
+let isRefreshing = false
+let requestQueue: Array<(token: string) => void> = []
+
+function getToken() {
+  return localStorage.getItem('token')
+}
+
+function getRefreshToken() {
+  return localStorage.getItem('refresh_token')
+}
+
+function setToken(token: string) {
+  localStorage.setItem('token', token)
+}
+
+axiosInstance.interceptors.response.use(
+  (response: AxiosResponse) => {
+    return response
+  },
+  async error => {
+    const originalRequest = error.config
+    const status = error.response?.status
+    if (status === 401 && !originalRequest._retry) {
+      // 避免无限循环
+      originalRequest._retry = true
+      // 如果已经在刷新，等待刷新完成再重发请求
+      if (isRefreshing) {
+        return new Promise(resolve => {
+          requestQueue.push((token: string) => {
+            originalRequest.headers.Authorization = `Bearer ${token}`
+            resolve(axiosInstance(originalRequest))
+          })
+        })
+      }
+      // 未刷新，开始刷新流程
+      isRefreshing = true
+      try {
+        const res = await axios.post('/auth/refresh', {  //后端要有相应的刷新token代码
+          refreshToken: getRefreshToken()
+        })
+        const newToken = res.data.token
+        setToken(newToken)
+        // 重发所有排队的请求
+        requestQueue.forEach(callback => callback(newToken))
+        requestQueue = []
+        isRefreshing = false
+        // 重发当前请求
+        originalRequest.headers.Authorization = `Bearer ${newToken}`
+        return axiosInstance(originalRequest)
+      } catch (refreshError) {
+        isRefreshing = false
+        requestQueue = []
+        ElMessage.error('登录已过期，请重新登录')
+        localStorage.removeItem('token')
+        localStorage.removeItem('refresh_token')
+        window.location.href = '/login'
+        return Promise.reject(refreshError)
+      }
+    }
+    // 其他错误处理
+    ElMessage.error(error.response?.data?.message || '请求出错')
+    return Promise.reject(error)
+  }
+)
+```
+
+
+

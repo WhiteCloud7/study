@@ -9,28 +9,59 @@
 ## 变量类型及一些常用方法：
 - 基本类型：
   - number: 数字,即不分整型、浮点型了
+  
   - string: 字符串
     - 大部分和java一样
     - slice(start, end) 截取,   slice()也能作为深拷贝
     - substr(start, length) 
     - includes(str) 
+    
   - boolean: 布尔值
+  
   - array: 数组 这个就可看做对象列表
     - 用push和pop对最后一个元素增删
+    
     - 而shift和unshift对第一个元素增删
+    
     - slice(start, end) 截取数组，返回一个新数组，原数组不变
+    
     - splice(start, deleteCount, item1, item2, ...) 删除元素，并可以往start位置添加元素，返回一个新数组，原数组改变
+    
     - concat(arr1, arr2,...) 合并数组，返回一个新数组，原数组不变
+    
     - join(separator) 将数组转换为字符串，separator为分隔符，默认为逗号
+    
     - reverse() sort() 
+    
     - 自定义排序，重写sort方法，定义a和b，返回a-b为升序，b-a为降序
+    
     - **map方法**：对数组中的每个元素执行你的函数，返回一个新数组，原数组不变 
-      - 参数一：函数，该函数接受三个参数：
-        - 参数一：当前元素
-        - 参数二：当前元素的索引（可选）
-        - 参数三：数组本身（可选）
-      - 参数二：this指向（可选）
-  - 对象：
+    
+    - 接收一个函数，函数有三个参数
+      - 参数一：当前元素
+      - 参数二：当前元素的索引（可选）
+      - 参数三：数组本身（可选）
+      - 一个简单例子：`array.map((item,可选索引，可选数组) => (你的函数，对数组元素进行操作，如修改数值等等))`
+    
+    - **forEach**方法：这个类似map，但不能改变数组元素操作，只能进行不改变数组值的操作如控制台输出
+    
+    - **find方法**：map方法的变体，参数写法和map一致，但这个执行函数变成了表达式，用于查找数组中并返回第一个符合表达式条件的值
+    
+    - **findIndex方法**：同上，这个是返回第一个符合表达式的索引，不符合返回-1
+    
+    - **filter方法**：同上，这个返回所有符合表达式的值。
+    
+    - **some方法**：同上，这个是返回的是一个布尔值，用于判断数组里是否至少有一个符合表达式的值。
+    
+    - **every方法**：同上，返回布尔类型，这个用于判断数组中所有元素是否都符合表达式。
+    
+    - **reduce方法：**这个用于返回满足某个条件的累计值或对数组元素累加，有两个参数，一个是回调函数，他接收四个参数：累加器（默认为数组第一个元素）、当前元素、当前索引（可选）、数组本身（可选）
+    
+      - 第二个参数是累加器初始值，可选
+      - 不设置默认值一般由于对数组元素进行简单操作，如`array.reduce((acc,a)=>{return acc+a}`,能看出累加器这里就是一个标志代表累加结果，如这里换成-a就是-a累加了，但由于累加器初始值默认为第一个元素可能有所偏差
+      - 而默认值可以用于一些精细操作，如`array.reduce((acc,a)=>{return a===true?acc+1;acc},0)`,用于返回元素为true的总数。显然还有更多功能，就自行探索了。
+    
+    - 对象：
     - 两种定义方式：
       ```js
       // 方式一
@@ -57,14 +88,14 @@
             console.log("b = " + b);
             console.log("fun = " + this);
         }
-
+        
         var obj = {
             name: "obj",
             sayName: function () {
                 console.log(this.name);
             }
         };
-
+        
         fun(2, 3);
         console.log("===============");
         fun.call(obj, 2, 3);
@@ -77,8 +108,9 @@
         for(const [key,value] of Object.entries(a)){
             console.log(key,value)
         }
-        ```    
+        ```
     - **arguments**对象，可以用来获取函数的参数，类型java的mian方法的args一样，我们函数所接受的参数都存在这里面
+    
   - map:
     - size(): 获取map的大小
     - get(key): 获取key对应的值
@@ -86,9 +118,13 @@
     - has(key): 判断map中是否存在key
     - delete(key): 删除key对应的值
     - clear(): 清空map
+  
   - undefined: 未定义
+  
   - null: 空值
+  
   - symbol: 唯一值
+  
   - iterator: 迭代器
     - 获取迭代器：`let iterator = arr[Symbol.iterator]();`
     - 常用方法：
@@ -102,11 +138,11 @@
           constructor() {
               this.items = [];
           }
-
+      
           add(item) {
               this.items.push(item);
           }
-
+      
           // 实现 Symbol.iterator 方法
           [Symbol.iterator]() {
               let index = 0;
@@ -120,17 +156,18 @@
               };
           }
       }
-
+      
       const customArray = new CustomArray();
       customArray.add('apple');
       customArray.add('banana');
       customArray.add('cherry');
-
+      
       // 使用 for...of 循环遍历自定义数组
       for (const item of customArray) {
           console.log(item);
       }
-      ``` 
+      ```
+  
   - yeild: 生成器
     - 用于依次执行某个函数，返回一个迭代器对象，如下：
       ```js
@@ -145,15 +182,19 @@
           console.log("代码3执行了");
           return "真奇怪";
       }
-
+      
       let iterator = gen();
       console.log(iterator.next());
       console.log(iterator.next());
       console.log(iterator.next());
-      ```    
+      ```
+  
   - Date：日期
+  
   - Math：数学 无需new 可看作里面都是静态方法
+  
   - ***class***: 以上对象的使用都可以用class实现，class就是传统的面对对象，不同的是js的class声明变量和无需let等关键字，构造函数为constructor而不是和类名同名
+  
   - 正则表达式：
     - var 变量名 = new RegExp("正则表达式","匹配模式");
     - 匹配模式：
@@ -191,7 +232,7 @@
 - ==和===: ==是值相等，===是值和类型都相等
 - !=和!==: 同上
 - 和python一样可以用，隔开来多次定义变量
- 
+
 # 条件、循环、函数：
 多数和java一样，但是有一些不同：
 - 遍历：
@@ -208,7 +249,7 @@
         // 设置对象的方法，略
     }
   ```
-但如果想更灵活，我们可以原型链来实现，原理是获取类原型来设置方法和属性：
+  但如果想更灵活，我们可以原型链来实现，原理是获取类原型来设置方法和属性：
 ```js
 // 使用构造函数来创建对象
 function Person(name, age) {
@@ -291,18 +332,18 @@ Student.prototype.setPrice = function (price) { // 添加子类型私有的方�
       - 不多举例，就下面一个创造一个列表的例子：
       ```js
         var ul = document.createElement("ul");
-
+      
         var li1 = document.createElement("li");
         var text1 = document.createTextNode("列表项1");
         li1.appendChild(text1);
         ul.appendChild(li1);
-
+      
         var li2 = document.createElement("li");
         var text2 = document.createTextNode("列表项2");
         li2.appendChild(text2);
         ul.appendChild(li2);
         //省略重复代码
-
+      
         document.getElementsByTagName("body")[0].appendChild(ul);
       ```
    - 通过结构找元素：用元素.属性名来调用
@@ -312,6 +353,7 @@ Student.prototype.setPrice = function (price) { // 添加子类型私有的方�
      - lastChild lastElementChild：最后一个子节点和最后一个子元素
      - previousSibling previousElementSibling：前一个兄弟节点和前一个兄弟元素
      - nextSibling nextElementSibling：后一个兄弟节点和后一个兄弟元素 
+     - closest:离当前元素最近的匹配特定选择器的祖先元素
 2. 对文档元素值操作： 
    - 查找及修改：这个是元素.方法名来调用
      - innerHTML：获取或设置元素的HTML内容
@@ -364,6 +406,13 @@ Student.prototype.setPrice = function (price) { // 添加子类型私有的方�
   3. 由于捕获顺序，可能会导致一些问题，我们可以用事件对象的stopPropagation()方法来阻止事件冒泡
 - **事件委托：**
   - 即利用事件冒泡的原理，在父元素上监听事件，子元素也会触发事件，这样就可以避免多个子元素的事件监听，提高性能
+- 事件参数：事件参数的属性有很多，都是在以上dom基础上，例如
+  - stop：阻止事件冒泡
+  - prevent：阻止默认
+  - capture: 阻止事件捕获
+  - self：只有事件在改元素触发才调用处理函数
+  - once：只执行一次处理函数
+  - target：点击的目标来获取母标元素信息，拥有DOM几乎所有操作元素方法，如getElementById等等
 ## JSON:
 1. 语法及数据类型：
    - 数据类型时除了函数、日期和undefined外的其他js数据类型
@@ -375,7 +424,7 @@ Student.prototype.setPrice = function (price) { // 添加子类型私有的方�
 ```js
 var obj = {name: "猪八戒", age: 28, gender: "男"};
 var jsonStr = JSON.stringify(obj);
-``` 
+```
 1. json字符串转js对象：
 ```js
 var jsonStr = '{"name":"猪八戒","age":28,"gender":"男"}';
@@ -438,7 +487,7 @@ ajax.onreadystatechange = function () {
         console.log(ajax.responseText);//输入响应的内容
     }
 };
-``` 
+```
 5. **POST请求：**
 ```js
 //步骤一：创建异步对象
@@ -455,7 +504,7 @@ ajax.onreadystatechange = function () {
         console.log(ajax.responseText);//输入响应的内容
     }
 };
-``` 
+```
 6. ***fetch + async/await*** :
   1. 概述： 这是对ajax的简化甚至替代，还能处理put、delete等请求
   2. GET请求：
@@ -472,7 +521,7 @@ ajax.onreadystatechange = function () {
       }
   }
   getUsers();
-  ```  
+  ```
   2. POST请求:
   ```js
     async function createUser() {
@@ -497,7 +546,7 @@ ajax.onreadystatechange = function () {
       }
   }
   createUser();
-  ``` 
+  ```
   3. 其他请求参考以上两个 
 ***关于Content-Type：***
 - text/plain：表明传输的数据是纯文本，编码格式一般是 UTF - 8。
@@ -528,17 +577,20 @@ tableData.innerHTML = tableContent;
    - 等等
 2. 请求首部字段：
   1. 内容协商类:
+
     - Accept：指定客户端可以接受的媒体类型
     - Accept-Charset：指定客户端可以接受的字符集
     - Accept-Encoding：指定客户端可以接受的编码方式
     - Accept-Language：指定客户端可以接受的语言
   2. 用户信息类：
+
     - User-Agent：指定客户端的用户代理字符串
     - Referer：指定请求的来源地址  
   3. 认证类:Authorization：指定客户端的认证信息
   4. cookie类:Cookie：指定客户端的cookie信息    
   5. 其他 Host：指定请求的主机和端口号，响应头为server
   6. 通用类:
+
     - Connection：指定客户端与服务器之间的连接类型
     - Cache-Control：指定缓存控制策略
     - Date：指定请求的日期和时间
@@ -576,11 +628,15 @@ p.catch((error) => {
 - 4xx 客户端错误状态码：表示客户端发送的请求有错误。
   - 400 Bad Request：客户端请求存在语法错误，服务器无法理解。
   - 401 Unauthorized：请求要求身份验证。
-  - 403 Forbidden：服务器理解请求，但拒绝执行该请求。这与 401 不同，401 是因为未授权，而 403 是已授权但权限不足。例如普通用户尝试访问管理员才能访问的页面，服务器返回 403 Forbidden。
-  - 404 Not Found：服务器找不到请求的资源。这是最常见的错误状态码之一，可能是因为 URL 输入错误、资源被删除或未创建。
+  - 403 Forbidden：服务器理解请求，但拒绝执行该请求。这与 401 不同，401 是因为未授权，而 403 是已授权但权限不足。
+  - 404 Not Found：服务器找不到请求的资源。
+  - **405 Method Not Allowed**：请求的方法不被允许。
 - 5xx 服务器错误状态码：表示服务器在处理请求时发生了错误。
   - 500 Internal Server Error：服务器内部发生错误，无法完成请求。这是一个通用的服务器错误状态码，通常是由于服务器端代码出现异常（如未捕获的异常、数据库连接错误等）导致的。例如服务器端的 Java 代码抛出了一个未处理的 NullPointerException，服务器返回 500 Internal Server Error。
   - 503 Service Unavailable：服务器目前无法处理请求，通常是因为服务器过载或正在维护。
+
+可以看出一些状态码服务器不会自动返回，而是后端主动返回的，如201、204、401等等，这个在springboot部分说明
+
 ## BOM:  
 1. **window对象**:以下方法都是window.方法名来调用
   - 弹出框：

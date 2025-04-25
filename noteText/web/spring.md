@@ -270,20 +270,19 @@ class Client {
          http://www.springframework.org/schema/beans/spring-beans.xsd
          http://www.springframework.org/schema/aop
          http://www.springframework.org/schema/aop/spring-aop.xsd">
-
-
-      <bean id="service" class="com.CloudWhite.Service.testService"></bean>
-      <bean id="beforeLog" class="com.CloudWhite.Log.beforeLog"></bean>
-      <bean id="afterLog" class="com.CloudWhite.Log.afterLog"></bean>
-      <!--aop的配置-->
-      <aop:config>
-         <!--切入点 expression:表达式匹配要执行的方法-->
-         <aop:pointcut id="pointcut" expression="execution(* com.CloudWhite.Service.testService.*(..))"/>
-         <!--执行环绕; advice-ref执行方法 . pointcut-ref切入点-->
-         <aop:advisor advice-ref="beforeLog" pointcut-ref="pointcut"/>
-         <aop:advisor advice-ref="afterLog" pointcut-ref="pointcut"/>
-      </aop:config>
+       <bean id="service" class="com.CloudWhite.Service.testService"></bean>
+       <bean id="beforeLog" class="com.CloudWhite.Log.beforeLog"></bean>
+       <bean id="afterLog" class="com.CloudWhite.Log.afterLog"></bean>
+       <!--aop的配置-->
+       <aop:config>
+        <!--切入点 expression:表达式匹配要执行的方法-->
+        <aop:pointcut id="pointcut" expression="execution(* com.CloudWhite.Service.testService.*(..))"/>
+        <!--执行环绕; advice-ref执行方法 . pointcut-ref切入点-->
+        <aop:advisor advice-ref="beforeLog" pointcut-ref="pointcut"/>
+        <aop:advisor advice-ref="afterLog" pointcut-ref="pointcut"/>
+       </aop:config>
    </beans>
+   
    ```
    5. 测试类：`testImpl testService = (testImpl) context.getBean("service");testService.test();`
 3. ***注解实现： ***
@@ -293,17 +292,17 @@ class Client {
    @Aspect
    @Component
    public class Log{
-      @Before("execution(* com.CloudWhite.Service.testService.*(..))")
+      @Before("execution(* com.CloudWhite.Service.testService..*.*(..))")
       public void before(){
          System.out.println("方法被执行前!");
       }
-
-      @After("execution(* com.CloudWhite.Service.testService.*(..))")
+   
+      @After("execution(* com.CloudWhite.Service.testService..*.*(..))")
       public void afterReturning(){
          System.out.println("方法被执行后!");
       }
-
-      @Around("execution(* com.CloudWhite.Service.testService.*(..))")//先around，然后通过类型如下jp.proceed() ，执行before，然后继续around，最后执行after，当然也不宜不写这个，这个是为了区分多个方法
+   
+      @Around("execution(* com.CloudWhite.Service.testService..*.*(..))")//先around，然后通过类型如下jp.proceed() ，执行before，然后继续around，最后执行after，当然也不宜不写这个，这个是为了区分多个方法
       public Object around(ProceedingJoinPoint jp) throws Throwable {
          System.out.println("环绕前");
          System.out.println("签名:"+jp.getSignature());//执行方法的返回类型、完整方法路径名
@@ -790,15 +789,16 @@ if (handler instanceof HandlerMethod) {
 ```
 这里有个isAnnotationPresent 方法，用于判断方法是否有指定注解。  
 那么现在就可以来看如何定义注解：
-   1. @interface关键字修饰方法
-   2. 定义元注解，以下是常用元注解：
+      1. @interface关键字修饰方法
+      2. 定义元注解，以下是常用元注解：
       - @Target：指定注解的作用目标，如方法、类、接口等等 
       - @Retention：指定注解的保留策略，如运行时、编译时、源文件等等
       - @Documented：指定注解是否包含在 JavaDoc 文档中
       - @Inherited：指定注解是否可继承
       - @Repeatable：指定注解是否可重复使用
       - 等等
-   3. 定义注解的属性，在方法里定义，格式为`属性名() default "默认值";`
+      3. 定义注解的属性，在方法里定义，格式为`属性名() default "默认值";`、
+
 ## 跨域
 当接收请求的接口和请求的页面不在同一个域名下时，就会出现跨域问题，除了微服务、使用第三方API外，现代的前后端分离也经常需要跨域，所以我们要解决跨域问题。
 在局部情况下，我们用`@CrossOrigin`注解来解决跨域问题，该注解参数如下（都为可选参数）：
@@ -889,7 +889,7 @@ public String getString(String key){
 JMS 即 Java 消息服务（Java Message Service）应用程序接口，是一个Java平台中关于面向消息中间件（MOM）的 API，用于在两个应用程序之间，或分布式系统中发送消息，进行异步通信（即无需等接收端确认即可进行新的请求）。Java 消息服务是一个与具体平台无关的 API，绝大多数 MOM 提供商都对 JMS 提供支持。  
 举个例子，我们可以用JMS来实现消息队列，即当我们在电商网站下单时，我们可以把订单信息存入消息队列，之后库存系统就可以从消息队列中获取订单信息，然后进行相应操作。即它作为两个应用程序的一个中间层，并实现了异步通信。  
 而作为中间件坑定也有除了实现异步的更多优势如JMS的消息队列可以作为一个缓冲区，将大量的请求消息暂存起来，然后按照系统的处理能力逐步处理这些消息，从而提高系统的吞吐量和响应速度。另外还有着可靠传输、兼容性高等等优点。
-### 集成：
+### 集成MQ：
 1. 下载配置ActiveMQ，加相应依赖：
 2. 配置：
 ```yml
@@ -976,7 +976,7 @@ public JmsListenerContainerFactory topicListenerContainer(ConnectionFactory conn
    - 用户（user）：在 Shiro 中，代表访问系统的用户，即上面提到的 Subject 认证主体
 ![它们之间的的关系可以用下图来表示](../photo/6.png)   
 一个用户可以有多个角色，而不同的角色可以有不同的权限，也可由有相同的权限。比如说现在有三个角色，1是普通角色，2也是普通角色，3是管理员，角色1只能查看信息，角色2只能添加信息，管理员都可以，而且还可以删除信息，类似于这样。
-### 集成
+
 有上面的介绍，第一步自然是自定义域，我们可以继承AuthorizingRealm类，然后重写doGetAuthenticationInfo和doGetAuthorizationInfo方法，这里有一个例子：
 ```java
 public class loginRealm extends AuthorizingRealm {
@@ -1179,7 +1179,119 @@ class Searcher {
     }
     //测试主类，略
 ```
+## 关于返回状态码和响应实体的定义
+
+我们对于复杂的请求，一般不仅仅返回结果，还可以返回状态码（这个一般会返回）、响应体（这个就是结果）、头部（看情况看需不需要）等等，那么我们这是就可以封装一个响应实体来统一处理。
+
+这里响应体类型是Object（适应不同结果），状态码是HttpStatus（属性是状态码的英文），头是HttpHeaders（通过add添加响应头信息）
+
+## 关于JWT
+
+以下是一个常用生成JWT方法例子
+
+```java
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
+public class JwtUtils {
+    // 签名密钥（应该放到配置文件中）
+    private static final String SECRET_KEY = "设置一个密匙，这是用来防止被攻击的";
+
+    // 生成 access_token，即短期的token
+    public static String createAccessToken(String username, String userId, long expiration) {
+        return Jwts.builder()
+                .setSubject(username) //这个是用户的核心标识符，如用户名、用户ID等等
+                .claim("userId", userId)  // 可自定义你需要的 claim，即可写几个claim
+                .setIssuedAt(new Date())
+                .setExpiration(new Date(System.currentTimeMillis() + expiration))  // 设置过期时间
+                .signWith(SignatureAlgorithm.HS512, SECRET_KEY)  // 使用 HS512 算法签名
+                .compact(); //返回最终的字符串
+    }
+
+    // 生成 refresh_token（即长期token，可以不设置过期时间，或设置较长的过期时间）
+    public static String createRefreshToken(String username, String userId) {
+        return Jwts.builder()
+                .setSubject(username)
+                .claim("userId", userId)
+                .setIssuedAt(new Date())
+                .signWith(SignatureAlgorithm.HS512, SECRET_KEY)
+                .compact();
+    }
+}
+```
+
+然后是解析JWT方法
+
+```java
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jwts;
+
+public class JwtUtils {
+    // 解析 JWT Token
+    public static Claims parseToken(String token) {
+        return Jwts.parser()
+                .setSigningKey(SECRET_KEY) //设置密匙
+                .parseClaimsJws(token)  //解析Claim
+                .getBody();  //返回一个claim对象，claim可以向访问map一样访问它
+    }
+    // 获取用户 ID（示例）
+    public static String getUserIdFromToken(String token) {
+        Claims claims = parseToken(token);
+        return claims.get("userId", String.class);
+    }
+    // 获取用户名（示例）
+    public static String getUsernameFromToken(String token) {
+        Claims claims = parseToken(token);
+        return claims.getSubject();
+    }
+}
+```
+
+验证JWT是否有效
+
+```java
+import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.SignatureException;
+
+public class JwtUtils {
+
+    // 验证 JWT 是否有效
+    public static boolean validateToken(String token) {
+        try {
+            Claims claims = parseToken(token); // 解析 token
+            Date expiration = claims.getExpiration();
+            return !expiration.before(new Date());  // 判断是否过期
+        } catch (ExpiredJwtException e) {
+            // token 已过期
+            return false;
+        } catch (SignatureException e) {
+            // token 签名无效
+            return false;
+        } catch (Exception e) {
+            return false;
+        }
+    }
+}
+```
+
+刷新token
+
+```java
+public class JwtUtils {
+
+    // 刷新 access_token，基于有效的 refresh_token
+    public static String refreshAccessToken(String refreshToken) {
+        // 假设刷新 token 时，仍然能解析出 userId 和 username
+        Claims claims = parseToken(refreshToken);
+        String userId = claims.get("userId", String.class);
+        String username = claims.getSubject();
+        // 重新生成一个新的 access_token
+        return createAccessToken(username, userId, 15 * 60 * 1000);  // 15 分钟的有效期
+    }
+}
+```
+
 # Spring Data
+
 ## 概述：
 Spring Data 它主要是用于做数据存储的，用在数据持久层。mybatis主要是用来操作像mysql这种关系型数据库，而除了这些外，**Spring Data 还可以操作非关系型数据库**，如Redis、MongoDB、Elasticsearch、Neo4j等。随着时代发展单一数据库已经无法满足实际开发需求了，因为用户量越来越大了。这时候项目就需要多种数据库，可每种数据库都有自己的语言，学习成本大，而**Spring Data将不同的这个数据存储进行了统一 提升了我们的开发效率，降低了我们的学习成本**，这就是我们学习Spring Data的原因。而常用的springdata模块如下：
 - Spring Data common - 用于支持每个Spring Data模块的核心公共模块。

@@ -34,6 +34,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 //import org.springframework.security.core.GrantedAuthority;
 //import org.springframework.security.core.context.SecurityContextHolder;
 //import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.MissingServletRequestParameterException;
@@ -50,7 +51,7 @@ import java.util.stream.Collectors;
 //import static com.WhiteCloud.SpringBootTest.Model.ShiroRealm.loginRealm.remindMessage;
 
 //@RestController
-@Controller
+@RestController
 @Tag(name = "测试控制器")
 public class test {
     private static final Logger logger = LoggerFactory.getLogger(test.class);

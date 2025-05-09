@@ -3,11 +3,12 @@
     <my-projects></my-projects>
   </div>
 </template>
-<script>
+<script setup>
 import MyProjects from "@/components/project/MyProjects";
-export default {
-  components: {MyProjects}
-}
+import {useHead} from "@vueuse/head";
+useHead({
+  title:"项目",
+})
 </script>
 <style>
 .myProject-project{

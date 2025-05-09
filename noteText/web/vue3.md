@@ -122,7 +122,17 @@ export default defineComponent({
 });
 </script>
 ```
+补全一下全局变量使用，选项api直接this.$全局变量名使用，而语法糖如下：
+```js
+import { getCurrentInstance } from 'vue'
+const instance = getCurrentInstance()  // 获取当前组件实例
+const globalVar = instance?.appContext.config.globalProperties.$myGlobalVar // 通过 globalProperties 访问全局变量
+```
+
+这里得到实例后还可以访问main.js的其他配置，这里略
+
 ## v-for
+
 - 遍历非对象，格式为`v-for="(item,index) in iteams"`，也可以指只遍历iteam。   
 - 遍历对象为`v-for="(value,key,index) in iteams"`，也可以指只遍历`(value,key)`或只遍历value。  
 - `v-bind:key`或`:key`是遍历对象的唯一标识符，用于告诉Vue如何跟踪每个节点。如果不是对象，那可以是索引，如果数据又唯一性，也可以是数据本身（iteam）。如果是对象，同非对象，只不过对象一般会设置唯一标识符id，所以一般是id。  
@@ -570,69 +580,62 @@ export default axiosInstance
 
 上面的响应拦截器也只是简单拦截转到登录，如果想自动刷新token，下面是一个简单实例：
 ```js
-let isRefreshing = false
-let requestQueue: Array<(token: string) => void> = []
-
-function getToken() {
-  return localStorage.getItem('token')
-}
-
-function getRefreshToken() {
-  return localStorage.getItem('refresh_token')
-}
-
-function setToken(token: string) {
-  localStorage.setItem('token', token)
-}
-
 axiosInstance.interceptors.response.use(
-  (response: AxiosResponse) => {
-    return response
-  },
-  async error => {
-    const originalRequest = error.config
-    const status = error.response?.status
-    if (status === 401 && !originalRequest._retry) {
-      // 避免无限循环
-      originalRequest._retry = true
-      // 如果已经在刷新，等待刷新完成再重发请求
-      if (isRefreshing) {
-        return new Promise(resolve => {
-          requestQueue.push((token: string) => {
-            originalRequest.headers.Authorization = `Bearer ${token}`
-            resolve(axiosInstance(originalRequest))
-          })
-        })
-      }
-      // 未刷新，开始刷新流程
-      isRefreshing = true
-      try {
-        const res = await axios.post('/auth/refresh', {  //后端要有相应的刷新token代码
-          refreshToken: getRefreshToken()
-        })
-        const newToken = res.data.token
-        setToken(newToken)
-        // 重发所有排队的请求
-        requestQueue.forEach(callback => callback(newToken))
-        requestQueue = []
-        isRefreshing = false
-        // 重发当前请求
-        originalRequest.headers.Authorization = `Bearer ${newToken}`
-        return axiosInstance(originalRequest)
-      } catch (refreshError) {
-        isRefreshing = false
-        requestQueue = []
-        ElMessage.error('登录已过期，请重新登录')
-        localStorage.removeItem('token')
-        localStorage.removeItem('refresh_token')
-        window.location.href = '/login'
-        return Promise.reject(refreshError)
-      }
+    (response: AxiosResponse) => {
+        if (response.data?.code !== "200") {
+            ElMessage.error(response.data?.message || '请求失败')
+            return Promise.reject(response.data)
+        }
+        return response
+    },
+    async (error) => {
+        const originalRequest = error.config
+        const status = error.response?.status
+
+        if (status === 401 && !originalRequest._retry) {
+            originalRequest._retry = true
+
+            const refreshToken = localStorage.getItem('refreshToken')
+            if (!refreshToken) {
+                router.push('/login')
+                return Promise.reject(error)
+            }
+
+            if (!isRefreshing) {
+                isRefreshing = true
+                try {
+                    const res = await axios.post('http://localhost:8080/refreshToken', null, { //注意写好后端刷新的接口
+                        params: { refreshToken }
+                    })
+
+                    const newToken = res.data.token
+                    localStorage.setItem('token', newToken)
+                    isRefreshing = false
+                    onRefreshed(newToken)
+                } catch (err) {
+                    isRefreshing = false
+                    localStorage.removeItem('token')
+                    localStorage.removeItem('refreshToken')
+                    router.push('/login')
+                    return Promise.reject(err)
+                }
+            }
+
+            return new Promise(resolve => {
+                addRefreshSubscriber((newToken: string) => {
+                    originalRequest.headers.Authorization = `Bearer ${newToken}`
+                    resolve(axiosInstance(originalRequest))
+                })
+            })
+        }
+
+        // 其他错误处理
+        if (status === 403) ElMessage.error('没有权限访问')
+        else if (status === 500) ElMessage.error('服务器错误')
+        else ElMessage.error(error.response?.data?.message || '请求出错')
+
+        return Promise.reject(error)
     }
-    // 其他错误处理
-    ElMessage.error(error.response?.data?.message || '请求出错')
-    return Promise.reject(error)
-  }
 )
 ```
 

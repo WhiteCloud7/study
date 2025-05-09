@@ -1,8 +1,20 @@
 <template>
-  <blog-nav></blog-nav>
+  <blog-nav v-if="$route.meta.showNav"></blog-nav>
   <router-view></router-view>
 </template>
+<script setup>
+import {onMounted} from "vue";
 
+onMounted(() => {
+  let link = document.querySelector("link[rel~='icon']");
+  if (!link) {
+    link = document.createElement('link');
+    link.rel = 'icon';
+    document.getElementsByTagName('head')[0].appendChild(link);
+  }
+  link.href = '/photo/logo.png';
+});
+</script>
 <style scoped>
 #app {
   font-family: Avenir, Helvetica, Arial, sans-serif;

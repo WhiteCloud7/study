@@ -1,23 +1,75 @@
 <template>
-  <div class="login-container">
-    <h1>登录</h1>
-    <form @submit.prevent="handleLogin">
-      <div class="form-group">
-        <label for="username">用户名</label>
-        <input type="text" id="username" v-model="username" placeholder="请输入用户名">
-      </div>
-      <div class="form-group">
-        <label for="password">密码</label>
-        <input type="password" id="password" v-model="password" placeholder="请输入密码">
-      </div>
-      <button type="submit">登录</button>
-    </form>
+  <div class="login-document">
+    <div class="login-container">
+      <h1>登录</h1>
+      <form @submit.prevent="handleLogin">
+        <div class="login-formGroup">
+          <label for="username">用户名</label>
+          <input type="text" id="username" v-model="username" placeholder="请输入用户名" required>
+        </div>
+        <div class="login-formGroup">
+          <label for="password">密码</label>
+          <input type="password" id="password" v-model="password" placeholder="请输入密码" required>
+        </div>
+        <button type="submit">登录</button>
+        <p @click="goToRegister" class="login-register">还没有账号？点我注册</p>
+      </form>
+    </div>
   </div>
 </template>
-<script>
+<script setup>
+import { ref,getCurrentInstance} from 'vue';
+import {useHead} from "@vueuse/head";
+import axios from 'axios';
+import cookie from "js-cookie";
+
+const instance = getCurrentInstance();
+const isLogin = instance?.appContext.config.globalProperties.$isLogin;
+const username = ref('');
+const password = ref('');
+
+function goToRegister(){
+  location.assign("/register");
+}
+
+function initUser(){
+  isLogin.value = false;
+  localStorage.removeItem("refreshToken");
+  cookie.remove("token");
+}
+
+function handleLogin(){
+  console.log(isLogin.value);
+  axios.get("http://localhost:8081/login",{
+    params:{
+      username:username.value,
+      password:password.value
+    }
+  }).then(res=> {
+    const data = res.data;
+    if (data.message === "密码错误")
+      alert("密码错误，请重新登录!")
+    else if (data.message === "账号不存在")
+      alert("账号不存在")
+    else {
+      initUser();
+      isLogin.value = true;
+      localStorage.setItem("token", data.data[0]);
+      cookie.set("refreshToken",data.data[1],{expires:7});
+      location.assign("/index");
+    }
+  }).catch(err=>{
+    console.log(err);
+  })
+}
+
+useHead({
+  title:"登录"
+})
 </script>
 <style>
-body {
+.login-document {
+  background-image: url("@/assets/photo/view.png");
   font-family: Arial, sans-serif;
   display: flex;
   justify-content: center;
@@ -40,16 +92,16 @@ body {
   margin-bottom: 20px;
 }
 
-.form-group {
+.login-formGroup {
   margin-bottom: 15px;
 }
 
-.form-group label {
+.login-formGroup label {
   display: block;
   margin-bottom: 5px;
 }
 
-.form-group input {
+.login-formGroup input {
   width: 100%;
   padding: 8px;
   box-sizing: border-box;
@@ -69,5 +121,12 @@ body {
 
 .login-container button:hover {
   background-color: #0056b3;
+}
+
+.login-register{
+  margin-top: 10px;
+  margin-left: 40px;
+  cursor: pointer;
+  color: rgba(0, 0, 0, 0.74);
 }
 </style>

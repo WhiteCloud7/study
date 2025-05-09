@@ -16,6 +16,11 @@
 import IndexLeftAside from "@/components/index/indexLeftAside";
 import IndexMain from "@/components/index/IndexMain";
 import IndexRightAside from "@/components/index/IndexRightAside";
+import {useHead} from "@vueuse/head";
+
+useHead({
+  title:"云白的个人博客",
+})
 </script>
 
 <style scoped>

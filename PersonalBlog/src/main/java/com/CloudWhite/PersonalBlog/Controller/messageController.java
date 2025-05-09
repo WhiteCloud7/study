@@ -1,7 +1,9 @@
 package com.CloudWhite.PersonalBlog.Controller;
 
 import com.CloudWhite.PersonalBlog.Entity.message;
+import com.CloudWhite.PersonalBlog.Model.ResponseEntity;
 import com.CloudWhite.PersonalBlog.Service.messageService;
+import com.CloudWhite.PersonalBlog.Utils.Annotation.LoginRequired;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Description;
@@ -20,39 +22,38 @@ public class messageController {
 
     @PostMapping("/sendMessage")
     @Description("发送消息")
-    public String sendMessage(@RequestBody message message){
-        try {
-            messageService.sendMessage(message);
-            return "发送成功";
-        }catch (Exception e){
-            e.printStackTrace();
-            return "发送失败";
-        }
+    @LoginRequired
+    public ResponseEntity sendMessage(@RequestBody message message){
+        message newMessage = messageService.sendMessage(message);
+        if(newMessage!=null)
+            return new ResponseEntity(newMessage);
+        else
+            return new ResponseEntity("500","发送失败",null);
     }
 
     @GetMapping("/getSentMessage")
     @Description("得到发送消息")
-    public List<String[]> getSentMessage(@RequestParam int userId, @RequestParam int friendId){
-        return messageService.getSentMessage(userId,friendId);
+    @LoginRequired
+    public ResponseEntity getSentMessage(@RequestParam String friendName){
+        return new ResponseEntity(messageService.getSentMessage(friendName));
     }
 
     @GetMapping("/getAllMessages")
-    public List<message> getAllMessages(int userId, int friendId){
-        return messageService.getAllMessages(userId,friendId);
+    @LoginRequired
+    public ResponseEntity getAllMessages(String friendName){
+        return new ResponseEntity(messageService.getAllMessages(friendName));
     }
 
     @GetMapping("/deleteMessage")
-    public void deleteMessage(@RequestParam int messageId){
+    @LoginRequired
+    public ResponseEntity deleteMessage(@RequestParam int messageId){
         messageService.deleteMessage(messageId);
-    }
-
-    @GetMapping("/getSendMessageId")
-    public int getSendMessageId(@RequestParam int userId,@RequestParam int friendId,@RequestParam String Time){
-        return messageService.getSendMessageId(userId,friendId,Time);
+        return new ResponseEntity();
     }
 
     @GetMapping("/getReceiveMessage")
-    public List<String[]> getReceiveMessage(@RequestParam int friendId,@RequestParam int userId){
-        return messageService.getReceiveMessages(friendId,userId);
+    @LoginRequired
+    public ResponseEntity getReceiveMessage(String friendName,String currentNewMessageTime){
+        return new ResponseEntity(messageService.getReceiveMessages(friendName,currentNewMessageTime));
     }
 }

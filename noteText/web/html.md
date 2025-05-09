@@ -21,7 +21,7 @@
     - `<h1>` 元素定义一个大标题
     - `<p>` 元素定义一个段落
 ## 常用标签：
-- meta：
+- xxxxxxxxxx public class getConnection {    private static final HikariDataSource dataSource;​    static {        // 配置 HikariCP        HikariConfig config = new HikariConfig();        // 设置数据库连接 URL        config.setJdbcUrl("jdbc:mysql://localhost:3306/usermanagesystem?useUnicode=true&characterEncoding=utf-8&useSSL=false");        // 设置数据库用户名        config.setUsername("root");        // 设置数据库密码        config.setPassword("123456");        // 设置连接池的最小空闲连接数        config.setMinimumIdle(5);        // 设置连接池的最大连接数        config.setMaximumPoolSize(15);        // 设置连接的最大空闲时间        config.setIdleTimeout(30000);        // 设置连接的最大生命周期        config.setMaxLifetime(1800000);        // 设置获取连接的最大等待时间        config.setConnectionTimeout(30000);​        // 创建 HikariDataSource 实例        dataSource = new HikariDataSource(config);    }​    public static Connection myConnection() {        try {            // 从连接池中获取连接            return dataSource.getConnection();        } catch (SQLException e) {            throw new RuntimeException(e);        }    }}java
   - `<meta charset="utf-8">` 定义网页编码格式为 utf-8
   - `<meta name="viewport" content="width=device-width, initial-scale=1.0">` 定义视口，用于控制页面在不同设备上的显示方式
     - minimum-scale：  
@@ -167,8 +167,8 @@
   - minlength：最小长度
   - step：步长
   - multiple：多选
-其中用for属性指定了标签的指向
-以上只是基础，更详细的（表单）[https://developer.mozilla.org/zh-CN/docs/Learn_web_development/Extensions/Forms]
+  其中用for属性指定了标签的指向
+  以上只是基础，更详细的（表单）[https://developer.mozilla.org/zh-CN/docs/Learn_web_development/Extensions/Forms]
 ## 表格：
 HTML 表格是通过标签`<table>` 来定义的。如：
 ```html
@@ -259,7 +259,7 @@ HTML 表格是通过标签`<table>` 来定义的。如：
   ```html
   <a href="https://example.com/page-1" rel="prev">上一页</a>
   <a href="https://example.com/page+1" rel="next">下一页</a>
-  ``` 
+  ```
   - `first` 和 `last` : 定义首页和末页，参考prev和next
   - `preload`: 预加载资源，需要配合as指定资源类型
   - `prefetch`:提示浏览器在空闲时预先获取资源，需要配合as指定资源类型

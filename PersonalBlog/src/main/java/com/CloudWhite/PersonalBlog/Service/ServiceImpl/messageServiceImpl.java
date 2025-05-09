@@ -2,56 +2,66 @@ package com.CloudWhite.PersonalBlog.Service.ServiceImpl;
 
 import com.CloudWhite.PersonalBlog.Dao.messageDao;
 import com.CloudWhite.PersonalBlog.Dao.mybatisDao;
+import com.CloudWhite.PersonalBlog.Dao.userDao;
 import com.CloudWhite.PersonalBlog.Entity.message;
+import com.CloudWhite.PersonalBlog.Model.UserContext;
 import com.CloudWhite.PersonalBlog.Service.messageService;
-import com.CloudWhite.PersonalBlog.Utils.utils;
+import com.CloudWhite.PersonalBlog.Utils.Annotation.NoAop;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
-import java.sql.Timestamp;
+
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 @Service
+@Transactional
 public class messageServiceImpl implements messageService {
-    @Autowired
-    private utils utils;
+    private static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS");
     private messageDao messageDao;
+    private userDao userDao;
     private com.CloudWhite.PersonalBlog.Dao.mybatisDao mybatisDao;
     @Autowired
-    public messageServiceImpl(utils utils, messageDao messageDao, mybatisDao mybatisDao) {
-        this.utils = utils;
+    public messageServiceImpl(com.CloudWhite.PersonalBlog.Dao.messageDao messageDao, com.CloudWhite.PersonalBlog.Dao.userDao userDao, com.CloudWhite.PersonalBlog.Dao.mybatisDao mybatisDao) {
         this.messageDao = messageDao;
+        this.userDao = userDao;
         this.mybatisDao = mybatisDao;
     }
-    public List<message> getAllMessages(int senderId,int receiverId){
-        return messageDao.getAllMessages(senderId,receiverId);
+
+    public List<message> getAllMessages(String friendName){
+        String username = UserContext.getCurrentToken().getUsername();
+        return messageDao.getAllMessages(username,friendName);
     }
-    @Transactional
-    public void sendMessage(message message) {
+
+    public message sendMessage(message message) {
+        String username = UserContext.getCurrentToken().getUsername();
+        message.setSenderName(username);
+        String formattedTime = LocalDateTime.now().format(DATE_TIME_FORMATTER);
+        message.setSendTime(formattedTime);
         messageDao.save(message);
+        message newMessage = messageDao.findBySenderNameAndReceiverNameAndSendTime(message.getSenderName(),message.getReceiverName(),message.getSendTime());
+        return newMessage;
     }
 
-    public List<String[]> getSentMessage(int userId, int friendId) {
-        return messageDao.getSentMessages(userId,friendId);
+    public List<String[]> getSentMessage(String friendName) {
+        String username = UserContext.getCurrentToken().getUsername();
+        return messageDao.getSentMessages(username,friendName);
     }
 
-    @Transactional
     public void deleteMessage(int messageId) {
         message message = messageDao.findByMessageId(messageId);
         messageDao.delete(message);
     }
 
-    public int getSendMessageId(int userId, int friendId, String sendTime) {
-        return messageDao.getSentMessageId(userId,friendId,sendTime);
-    }
-
-    public List<String[]> getReceiveMessages(int friendId,int userId){
-        return  messageDao.getReceiveMessages(friendId,userId);
+    @NoAop
+    public List<String[]> getReceiveMessages(String friendName,String sendTime){
+        String username = UserContext.getCurrentToken().getUsername();
+        return  messageDao.getReceiveMessages(friendName,username,sendTime);
     }
 
     @Scheduled(fixedDelay = (1000*60*60*24))
-    @Transactional
     public void RestMessageTable(){
         mybatisDao.lockMessageTable();
         mybatisDao.ResetMessageAutoIncrement();

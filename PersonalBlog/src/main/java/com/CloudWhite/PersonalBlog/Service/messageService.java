@@ -8,11 +8,10 @@ import java.sql.Timestamp;
 import java.util.List;
 
 public interface messageService {
-    public List<message> getAllMessages(int senderId,int receiverId);
-    public void sendMessage(message message);
-    public List<String[]> getSentMessage(int userId, int friendId);
+    public List<message> getAllMessages(String friendName);
+    public message sendMessage(message message);
+    public List<String[]> getSentMessage(String friendName);
     public void deleteMessage(int messageId);
-    public int getSendMessageId(int userId,int friendId,String sendTime);
-    public List<String[]> getReceiveMessages(int friendId,int userId);
+    public List<String[]> getReceiveMessages(String friendName,String sendTime);
     public void RestMessageTable();
 }

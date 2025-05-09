@@ -1,7 +1,7 @@
 <template>
   <div class="myArticles-articleDetail">
     <div class="myArticles-content">
-      <p>哈哈哈</p>
+      <p v-for="c in content" :key="c">{{c}}</p>
     </div>
     <div class="myArticles-articleDetailIconGroup">
       <el-icon class="myArticles-articleDetailIcon" @click="toggleLike">
@@ -22,12 +22,14 @@
 // 引入必要的 Vue 函数和 Element Plus 图标
 import { computed, defineProps, ref, defineEmits } from "vue";
 import { Star, StarFilled, ChatDotRound } from '@element-plus/icons-vue';
-
+import axiosToken from "@/axios";
 // 定义组件的自定义事件
 const emit = defineEmits(["back", "updateLike", "updateStar"]);
 
 // 定义组件接收的 props
 const props = defineProps({
+  content:Array,
+  articleId:Number,
   likeCount: Number,
   starCount: Number,
   isLiked: Boolean,
@@ -51,26 +53,39 @@ const likeIcon = computed(() => {
 
 // 点赞按钮点击处理函数
 const toggleLike = () => {
-  if (isLike.value) {
-    likeCount.value--;
-  } else {
-    likeCount.value++;
-  }
-  isLike.value =!isLike.value;
-  emit("updateLike", likeCount.value, isLike.value);
+  axiosToken.get("http://localhost:8081/updateArticleLikeCount",{
+    params:{
+      articleId:props.articleId,
+    },
+    responseType:"json"
+  }).then(res=>{
+    if (isLike.value) {
+      likeCount.value--;
+    } else {
+      likeCount.value++;
+    }
+    isLike.value =!isLike.value;
+    emit("updateLike", likeCount.value, isLike.value,props.articleId);
+  }).catch(console.log)
 };
 
 // 收藏按钮点击处理函数
 const toggleStar = () => {
-  if (isStar.value) {
-    starCount.value--;
-  } else {
-    starCount.value++;
-  }
-  isStar.value =!isStar.value;
-  emit("updateStar", starCount.value, isStar.value);
+  axiosToken.get("http://localhost:8081/updateArticleStarCount",{
+    params:{
+      articleId:props.articleId,
+    },
+    responseType:"json"
+  }).then(res=>{
+    if (isStar.value) {
+      starCount.value--;
+    } else {
+      starCount.value++;
+    }
+    isStar.value =!isStar.value;
+    emit("updateStar", starCount.value, isStar.value,props.articleId);
+  }).catch(console.log)
 };
-
 // 返回按钮点击处理函数
 const back = () => {
   emit("back");

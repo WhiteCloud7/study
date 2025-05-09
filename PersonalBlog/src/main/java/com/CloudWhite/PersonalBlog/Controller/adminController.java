@@ -15,10 +15,4 @@ public class adminController {
     public adminController(userService userService) {
         this.userService = userService;
     }
-
-    @GetMapping("/adminAvatar")
-    @Description("得到管理员年龄")
-    public String getAdminAge(int userId) {
-        return userService.getUserByUserId(userId).getAvatar_src();
-    }
 }

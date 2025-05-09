@@ -9,31 +9,37 @@ export default[
     path: '/index',
     name: 'index',
     component: index,
+    meta:{showNav:true},
     children :[{
       path: "/myNotice/:noticeId",
       name: "notice",
       component: () => import("@/components/index/Main/noticeDetail.vue"),
-      props: true
+      meta:{showNav:true},
+      props: true,
     }]
   },
   {
     path: '/resume',
     name: 'resume',
+    meta:{showNav:true},
     component: resume
   },
   {
     path: '/project',
     name: 'project',
+    meta:{showNav:true},
     component: project
   },
   {
     path: '/article',
     name: 'article',
+    meta:{showNav:true},
     component: article
   },
   {
     path: '/contactMe',
     name: 'contactMe',
+    meta:{showNav:true},
     component: contact
   }
 ]

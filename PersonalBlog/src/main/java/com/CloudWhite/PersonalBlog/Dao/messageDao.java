@@ -9,16 +9,15 @@ import java.sql.Timestamp;
 import java.util.List;
 
 public interface messageDao extends JpaRepository<message,Integer> {
-    @Query(value = "SELECT * FROM message WHERE sender_id = :senderId AND receiver_id = :receiverId OR sender_id = :receiverId AND receiver_id = :senderId",nativeQuery = true)
-    public List<message> getAllMessages(@Param("senderId") int senderId, @Param("receiverId") int receiverId);
-    @Query(value = "SELECT message_id,message,send_time FROM message WHERE sender_id = :senderId AND receiver_id = :receiverId",nativeQuery = true)
-    public List<String[]> getSentMessages(@Param("senderId") int senderId, @Param("receiverId") int receiverId);
+    @Query(value = "SELECT * FROM message WHERE sender_name = :senderName AND receiver_name = :receiverName OR sender_name = :receiverName AND receiver_name = :senderName",nativeQuery = true)
+    public List<message> getAllMessages(@Param("senderName") String senderName, @Param("receiverName") String receiverName);
+    @Query(value = "SELECT message_id,message,send_time FROM message WHERE sender_name = :senderName AND receiver_name = :receiverName",nativeQuery = true)
+    public List<String[]> getSentMessages(@Param("senderName") String senderName, @Param("receiverName") String receiverName);
 
     public message findByMessageId(int messageId);
 
-    @Query(value = "SELECT message_id FROM message WHERE sender_id = :senderId AND receiver_id = :receiverId AND send_time = :sendTime", nativeQuery = true)
-    public int getSentMessageId(int senderId,int receiverId,String sendTime);
+    public message findBySenderNameAndReceiverNameAndSendTime(String senderName,String receiveName,String sendTime);
 
-    @Query(value = "SELECT message_id,message,send_time FROM message WHERE sender_id = :friendId AND receiver_id = :userId;",nativeQuery = true)
-    public List<String[]> getReceiveMessages(@Param("friendId") int friendId, @Param("userId") int userId);
+    @Query(value = "SELECT message_id,message,send_time FROM message WHERE sender_name = :friendName AND receiver_name = :username AND send_Time > :sendTime;",nativeQuery = true)
+    public List<String[]> getReceiveMessages(@Param("friendName") String friendName, @Param("username") String username,@Param("sendTime") String sendTime );
 }

@@ -1,6 +1,6 @@
 <template>
   <div class="contact-send">
-    <el-avatar class="contact-sendAvatar"></el-avatar>
+    <el-avatar class="contact-sendAvatar" :src="avatarSrc"></el-avatar>
     <p @contextmenu.prevent
        class="contact-sendContent"
        @mousedown.right="showOptions"
@@ -28,14 +28,15 @@
 </template>
 <script setup>
 import {defineProps, onMounted, ref, defineEmits, onUnmounted} from "vue";
-import axios from 'axios';
+import axios from '@/axios';
 import {ElMessage} from "element-plus";
 
 const props = defineProps({
   messageId:Number,
   message: String,
   sendTime: String,
-  activeSendTime: String
+  activeSendTime: String,
+  avatarSrc:String
 })
 const dialogVisible = ref(false);
 const emit = defineEmits(["deleteSendMessage", "updateActiveSendTime"]);

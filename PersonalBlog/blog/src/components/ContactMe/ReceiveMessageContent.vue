@@ -1,6 +1,6 @@
 <template>
   <div class="contact-receive">
-    <el-avatar class="contact-receiveAvatar"></el-avatar>
+    <el-avatar class="contact-receiveAvatar" :src="receiverProfile.avatar_src"></el-avatar>
     <p @contextmenu.prevent
        class="contact-receiveContent"
        @mousedown.right="showOptions"
@@ -27,18 +27,19 @@
   </el-dialog>
 </template>
 <script setup>
-import {defineProps, onMounted, ref, defineEmits, onUnmounted} from "vue";
-import axios from 'axios';
+import {defineProps, onMounted, ref, defineEmits, onUnmounted, inject} from "vue";
+import axios from '@/axios';
 
 const props = defineProps({
   messageId:Number,
   message: String,
   receiveTime: String,
-  activeReceiveTime: String
+  activeReceiveTime: String,
+  receiverProfile:Object
 })
 const dialogVisible = ref(false);
 const emit = defineEmits(["deleteReceiveMessage", "updateActiveReceiveTime"]);
-
+const userId = inject("userId");
 
 function showOptions() {
   emit("updateActiveReceiveTime", props.receiveTime);

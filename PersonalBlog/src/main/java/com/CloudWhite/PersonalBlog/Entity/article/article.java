@@ -1,5 +1,6 @@
-package com.CloudWhite.PersonalBlog.Entity;
+package com.CloudWhite.PersonalBlog.Entity.article;
 
+import com.CloudWhite.PersonalBlog.Entity.user;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import io.swagger.v3.oas.annotations.media.Schema;

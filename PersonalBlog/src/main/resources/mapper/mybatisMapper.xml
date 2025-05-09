@@ -3,6 +3,11 @@
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<mapper namespace="">
-    
+<mapper namespace="com.CloudWhite.PersonalBlog.Dao.mybatisDao">
+   <select id="getNextDir" resultType="project" parameterType="Integer">
+       select * from project where parent_directory_id =
+       <foreach collection="filePath" item="currentPath" separator=" ( " close=" ) ">
+
+       </foreach>
+   </select>
 </mapper>

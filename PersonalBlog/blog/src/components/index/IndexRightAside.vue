@@ -72,6 +72,8 @@ img {
 }
 
 .footer .passage {
+  height: 100%;
+  padding-top: 10px;
   font-size: 15px; /* 调整字体大小 */
   font-weight: 500;
   font-family: 'KaiTi', 'STKaiti', 'Songti SC', serif;

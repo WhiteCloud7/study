@@ -21,10 +21,12 @@
 </template>
 
 <script setup>
-import {ref, computed, watch, onMounted, nextTick} from "vue";
+import {ref, computed, watch, onMounted, nextTick, getCurrentInstance} from "vue";
 import { defineProps, defineEmits } from "vue";
 import { Star, StarFilled, ChatDotRound } from "@element-plus/icons-vue";
 import axios from "axios";
+import axiosToken from "@/axios";
+import {useRouter} from "vue-router";
 
 const props = defineProps({
   noticeId: Number,
@@ -37,7 +39,9 @@ const props = defineProps({
 });
 
 const emit = defineEmits(["updateLike", "updateStar", "back"]);
-
+const instance = getCurrentInstance();
+const isLogin = instance?.appContext.config.globalProperties.$isLogin;
+const router = useRouter();
 const likeCount = ref(props.likeCount);
 const starCount = ref(props.starCount);
 const isLike = ref(props.isLiked);
@@ -54,25 +58,33 @@ const likeIcon = computed(() =>
 );
 
 function toggleLike() {
-  isLike.value = !isLike.value;
-  likeCount.value += isLike.value ? 1 : -1;
+  if(isLogin.value===true){
+    isLike.value = !isLike.value;
+    likeCount.value += isLike.value ? 1 : -1;
 
-  axios.get("http://localhost:8081/updateLikeCount", {
-    params: { noticeId: props.noticeId, userId: 1 }
-  }).catch(console.log);
+    axiosToken.get("http://localhost:8081/updateLikeCount", {
+      params: { noticeId: props.noticeId}
+    }).catch(console.log);
 
-  emit("updateLike", props.noticeId, likeCount.value, isLike.value);
+    emit("updateLike", props.noticeId, likeCount.value, isLike.value);
+  }else {
+    router.push("/login");
+  }
 }
 
 function toggleStar() {
-  isStar.value = !isStar.value;
-  starCount.value += isStar.value ? 1 : -1;
+  if(isLogin.value===true){
+    isStar.value = !isStar.value;
+    starCount.value += isStar.value ? 1 : -1;
 
-  axios.get("http://localhost:8081/updateStarCount", {
-    params: { noticeId: props.noticeId, userId: 1 }
-  }).catch(console.log);
+    axiosToken.get("http://localhost:8081/updateStarCount", {
+      params: { noticeId: props.noticeId }
+    }).catch(console.log);
 
-  emit("updateStar", props.noticeId, starCount.value, isStar.value);
+    emit("updateStar", props.noticeId, starCount.value, isStar.value);
+  }else {
+    router.push("/login");
+  }
 }
 
 const getLabelFormat = (count) => {

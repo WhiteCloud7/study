@@ -57,13 +57,18 @@
 </template>
 
 <script setup>
-import {ref, onMounted, nextTick} from 'vue';
+import {ref, onMounted, nextTick, getCurrentInstance} from 'vue';
 import axios from 'axios';
+import axiosToken from '@/axios';
 import { Star, StarFilled, View } from '@element-plus/icons-vue';
 import GlobalMask from '@/components/public/GlobalMask.vue';
 import EditNotice from '@/components/index/Main/EditNotice.vue';
 import NoticeDetail from '@/components/index/Main/noticeDetail.vue';
+import {useRouter} from "vue-router";
 
+const instance = getCurrentInstance();
+const isLogin = instance?.appContext.config.globalProperties.$isLogin;
+const router = useRouter();
 const notices = ref([]);
 const isLike = ref({});
 const isStarred = ref({});
@@ -113,27 +118,36 @@ function getCurrentNotice(noticeId) {
 function formatCount(count){
   return count > 9999 ? '9999+' : count;
 }
-
 function toggleLike(noticeId) {
-  const notice = getCurrentNotice(noticeId);
-  if (!notice) return;
-  notice.likeCount += isLike.value[noticeId] ? -1 : 1;
-  isLike.value[noticeId] = !isLike.value[noticeId];
+  if(isLogin.value===true){
+    const notice = getCurrentNotice(noticeId);
+    if (!notice) return;
+    notice.likeCount += isLike.value[noticeId] ? -1 : 1;
+    isLike.value[noticeId] = !isLike.value[noticeId];
 
-  axios.get("http://localhost:8081/updateLikeCount", {
-    params: { noticeId, userId: 1 }
-  }).catch(console.log);
+    axiosToken.get("http://localhost:8081/updateLikeCount", {
+      params: { noticeId }
+    }).catch(console.log);
+  }else{
+    router.push("login");
+  }
 }
 
 function toggleStar(noticeId) {
-  const notice = getCurrentNotice(noticeId);
-  if (!notice) return;
-  notice.starCount += isStarred.value[noticeId] ? -1 : 1;
-  isStarred.value[noticeId] = !isStarred.value[noticeId];
+  if(isLogin.value===true){
+    const notice = getCurrentNotice(noticeId);
+    if (!notice) return;
+    notice.starCount += isStarred.value[noticeId] ? -1 : 1;
+    isStarred.value[noticeId] = !isStarred.value[noticeId];
 
-  axios.get("http://localhost:8081/updateStarCount", {
-    params: { noticeId, userId: 1 }
-  }).catch(console.log);
+    axiosToken.get("http://localhost:8081/updateStarCount", {
+      params: { noticeId}
+    }).catch(err=>{
+      console.log(err)
+    });
+  }else {
+    router.push("login");
+  }
 }
 
 function updateLike(id, count, liked) {
@@ -153,6 +167,9 @@ function updateStar(id, count, starred) {
 }
 
 async function detail(noticeId) {
+  if(isLogin.value===true){
+
+  }
   const notice = getCurrentNotice(noticeId);
   if (!notice) return;
 
@@ -173,15 +190,17 @@ async function detail(noticeId) {
 }
 
 async function edit(noticeId) {
-  const notice = getCurrentNotice(noticeId);
-  if (!notice) return;
+  await axiosToken.get("http://localhost:8081/permissionCheck", null).then(res=>{
+    const notice = getCurrentNotice(noticeId);
+    if (!notice) return;
 
-  currentNoticeId.value = noticeId;
-  currentMessage.value = notice.noticeMessage;
-  currentNoticeTitle.value = notice.title;
+    currentNoticeId.value = noticeId;
+    currentMessage.value = notice.noticeMessage;
+    currentNoticeTitle.value = notice.title;
 
-  editNotice.value = EditNotice;
-  isMask.value = true;
+    editNotice.value = EditNotice;
+    isMask.value = true;
+  }).catch(console.log);
 }
 
 function back() {
@@ -201,11 +220,12 @@ async function initNotice() {
 
     for (let notice of notices.value) {
       const id = notice.noticeId;
-      const info = await axios.get("http://localhost:8081/getNoticeInfo", {
-        params: { noticeId: id, userId: 1 }
+      const info = await axiosToken.get("http://localhost:8081/getNoticeInfo", {
+        params: { noticeId: id}
       });
-      isLike.value[id] = info.data.like;
-      isStarred.value[id] = info.data.star;
+      isLike.value[id] = info.data.data.like;
+      isStarred.value[id] = info.data.data.star;
+      console.log(info.data.data);
     }
   } catch (err) {
     console.log(err);

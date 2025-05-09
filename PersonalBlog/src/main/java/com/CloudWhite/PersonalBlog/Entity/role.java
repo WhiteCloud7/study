@@ -18,9 +18,8 @@ public class role {
     @Column(name = "permission_id", insertable = false, updatable = false)
     private int permissionId;
     @Schema(name="角色对应权限对象")
-    @OneToOne(fetch = FetchType.LAZY)
+    @OneToOne
     @JoinColumn(name = "permission_id")
-    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
     private permission permission;
 
     public role() {

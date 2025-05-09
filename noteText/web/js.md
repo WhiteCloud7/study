@@ -764,3 +764,24 @@ cookie使用：
 3. Mybatis： 
   - ${}: 直接拼接sql，不是用户输入而是开发者进行动态sql拼接，但是会有sql注入风险
   - #{}: 主要用于传递参数，防止SQL注入。MyBatis 会自动把#{}里的参数解析为?占位符，然后绑定变量。
+- ```
+  public Object login(String username,String password){
+      user user = userDao.findByUsername(username);
+      role role = new role();
+      if(user!=null)
+          if(Objects.equals(userDao.findPasswordByUserName(username), password)){
+              token token = new token();
+              token.setUserId(user.getUserId());
+              token.setUsername(user.getUsername());
+              token.setRole(role);
+              token.getRole().setRoleName(user.getRole().getRoleName());
+  
+              String userToken = JWTUtils.createRefreshToken(token,0);
+              return userToken;
+          }
+          else
+              return "密码错误";
+      else
+          return "账号不存在";
+  }
+  ```

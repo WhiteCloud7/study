@@ -4,11 +4,14 @@ export default [
     {
         path: '/project',
         name: 'project',
+        meta:{showNav:true},
         component: myProjects
     },
     {
         path: '/project/:first?/:second?/:third?/:fourth?/:fifth?/:sixth?/:seventh?',
         name: 'projectPath',
-        component: myProjects
+        meta:{showNav:true},
+        component: myProjects,
+        props: true
     }
 ]

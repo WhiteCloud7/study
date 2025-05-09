@@ -10,12 +10,12 @@ public class message {
     @Column(name = "message_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int messageId;
-    @Schema(name="发送者ID")
-    @JoinColumn(name = "sender_id")
-    private int senderId;
-    @Schema(name = "接收者ID")
-    @JoinColumn(name = "receiver_id")
-    private int receiverId;
+    @Schema(name="发送者名")
+    @JoinColumn(name = "sender_name")
+    private String senderName;
+    @Schema(name = "接收者名")
+    @JoinColumn(name = "receiver_name")
+    private String receiverName;
     @Schema(name = "消息内容")
     private String message;
     @Schema(name = "发送时间")
@@ -24,10 +24,10 @@ public class message {
     public message() {
     }
 
-    public message(int messageId, int senderId, int receiverId, String message,String sendTime) {
+    public message(int messageId, String senderName, String receiverName, String message, String sendTime) {
         this.messageId = messageId;
-        this.senderId = senderId;
-        this.receiverId = receiverId;
+        this.senderName = senderName;
+        this.receiverName = receiverName;
         this.message = message;
         this.sendTime = sendTime;
     }
@@ -38,22 +38,6 @@ public class message {
 
     public void setMessageId(int messageId) {
         this.messageId = messageId;
-    }
-
-    public int getSenderId() {
-        return senderId;
-    }
-
-    public void setSenderId(int senderId) {
-        this.senderId = senderId;
-    }
-
-    public int getReceiverId() {
-        return receiverId;
-    }
-
-    public void setReceiverId(int receiverId) {
-        this.receiverId = receiverId;
     }
 
     public String getMessage() {
@@ -70,5 +54,21 @@ public class message {
 
     public void setSendTime(String sendTime) {
         this.sendTime = sendTime;
+    }
+
+    public String getSenderName() {
+        return senderName;
+    }
+
+    public void setSenderName(String senderName) {
+        this.senderName = senderName;
+    }
+
+    public String getReceiverName() {
+        return receiverName;
+    }
+
+    public void setReceiverName(String receiverName) {
+        this.receiverName = receiverName;
     }
 }

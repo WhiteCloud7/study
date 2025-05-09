@@ -1,20 +1,59 @@
 package com.CloudWhite.PersonalBlog.Model.Redis;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.annotation.Resource;
 import org.springframework.data.redis.core.HashOperations;
 import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.stereotype.Component;
 
-@Resource
+import java.io.IOException;
+import java.util.Map;
+import java.util.concurrent.TimeUnit;
+
+@Component
 public class redisHashTemplateConfig {
+
+    @Resource
     private StringRedisTemplate stringRedisTemplate;
 
-    public void setHash(String key,Object hashKey,Object value){
-        HashOperations<String, Object, Object> valueOperations = stringRedisTemplate.opsForHash();
-        valueOperations.put(key, hashKey,value);
+    private final ObjectMapper objectMapper = new ObjectMapper();
+
+    // 存储字符串值
+    public void setHash(String key, Object hashKey, Object value) {
+        HashOperations<String, Object, Object> ops = stringRedisTemplate.opsForHash();
+        ops.put(key, hashKey, value);
     }
 
-    public void getHash(String key,Object hashKey){
-        HashOperations<String, Object, Object> valueOperations = stringRedisTemplate.opsForHash();
-        valueOperations.get(key, hashKey);
+    // 获取字符串值
+    public Object getHash(String key, Object hashKey) {
+        HashOperations<String, Object, Object> ops = stringRedisTemplate.opsForHash();
+        return ops.get(key, hashKey);
+    }
+
+    // 存储对象为 JSON 字符串
+    public <T> void setHashObject(String key, Object hashKey, T obj) {
+        try {
+            String json = objectMapper.writeValueAsString(obj);
+            setHash(key, hashKey, json);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException("序列化失败", e);
+        }
+    }
+
+    // 获取 JSON 并反序列化为对象
+    public <T> T getHashObject(String key, Object hashKey, Class<T> clazz) {
+        Object value = getHash(key, hashKey);
+        if (value == null) return null;
+        try {
+            return objectMapper.readValue(value.toString(), clazz);
+        } catch (IOException e) {
+            throw new RuntimeException("反序列化失败", e);
+        }
+    }
+
+    // 可选：一次存储多个字段（批量 put）
+    public void putAllHash(String key, Map<String, String> map) {
+        stringRedisTemplate.opsForHash().putAll(key, map);
     }
 }

@@ -15,11 +15,6 @@ public class noticeInfo {
     @Schema(name="通知ID")
     @Column(name="notice_id",insertable = false,updatable = false)
     private int noticeId;
-    @Schema(name="通知ID的对象")
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name="notice_id")
-    @JsonIgnore
-    private notice notice;
     @Schema(name="当前用户ID")
     private int userId;
     @Schema(name="当前用户是否点赞")
@@ -41,7 +36,6 @@ public class noticeInfo {
     public noticeInfo(int noticeinfoId, int noticeId, com.CloudWhite.PersonalBlog.Entity.notice.notice notice, boolean isLike, boolean isStar) {
         this.noticeinfoId = noticeinfoId;
         this.noticeId = noticeId;
-        this.notice = notice;
         this.isLike = isLike;
         this.isStar = isStar;
     }
@@ -76,14 +70,6 @@ public class noticeInfo {
 
     public void setNoticeinfoId(int noticeinfoId) {
         this.noticeinfoId = noticeinfoId;
-    }
-
-    public com.CloudWhite.PersonalBlog.Entity.notice.notice getNotice() {
-        return notice;
-    }
-
-    public void setNotice(com.CloudWhite.PersonalBlog.Entity.notice.notice notice) {
-        this.notice = notice;
     }
 
     public int getNoticeId() {

@@ -3,11 +3,12 @@
     <my-articles></my-articles>
   </div>
 </template>
-<script>
+<script setup>
 import MyArticles from "@/components/article/MyArticles";
-export default {
-  components: {MyArticles}
-}
+import {useHead} from "@vueuse/head";
+useHead({
+  title:"文章",
+})
 </script>
 <style>
 myArticle-article{

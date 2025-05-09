@@ -1,7 +1,9 @@
 package com.CloudWhite.PersonalBlog.Controller;
 
 import com.CloudWhite.PersonalBlog.Entity.friendList;
+import com.CloudWhite.PersonalBlog.Model.ResponseEntity;
 import com.CloudWhite.PersonalBlog.Service.friendListService;
+import com.CloudWhite.PersonalBlog.Utils.Annotation.LoginRequired;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Description;
@@ -20,9 +22,15 @@ public class friendListController {
     }
 
     @GetMapping("/getFriendBasicInfo")
+    @LoginRequired
     @Description("得到好友基础信息，即头像和昵称")
-    public List<String[]> getFriendBasicInfo(int userId){
-        System.out.println(friendListService.getFriendBasicInfo(userId));
-        return friendListService.getFriendBasicInfo(userId);
+    public ResponseEntity getFriendBasicInfo(){
+        return new ResponseEntity(friendListService.getFriendBasicInfo());
+    }
+
+    @GetMapping("/getFriendBasicInfoByUsername")
+    @LoginRequired
+    public ResponseEntity getFriendBasicInfoByUsername(String friendName){
+        return new ResponseEntity(friendListService.getFriendBasicInfoByUsername(friendName));
     }
 }

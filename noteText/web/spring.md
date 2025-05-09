@@ -480,6 +480,35 @@ mybatis:
 ```
 这里没有配置MapperScannerConfigurer，因为springBoot可以在启动类加@MapperScan("mapper所在的包")来扫描mapper，也可以在mapper层加@Mapper注解来扫描mapper，但这样要每个mapper写一遍
 此时整合了mybatis的springboot的控制器就可以直接调用service层的方法了，但注意此时不用getBean()了，所以只能用依赖注入了获取service层的方法，当然这样更简单。
+## 一些常用注解（上面或下面提到的略）
+- @Scheduled：定时任务，需要在启动类加@EnableScheduling注解启用
+  - fixedRate：指定任务执行的固定时间间隔，单位是毫秒
+  - fixedDelay：指定任务执行完成后到下一次任务开始的固定时间间隔，单位为毫秒，和上面区别是fixedRate忽略了任务执行时间。
+  - initialDelay：用来设置任务首次执行的延迟时间，单位是毫秒
+  - cron：借助 Cron 表达式来指定任务的执行时间。Cron 表达式是一个字符串，由 6 或 7 个字段构成，分别表示秒、分、时、日、月、周、年（年为可选字段）。如`0 0 12 * * ?`每天中午 12 点触发
+## 启动时执任务
+1. 实现ApplicationRunner接口：
+```java
+@Component
+public class exmaple implements ApplicationRunner {
+    @Override
+    public void run(ApplicationArguments args) {
+       // 这里写要执行的任务代码
+    }
+}
+```
+2. 使用 @PostConstruct 初始化(推荐)
+```java
+@Component
+public class BloomFilterInitializer {
+    @PostConstruct
+    public void initBloomFilter() {
+        // 这里写要执行的任务代码
+    }
+}
+
+```
+3. 使用@EventListener(ApplicationReadyEvent.class)注解，同PostConstruct用法，这个可以启动后运行，这一解决一些Hiberate的问题
 ## 集成swagger：
 swagger主要是为了接口文档，便于代码理解和测试
 1. 依赖：
@@ -540,8 +569,8 @@ springdoc:
 ## 集成thymeleaf
 1. 依赖：
 另外，在html页面上如果要使用thymeleaf模板，需要在页面标签中引入：`<html xmlns:th="http://www.thymeleaf.org">`
-2. 配置：springboot已经默认级别配置好了，可能就一个受否开启页面缓存需要注意，默认是开启的，如要关闭：`spring.thymeleaf.cache=false #关闭缓存`
-3. 使用：
+1. 配置：springboot已经默认级别配置好了，可能就一个受否开启页面缓存需要注意，默认是开启的，如要关闭：`spring.thymeleaf.cache=false #关闭缓存`
+2. 使用：
 访问静态界面，这里上面有说，一般由于写错误页面，如500、404等等，thymeleaf会自动识别并返回错误页面，当然也可以自己写。  
 然后就是一些thymeleaf操作了，我们用一个例子说明：
 ```html
@@ -628,7 +657,7 @@ SpringBoot的事务管理非常简单，只需要在方法上加上@Transactiona
    - 共享数据：ServletContext 提供了一个在整个 Web 应用程序中共享数据的机制。多个 Servlet、Filter 或其他 Web 组件可以通过 ServletContext 来存储和获取共享数据，实现不同组件之间的信息传递和交互。
    - 访问资源：它允许Servlet访问Web应用程序的资源，如配置文件、静态资源等。通ServletContext，可以获取资源的输入流，从而读取资源的内容。
    - 获取服务器信息：ServletContext 提供了获取服务器相关信息的方法。
-   2. 常用方法：
+   1. 常用方法：
       - get/setAttribute()：获取/设置属性
       - removeAttribute()：移除属性
       - getRealPath()：获取资源的真实路径
@@ -652,9 +681,9 @@ public class ContextRefreshedEventListener implements ApplicationListener<Contex
 }
 ```
 **这里可以看到ApplicationListener是一个泛型，我们可以监听很多不同事件，还可以用来自定义监听器。**
-2. 自定义监听器：  
+1. 自定义监听器：  
 显然我们只要自定义监听事件然后实现ApplicationListener接口即可。这里自定义事件只要继承ApplicationEvent类即可，这里构造函数有一个参数即数据源，即监听的对象。
-3. 监听sesion：
+1. 监听sesion：
 当我们要监听session时，如需要session存储登录人数，我们需要实现HttpSessionListener接口，然后重写sessionCreated和sessionDestroyed方法，然后在方法里写我们要监听的事件。以下是一个例子：
 ```java
 @Component
@@ -677,7 +706,7 @@ public class SessionListener implements HttpSessionListener {
     }
 }
 ```
-4. 监听ServletRequest：
+1. 监听ServletRequest：
 都是一个道理，直接贴代码：
 ```java
 @Component
@@ -750,6 +779,7 @@ public class interceptionConfig extends WebMvcConfigurationSupport {
 ```
 **这里的addPathPatterns是拦截的路径，`/**`是拦截所有路径**，一般就是拦截所有请求，具体视情况而定。  
 但是这里有个问题，就是拦截器是全局的，即所有请求都会被拦截，静态资源也会被拦截，即视图都无法显示，所以即使我们拦截所有请求也要防止拦截静态资源。这里有两个方法：
+
 ```java
 //方法一为重写addResourceHandlers方法，指定不拦截某些资源更灵活
 @Override
@@ -789,19 +819,21 @@ if (handler instanceof HandlerMethod) {
 ```
 这里有个isAnnotationPresent 方法，用于判断方法是否有指定注解。  
 那么现在就可以来看如何定义注解：
+
       1. @interface关键字修饰方法
-      2. 定义元注解，以下是常用元注解：
-      - @Target：指定注解的作用目标，如方法、类、接口等等 
-      - @Retention：指定注解的保留策略，如运行时、编译时、源文件等等
-      - @Documented：指定注解是否包含在 JavaDoc 文档中
-      - @Inherited：指定注解是否可继承
-      - @Repeatable：指定注解是否可重复使用
-      - 等等
-      3. 定义注解的属性，在方法里定义，格式为`属性名() default "默认值";`、
+            2.2. 定义元注解，以下是常用元注解：
+
+- @Target：指定注解的作用目标，如方法（ElementType.METHOD）、类接口或枚举类(.TYPE)、成员变量(.FIELD)、方法参数（.PARAMETER）、构造方法(.CONSTRUCTOR)、局部变量(.LOCAL_VARIABLE)上。 
+- @Retention：指定注解的保留策略，如运行时（RetentionPolicy.RUNTIME，最常用的写法）、编译时（.CLASS，运行时不可读）、源文件(.SOURCE，编译后消失)等等
+- @Documented：指定注解是否包含在 JavaDoc 文档中
+- @Inherited：指定注解是否可继承
+- @Repeatable：指定注解是否可重复使用等等
+  3. 定义注解的属性，在方法里定义，格式为`lei'x属性名() default "默认值";`
 
 ## 跨域
 当接收请求的接口和请求的页面不在同一个域名下时，就会出现跨域问题，除了微服务、使用第三方API外，现代的前后端分离也经常需要跨域，所以我们要解决跨域问题。
 在局部情况下，我们用`@CrossOrigin`注解来解决跨域问题，该注解参数如下（都为可选参数）：
+
 - origins：指定允许访问的源地址列表，默认为 *。你可以指定一个或多个允许的跨域请求的源地址（多个逗号隔开即可）。
 - methods：指定允许的 HTTP 方法列表，默认为 *。你可以指定一个或多个允许的 HTTP 方法（RequestMethod.Get、Post、Put等等）。
 - allowedHeaders：指定允许的请求头列表，默认为 *。你可以指定一个或多个允许的请求头。
@@ -880,10 +912,73 @@ public String getString(String key){
     ValueOperations valueOperations = stringRedisTemplate.opsForValue();
     valueOperations.get(key);
 }
+//对于不用注解，可以接上面，存为字符串后用Jason库处理未JSON字符串即可，如下
+String json = objectMapper.writeValueAsString(obj);
 ```
 2. hash:这个就是上面的在加一个key（即hash的key）,将Operations换成HashOperations、opsForValue换成opsForHash即可，get和set变成了put和get 
 3. list：将Operations换成ListOperations、opsForValue换成opsForList即可，get和set变成了leftPush和rightPop  
 *这里注意之最后都会返回一个json字符串，所以要在设置时进行数值转换*
+### 相关注解
+1. @Cacheable：方法执行前先查缓存，有则返回，无则执行方法并缓存结果
+   - value: 缓存的名称，每个缓存名称下面可以有多个 key。
+   - key: 缓存的 key，支持 SpEL 表达式。
+   - condition: 缓存的条件，只有当条件为 true 时才缓存，支持 SpEL 表达式。
+   - unless: 方法执行完后判断是否缓存结果，返回 true 不缓存
+   - sync: 是否异步执行，默认为 false。
+2. @putCache：这个始终会执行方法，然后将结果放入缓存中。显然用于和@Scheduled搭配使用，定时更新缓存
+   - 支持value、key、condition
+3. @CacheEvict：清除缓存
+   - 支持value、key、condition
+   - allEntries：是否清除所有缓存，默认为 false（指清除整个value而不是整个redis数据库）。
+   - beforeInvocation：是否在方法执行前清除缓存，默认为 false。 
+4. @Chaching: 组合注解，可以同时使用多个@Cacheable、@CachePut、@CacheEvict，如`@Caching(evict = {@CacheEvict(value = "userCache", key = "#userId"),@CacheEvict(value = "postCache", key = "#userId")})`
+5. @EnableCaching ：开启缓存功能，在启动类上加上这个注解即可
+6. 这里注意，用注解的话系统会自动进行JDK序列化，但我们一般对于基本数值类型和字符串我们是直接存的，而对象我们使用JSON序列化，所以我们要在配置类里加上：
+```java
+@Configuration
+public class redisConfig {
+    @Bean
+    public CacheManager cacheManager(RedisConnectionFactory factory) {
+        RedisCacheConfiguration config = RedisCacheConfiguration.defaultCacheConfig()
+                .entryTtl(Duration.ofHours(1))  // 缓存过期时间，可自定义
+                .serializeKeysWith(RedisSerializationContext.SerializationPair.fromSerializer(new StringRedisSerializer()))
+                .serializeValuesWith(RedisSerializationContext.SerializationPair.fromSerializer(new GenericJackson2JsonRedisSerializer()));
+
+        return RedisCacheManager.builder(factory)
+                .cacheDefaults(config)
+                .build();
+    }
+
+    @Bean
+    public RedisTemplate<String, Object> redisTemplate(RedisConnectionFactory connectionFactory) {
+        RedisTemplate<String, Object> template = new RedisTemplate<>();
+        template.setConnectionFactory(connectionFactory);
+
+        // key 用 String 序列化
+        StringRedisSerializer stringSerializer = new StringRedisSerializer();
+        template.setKeySerializer(stringSerializer);
+        template.setHashKeySerializer(stringSerializer);
+
+        // value 用 GenericJackson2JsonRedisSerializer（自动处理类型信息）
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.setVisibility(PropertyAccessor.ALL, JsonAutoDetect.Visibility.ANY);
+        mapper.activateDefaultTyping(
+                BasicPolymorphicTypeValidator.builder()
+                        .allowIfSubType("com.CloudWhite")
+                        .build(),
+                ObjectMapper.DefaultTyping.NON_FINAL
+        );
+        GenericJackson2JsonRedisSerializer serializer = new GenericJackson2JsonRedisSerializer(mapper);
+
+        template.setValueSerializer(serializer);
+        template.setHashValueSerializer(serializer);
+
+        template.afterPropertiesSet();
+        return template;
+    }
+}
+```
+
 ## 集成jms
 ### 作用：
 JMS 即 Java 消息服务（Java Message Service）应用程序接口，是一个Java平台中关于面向消息中间件（MOM）的 API，用于在两个应用程序之间，或分布式系统中发送消息，进行异步通信（即无需等接收端确认即可进行新的请求）。Java 消息服务是一个与具体平台无关的 API，绝大多数 MOM 提供商都对 JMS 提供支持。  
@@ -902,7 +997,7 @@ spring:
       # 如果此处设置为true，需要添加activemq-pool的依赖包，否则会自动配置失败，无法注入JmsMessagingTemplate
       enabled: false
 ```
-3. 使用：  
+1. 使用：  
 先写个配置类：
 ```java
 @Configuration
@@ -1201,7 +1296,7 @@ public class JwtUtils {
         return Jwts.builder()
                 .setSubject(username) //这个是用户的核心标识符，如用户名、用户ID等等
                 .claim("userId", userId)  // 可自定义你需要的 claim，即可写几个claim
-                .setIssuedAt(new Date())
+                .setIssuedAt(new Date())  //JWT签发时间，就是生成时间
                 .setExpiration(new Date(System.currentTimeMillis() + expiration))  // 设置过期时间
                 .signWith(SignatureAlgorithm.HS512, SECRET_KEY)  // 使用 HS512 算法签名
                 .compact(); //返回最终的字符串

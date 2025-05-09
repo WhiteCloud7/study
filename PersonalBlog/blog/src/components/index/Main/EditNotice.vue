@@ -13,7 +13,7 @@
 </template>
 <script setup>
 import {defineEmits,defineProps,ref} from "vue";
-import axios from "axios";
+import axios from "@/axios";
 const props = defineProps({
   message: String,
   noticeId: Number,
@@ -36,18 +36,17 @@ function save(){
   params.append("title",noticeTitle.value);
   params.append("messageText", messageText.value);
   axios.post("http://localhost:8081/saveNotice",params,{
-    responseType: 'text',
     headers: {
       "Content-Type": "application/x-www-form-urlencoded"
     }
   }).then(res =>{
-    if(res.data=="保存成功"){
-      confirm("保存成功!");
+    if(res.data.message=="保存成功"){
+      confirm("保存成功！");
       window.location.reload();
     }
     else
       alert("保存失败!");
-  }).then(err =>{
+  }).catch(err =>{
     console.log(err);
   });
 }

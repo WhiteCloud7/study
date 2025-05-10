@@ -7,7 +7,7 @@
       <component
           v-for="msg in allMessages"
           :key="msg.messageId"
-          :is="msg.senderName === currentUserName ? SendMessageContent : ReceiveMessageContent"
+          :is="msg.receiverName === currentUserName ? ReceiveMessageContent : SendMessageContent"
           :message-id="msg.messageId"
           :message="msg.message"
           :send-time="msg.sendTime"
@@ -39,7 +39,8 @@
 </template>
 
 <script setup>
-import {onMounted, ref, getCurrentInstance, watch} from "vue";
+import {onMounted, ref, getCurrentInstance, watch, nextTick} from "vue";
+import test from  "axios";
 import axios from "@/axios";
 import SendMessageContent from "@/components/ContactMe/SendMessageContent";
 import ReceiveMessageContent from "@/components/ContactMe/ReceiveMessageContent";
@@ -55,6 +56,7 @@ const activeSendTime = ref("");
 const activeReceiveTime = ref("");
 const currentUserAvatar = ref();
 const receiverProfile = ref([]);
+const lastNewTime = ref();
 
 // 键盘按下事件处理函数
 const handleKeyDown = (event) => {
@@ -72,9 +74,8 @@ const handleKeyDown = (event) => {
   }
 };
 
-const sendMessageHandler = () => {
+const sendMessageHandler = async () => {
   if (sendMessage.value.trim() !== "") {
-    const sendTime = new Date();
     const params = {receiverName: currentChatObject.value, message: sendMessage.value}
     axios.post("http://localhost:8081/sendMessage", JSON.stringify(params), {
       headers: {
@@ -85,15 +86,15 @@ const sendMessageHandler = () => {
       if (res.data.message === "发送失败") {
         alert("发送失败");
       } else {
-        const message = res.data.data;
+        const {messageId, receiverName, sendTime, message} = res.data.data;
+        console.log("发送的消息: ",res.data.data)
         allMessages.value.push({
-          messageId: message.messageId,
-          senderName:message.senderName,
-          receiverName: message.receiverName,
-          message: sendMessage.value,
-          sendTime: message.sendTime
+          messageId: messageId,
+          receiverName: receiverName,
+          message: message,
+          sendTime: sendTime
         });
-        allMessages.value.sort((a, b) => a.messageId - b.messageId);
+        allMessages.value.sort((a, b) => new Date(a.sendTime) - new Date(b.sendTime));
         sendMessage.value = "";
       }
     });
@@ -101,27 +102,40 @@ const sendMessageHandler = () => {
     confirm("消息不能为空！");
 };
 
+function getLastNewTime(){
+  axios.get("http://localhost:8081/getLastNewTime",{
+    params:{
+      friendName: currentChatObject.value,
+    },
+  }).then(res=> {
+    const data = res.data.data;
+    lastNewTime.value = data;
+    console.log(data);
+  });
+}
+
 function receiveMessage(){
+  if(allMessages.value.length === 0){return}
   axios.get("http://localhost:8081/getReceiveMessage",{
     params:{
-      currentNewMessageTime: allMessages.value[allMessages.value.length-1].sendTime,
-      friendName: currentChatObject.value
+      friendName: currentChatObject.value,
+      currentNewMessageTime: lastNewTime.value
     },
     responseType: "json"
   }).then(res => {
     const gotMessages = res.data.data;
-
     for (const message of gotMessages) {
-      if (!allMessages.value.some(m => m.messageId === message[0])) {
+      if (!allMessages.value.some(m => m.messageId === message.messageId)) {
         allMessages.value.push({
           messageId: message[0],
           receiverName: currentUserName.value,
-          message: message[1],
-          sendTime: message[2]
+          message: message[2],
+          sendTime: message[3]
         });
       }
     }
-    allMessages.value.sort((a, b) => a.messageId - b.messageId);
+    allMessages.value.sort((a, b) => new Date(a.sendTime) - new Date(b.sendTime));
+    getLastNewTime();
   }).catch(err => {
     console.log("接收消息出错", err);
   });
@@ -150,13 +164,17 @@ watch(currentChatObject,()=>{
 function initMessage() {
   axios.get("http://localhost:8081/getAllMessages", {
     params: {
-      friendName:currentChatObject.value
+      friendName: currentChatObject.value
     },
     responseType: "json"
   }).then(res => {
     const gotMessages = res.data.data;
-    allMessages.value = gotMessages.sort((a, b) => a.messageId - b.messageId);
-    console.log(allMessages.value);
+    if (gotMessages !== null) {
+      const sorted = gotMessages.sort((a, b) => new Date(a.sendTime) - new Date(b.sendTime));
+      allMessages.value = sorted;
+    } else {
+      allMessages.value = [];
+    }
   }).catch(err => {
     console.log(err);
   });
@@ -180,6 +198,7 @@ function initCurrentChatObject(){
     responseType: "json"
   }).then(res => {
     receiverProfile.value = res.data.data;
+    console.log("会话对象", receiverProfile.value)
   }).catch(err => {
     console.log(err);
   });
@@ -189,7 +208,8 @@ onMounted(()=>{
   initCurrentUser();
   initCurrentChatObject();
   initMessage();
-  setInterval(receiveMessage,100)
+  getLastNewTime();
+  setInterval(receiveMessage,1000)
 });
 </script>
 

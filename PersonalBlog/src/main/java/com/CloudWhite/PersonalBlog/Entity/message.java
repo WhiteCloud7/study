@@ -5,6 +5,17 @@ import jakarta.persistence.*;
 @Entity
 @Table(name="message")
 public class message {
+    @Override
+    public String toString() {
+        return "message{" +
+                "messageId=" + messageId +
+                ", senderName='" + senderName + '\'' +
+                ", receiverName='" + receiverName + '\'' +
+                ", message='" + message + '\'' +
+                ", sendTime='" + sendTime + '\'' +
+                '}';
+    }
+
     @Id
     @Schema(name="消息ID")
     @Column(name = "message_id")
@@ -26,6 +37,20 @@ public class message {
 
     public message(int messageId, String senderName, String receiverName, String message, String sendTime) {
         this.messageId = messageId;
+        this.senderName = senderName;
+        this.receiverName = receiverName;
+        this.message = message;
+        this.sendTime = sendTime;
+    }
+
+    public message(int messageId, String receiverName, String message, String sendTime) {
+        this.messageId = messageId;
+        this.receiverName = receiverName;
+        this.message = message;
+        this.sendTime = sendTime;
+    }
+
+    public message(String senderName, String receiverName, String message, String sendTime) {
         this.senderName = senderName;
         this.receiverName = receiverName;
         this.message = message;

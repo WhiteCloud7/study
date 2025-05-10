@@ -20,4 +20,6 @@ public interface messageDao extends JpaRepository<message,Integer> {
 
     @Query(value = "SELECT message_id,message,send_time FROM message WHERE sender_name = :friendName AND receiver_name = :username AND send_Time > :sendTime;",nativeQuery = true)
     public List<String[]> getReceiveMessages(@Param("friendName") String friendName, @Param("username") String username,@Param("sendTime") String sendTime );
+
+    boolean existsBySenderNameAndReceiverNameAndSendTime(String sender,String receiver,String sendTime);
 }

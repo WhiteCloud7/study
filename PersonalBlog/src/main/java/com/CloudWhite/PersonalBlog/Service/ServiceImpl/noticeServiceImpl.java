@@ -10,6 +10,7 @@ import com.CloudWhite.PersonalBlog.Model.Redis.redisStringTemplateConfig;
 import com.CloudWhite.PersonalBlog.Model.UserContext;
 import com.CloudWhite.PersonalBlog.Service.noticeService;
 import com.CloudWhite.PersonalBlog.Utils.Annotation.NoAop;
+import com.CloudWhite.PersonalBlog.Utils.redisUtils;
 import jakarta.annotation.PostConstruct;
 import jakarta.annotation.Resource;
 import jakarta.transaction.Transactional;
@@ -31,6 +32,7 @@ import java.util.concurrent.TimeUnit;
 public class noticeServiceImpl implements noticeService {
     @Resource
     private StringRedisTemplate stringRedisTemplate;
+    private redisUtils redisUtils;
     private mybatisDao mybatisDao;
     private RedissonClient redissonClient;
     private noticeDao noticeDao;
@@ -38,8 +40,9 @@ public class noticeServiceImpl implements noticeService {
     private redisStringTemplateConfig redisStringTemplate;
     private redisCommonTemplate redisCommonTemplate;
     @Autowired
-    public noticeServiceImpl(StringRedisTemplate stringRedisTemplate, com.CloudWhite.PersonalBlog.Dao.mybatisDao mybatisDao, RedissonClient redissonClient, com.CloudWhite.PersonalBlog.Dao.notice.noticeDao noticeDao, com.CloudWhite.PersonalBlog.Dao.notice.noticeInfoDao noticeInfoDao, redisStringTemplateConfig redisStringTemplate, com.CloudWhite.PersonalBlog.Model.Redis.redisCommonTemplate redisCommonTemplate) {
+    public noticeServiceImpl(StringRedisTemplate stringRedisTemplate, com.CloudWhite.PersonalBlog.Utils.redisUtils redisUtils, com.CloudWhite.PersonalBlog.Dao.mybatisDao mybatisDao, RedissonClient redissonClient, com.CloudWhite.PersonalBlog.Dao.notice.noticeDao noticeDao, com.CloudWhite.PersonalBlog.Dao.notice.noticeInfoDao noticeInfoDao, redisStringTemplateConfig redisStringTemplate, com.CloudWhite.PersonalBlog.Model.Redis.redisCommonTemplate redisCommonTemplate) {
         this.stringRedisTemplate = stringRedisTemplate;
+        this.redisUtils = redisUtils;
         this.mybatisDao = mybatisDao;
         this.redissonClient = redissonClient;
         this.noticeDao = noticeDao;
@@ -81,82 +84,27 @@ public class noticeServiceImpl implements noticeService {
     }
 
     public notice getNotice(int noticeId){
-        String redisKey = "notice:" + noticeId;
-        // ① 先用布隆过滤器判断：是否“可能存在”
-        RBloomFilter<Integer> bloomFilter = redissonClient.getBloomFilter("notice-bloom");
-        if (!bloomFilter.contains(noticeId)) {
-            return null;
-        }
-        // ② 尝试获取缓存
-        notice cacheNotice = redisStringTemplate.getObject(redisKey, notice.class);
-        if (cacheNotice != null) {
-            return cacheNotice;
-        }
-        // ③ 分布式锁：防止缓存击穿
-        String lockKey = "lock:notice:" + noticeId;
-        RLock lock = redissonClient.getLock(lockKey);
-        try {
-            boolean success = lock.tryLock(0, 10, TimeUnit.SECONDS);
-            if (!success) {
-                // 拿不到锁，稍后再尝试一次缓存
-                return redisStringTemplate.getObject(redisKey, notice.class);
-            }
-            // ④ 查数据库
-            notice dbNotice = noticeDao.findByNoticeId(noticeId);
-            if (dbNotice != null) {
-                redisStringTemplate.setObject(redisKey, dbNotice);
-                return dbNotice;
-            } else {
-                redisStringTemplate.setObjectAndDeadTime(redisKey, null, 5, TimeUnit.MINUTES);
-                return null;
-            }
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
-            return null;
-        } finally {
-            if (lock.isHeldByCurrentThread()) {
-                lock.unlock();
-            }
-        }
+        return redisUtils.queryWithPassThrough(
+                "notice:" + noticeId,
+                notice.class,
+                () -> noticeDao.findByNoticeId(noticeId),
+                "notice-lock:" + noticeId,
+                "notice-bloom",
+                noticeId
+        );
     }
     public noticeInfo getNoticeInfo(int noticeId){
-        String redisKey = "noticeInfo:" + noticeId;
-        RBloomFilter<Integer> bloomFilter = redissonClient.getBloomFilter("noticeInfo-bloom");
-        if (!bloomFilter.contains(noticeId)) {
-            return null;
-        }
-        noticeInfo cacheNoticeInfo = redisStringTemplate.getObject(redisKey, noticeInfo.class);
-        if (cacheNoticeInfo != null) {
-            return cacheNoticeInfo;
-        }
-
-        String lockKey = "lock:noticeInfo:" + noticeId;
-        RLock lock = redissonClient.getLock(lockKey);
-        try {
-            boolean success = lock.tryLock(0, 10, TimeUnit.SECONDS);
-            if (!success) {
-                return redisStringTemplate.getObject(redisKey, noticeInfo.class);
-            }
-            int userId = UserContext.getCurrentToken().getUserId();
-            noticeInfo noticeInfo = noticeInfoDao.findByNoticeIdAndUserId(noticeId,userId);
-            if (noticeInfo != null) {
-                return noticeInfo;
-            }else{
-                noticeInfo noticeInfo2 = new noticeInfo();
-                noticeInfo2.setNoticeId(noticeId);
-                noticeInfo2.setUserId(userId);
-                noticeInfoDao.save(noticeInfo2);
-                return noticeInfo2;
-            }
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
-            return null;
-        } finally {
-            if (lock.isHeldByCurrentThread()) {
-                lock.unlock();
-            }
-        }
+        int userId = UserContext.getCurrentToken().getUserId();
+        return redisUtils.queryWithPassThrough(
+                "noticeInfo:" + noticeId,
+                noticeInfo.class,
+                () -> noticeInfoDao.findByNoticeIdAndUserId(noticeId, userId),
+                "noticeInfo-lock:" + noticeId,
+                "noticeInfo-bloom",
+                noticeId
+        );
     }
+
 
     public List<notice> getNoticeList(){
         List<notice> cacheNotice = new ArrayList<>();

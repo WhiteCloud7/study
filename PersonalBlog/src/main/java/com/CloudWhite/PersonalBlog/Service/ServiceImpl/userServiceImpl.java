@@ -14,8 +14,12 @@ import com.CloudWhite.PersonalBlog.Model.ResponseEntity;
 import com.CloudWhite.PersonalBlog.Model.UserContext;
 import com.CloudWhite.PersonalBlog.Service.userService;
 import com.CloudWhite.PersonalBlog.Utils.JWTUtils;
+import jakarta.annotation.PostConstruct;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.annotation.Order;
+import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -25,6 +29,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 @Service
@@ -37,14 +42,28 @@ public class userServiceImpl implements userService {
     private redisCommonTemplate redisCommonTemplate;
     private userDaoMybatis userDaoMybatis;
     private BCryptPasswordEncoder bCryptPasswordEncoder;
+    private StringRedisTemplate stringRedisTemplate;
     @Autowired
-    public userServiceImpl(com.CloudWhite.PersonalBlog.Dao.userDao userDao, com.CloudWhite.PersonalBlog.Dao.DTO.tokenDao tokenDao, redisStringTemplateConfig redisStringTemplate, redisHashTemplateConfig redisHashTemplate, com.CloudWhite.PersonalBlog.Dao.userDaoMybatis userDaoMybatis,redisCommonTemplate redisCommonTemplate) {
+    public userServiceImpl(com.CloudWhite.PersonalBlog.Dao.userDao userDao, com.CloudWhite.PersonalBlog.Dao.DTO.tokenDao tokenDao, redisStringTemplateConfig redisStringTemplate, redisHashTemplateConfig redisHashTemplate, com.CloudWhite.PersonalBlog.Dao.userDaoMybatis userDaoMybatis,redisCommonTemplate redisCommonTemplate,StringRedisTemplate stringRedisTemplate) {
         this.userDao = userDao;
         this.tokenDao = tokenDao;
         this.redisStringTemplate = redisStringTemplate;
         this.redisHashTemplate = redisHashTemplate;
         this.userDaoMybatis = userDaoMybatis;
         this.redisCommonTemplate = redisCommonTemplate;
+        this.stringRedisTemplate = stringRedisTemplate;
+    }
+
+    @PostConstruct
+    @Order(1)
+    public void initUser(){
+        List<user> users = userDao.findAll();
+        for(user user : users){
+            if(user!=null){
+                userInfo dto = new userInfo(user.getUserId(),user.getUsername(),user.getNikeName(), user.getSex(), user.getBirthday(), user.getPhone(),user.getQq(), user.getWechat(),  user.getSchool(),user.getAvatar_src());
+                redisHashTemplate.setHashObject("user",user.getUsername(),dto);
+            }
+        }
     }
 
     public void permissionCheck(){};
@@ -84,7 +103,8 @@ public class userServiceImpl implements userService {
                 String refreshToken = JWTUtils.createRefreshToken(token,0);
                 String accessToken = JWTUtils.createAccessToken(token,1000*60*30);
 
-                redisStringTemplate.setObjectAndDeadTime(username.concat("Token"),refreshToken,7, TimeUnit.DAYS);
+                redisStringTemplate.setObject(username.concat("Token"),refreshToken);
+                redisCommonTemplate.setExpire(username.concat("Token"),7, TimeUnit.DAYS);
                 return new ResponseEntity("200", "登录成功", new String[]{accessToken, refreshToken});
             }
             else
@@ -155,5 +175,11 @@ public class userServiceImpl implements userService {
 
     public void logout(String username){
         redisCommonTemplate.deleteKey(username.concat("Token"));
+    }
+
+    @Scheduled(cron = "0 0 3 * * ?")
+    public void scheduledRefreshCache() {
+        redisCommonTemplate.deleteKey("user");
+        initUser();
     }
 }

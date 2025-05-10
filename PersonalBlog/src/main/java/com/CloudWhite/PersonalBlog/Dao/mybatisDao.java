@@ -1,5 +1,6 @@
 package com.CloudWhite.PersonalBlog.Dao;
 
+import com.CloudWhite.PersonalBlog.Entity.DTO.CachedMessage;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
@@ -20,4 +21,6 @@ public interface mybatisDao {
 
     @Insert("INSERT INTO articleinfo (`user_id`,article_id) VALUES (#{userId},#{articleId})")
     void setArticleInfo(int userId,int articleId);
+
+    List<CachedMessage> getAllRecentMessagesForAllFriends();
 }

@@ -5,9 +5,12 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.annotation.Resource;
 import org.springframework.data.redis.core.HashOperations;
 import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
@@ -29,6 +32,26 @@ public class redisHashTemplateConfig {
     public Object getHash(String key, Object hashKey) {
         HashOperations<String, Object, Object> ops = stringRedisTemplate.opsForHash();
         return ops.get(key, hashKey);
+    }
+
+    public Object getHashes(String key, List<Object> hashKeys) {
+        HashOperations<String, Object, Object> ops = stringRedisTemplate.opsForHash();
+        return ops.multiGet(key,hashKeys);
+    }
+
+    public void setHashes(String key,Map<String,String> hashes) {
+        HashOperations<String,Object ,Object> ops = stringRedisTemplate.opsForHash();
+        for(String hashKey : hashes.keySet()){
+            ops.put(key,hashKey,hashes.get(hashKey));
+        }
+    }
+
+    public void setHashes(String key,Map<String,String> hashes,long time,TimeUnit timeUnit) {
+        HashOperations<String,Object ,Object> ops = stringRedisTemplate.opsForHash();
+        for(String hashKey : hashes.keySet()){
+            ops.put(key,hashKey,hashes.get(hashKey));
+        }
+        stringRedisTemplate.expire(key,time,timeUnit);
     }
 
     // 存储对象为 JSON 字符串
@@ -55,5 +78,13 @@ public class redisHashTemplateConfig {
     // 可选：一次存储多个字段（批量 put）
     public void putAllHash(String key, Map<String, String> map) {
         stringRedisTemplate.opsForHash().putAll(key, map);
+    }
+
+    public void deleteHashKey(String key,String hashKey){
+        stringRedisTemplate.opsForHash().delete(key,hashKey);
+    }
+
+    public void deleteHashKey(String key,List<String> hashKeys){
+        stringRedisTemplate.opsForHash().delete(key,hashKeys);
     }
 }

@@ -56,4 +56,10 @@ public class messageController {
     public ResponseEntity getReceiveMessage(String friendName,String currentNewMessageTime){
         return new ResponseEntity(messageService.getReceiveMessages(friendName,currentNewMessageTime));
     }
+
+    @GetMapping("/getLastNewTime")
+    @LoginRequired
+    public ResponseEntity getLastNewTime(String friendName){
+        return new ResponseEntity(messageService.getLastNewTime(friendName));
+    }
 }

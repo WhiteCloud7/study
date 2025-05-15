@@ -1,6 +1,8 @@
 package com.CloudWhite.PersonalBlog.Dao;
 
 import com.CloudWhite.PersonalBlog.Entity.DTO.CachedMessage;
+import com.CloudWhite.PersonalBlog.Entity.notice.noticeInfo;
+import com.CloudWhite.PersonalBlog.Entity.project;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
@@ -23,4 +25,10 @@ public interface mybatisDao {
     void setArticleInfo(int userId,int articleId);
 
     List<CachedMessage> getAllRecentMessagesForAllFriends();
+
+    @Insert("INSERT INTO noticeinfo (user_id, is_like, notice_id) VALUES (#{userId}, #{isLike}, #{noticeId})")
+    void saveNoticeInfo(noticeInfo noticeInfo);
+
+    @Insert("INSERT INTO project (file_name,modify_time,TYPE,directory_level,parent_directory_id)VALUES (#{fileName},#{modifyTime},#{type},#{dirLevel},#{parentDirId})")
+    void saveProject(project project);
 }

@@ -19,25 +19,21 @@ public class noticeInfo {
     private int userId;
     @Schema(name="当前用户是否点赞")
     private boolean isLike;
-    @Schema(name="当前用户是否收藏")
-    private boolean isStar;
 
     public noticeInfo() {
     }
 
-    public noticeInfo(int noticeinfoId, int noticeId, int userId, boolean isLike, boolean isStar) {
+    public noticeInfo(int noticeinfoId, int noticeId, int userId, boolean isLike) {
         this.noticeinfoId = noticeinfoId;
         this.noticeId = noticeId;
         this.userId = userId;
         this.isLike = isLike;
-        this.isStar = isStar;
     }
 
-    public noticeInfo(int noticeinfoId, int noticeId, com.CloudWhite.PersonalBlog.Entity.notice.notice notice, boolean isLike, boolean isStar) {
+    public noticeInfo(int noticeinfoId, int noticeId, com.CloudWhite.PersonalBlog.Entity.notice.notice notice, boolean isLike) {
         this.noticeinfoId = noticeinfoId;
         this.noticeId = noticeId;
         this.isLike = isLike;
-        this.isStar = isStar;
     }
 
     public int getUserId() {
@@ -54,14 +50,6 @@ public class noticeInfo {
 
     public void setLike(boolean like) {
         isLike = like;
-    }
-
-    public boolean isStar() {
-        return isStar;
-    }
-
-    public void setStar(boolean star) {
-        isStar = star;
     }
 
     public int getNoticeinfoId() {

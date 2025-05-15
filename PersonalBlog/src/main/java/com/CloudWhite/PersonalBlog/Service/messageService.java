@@ -1,14 +1,15 @@
 package com.CloudWhite.PersonalBlog.Service;
 
+import com.CloudWhite.PersonalBlog.Entity.DTO.messageDto;
 import com.CloudWhite.PersonalBlog.Entity.message;
 
 import java.util.List;
 
 public interface messageService {
-    public List<message> getAllMessages(String friendName);
-    public message sendMessage(message message);
+    List<messageDto> getAllMessages(String friendName);
+    public messageDto sendMessage(messageDto messageDto);
     public List<String[]> getSentMessage(String friendName);
-    public void deleteMessage(int messageId);
+    public void deleteMessage(String messageId,String receiveName,String sendTime);
     public List<String[]> getReceiveMessages(String friendName, String sendTime);
     public void RestMessageTable();
 

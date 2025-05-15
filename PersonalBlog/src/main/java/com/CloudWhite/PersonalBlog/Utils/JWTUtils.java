@@ -2,17 +2,21 @@ package com.CloudWhite.PersonalBlog.Utils;
 
 import com.CloudWhite.PersonalBlog.Entity.DTO.token;
 import com.CloudWhite.PersonalBlog.Entity.role;
+import com.CloudWhite.PersonalBlog.Model.Config.JwtProperties;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
+import io.lettuce.core.dynamic.annotation.Value;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.crypto.SecretKey;
+import java.nio.charset.StandardCharsets;
 import java.util.Date;
 
 @Component
 public class JWTUtils {
-    private static final SecretKey SECRET_KEY = Keys.secretKeyFor(SignatureAlgorithm.HS512);
-
+    private static final String SECRET_STRING = "n^R7k8WZ@pF#5qz!sB&dE3uL*mY0oV9tC$G1xHaJwKlNzQbMgXUeYcTiVrWpZoSdA";
+    private static final SecretKey SECRET_KEY = Keys.hmacShaKeyFor(SECRET_STRING.getBytes(StandardCharsets.UTF_8));
     public static String createAccessToken(token token, long expiration) {
         return Jwts.builder()
                 .setSubject(String.valueOf(token.getUserId()))
@@ -26,10 +30,11 @@ public class JWTUtils {
     }
 
     public static String createRefreshToken(token token, long expiration) {
+
         JwtBuilder builder = Jwts.builder()
                 .setSubject(String.valueOf(token.getUserId()))
                 .claim("username", token.getUsername())
-                .claim("userId", String.valueOf(token.getUserId()))
+                .claim("userId", token.getUserId())
                 .claim("roleName", token.getRole().getRoleName())
                 .setIssuedAt(new Date());
         if (expiration > 0) {

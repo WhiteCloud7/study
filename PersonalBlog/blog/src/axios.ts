@@ -1,6 +1,9 @@
 import axios, { AxiosInstance,AxiosResponse } from 'axios'
 import { ElMessage } from 'element-plus'
 import { useRouter } from 'vue-router'
+import {getCurrentInstance} from "vue";
+const instance = getCurrentInstance();
+const isLogin = instance?.appContext.config.globalProperties.$isLogin;
 // @ts-ignore
 import cookie from "js-cookie";
 
@@ -21,14 +24,14 @@ function addRefreshSubscriber(cb: Function) {
 
 // 创建 axios 实例
 const axiosInstance: AxiosInstance = axios.create({
-    baseURL: 'http://localhost:8081',
+    baseURL: 'http://59.110.48.56:8081',
     timeout: 10000
 })
-
+axiosInstance.defaults.withCredentials = true;
 // 请求拦截器
 axiosInstance.interceptors.request.use(
     config => {
-        const token = localStorage.getItem('token')
+        const token = sessionStorage.getItem('token')
         if (token) {
             config.headers.Authorization = `Bearer ${token}`
         } else {
@@ -64,18 +67,21 @@ axiosInstance.interceptors.response.use(
             if (!isRefreshing) {
                 isRefreshing = true
                 try {
-                    const res = await axios.post('http://localhost:8081/refreshToken', null, {
-                        params: { refreshToken }
-                    })
-
-                    const newToken = res.data.token
-                    localStorage.setItem('token', newToken)
-                    isRefreshing = false
-                    onRefreshed(newToken)
+                    axios.get("http://59.110.48.56:8081/refreshToken",{
+                    }).then(res=>{
+                        const data = res.data.data;
+                        if(data!==null){
+                            sessionStorage.setItem("token",data);
+                            isLogin.value = true;
+                            const newToken = res.data.token
+                            sessionStorage.setItem('token', newToken)
+                            isRefreshing = false
+                            onRefreshed(newToken)
+                        }
+                    }).catch(console.log)
                 } catch (err) {
                     isRefreshing = false
-                    localStorage.removeItem('token')
-                    localStorage.removeItem('refreshToken')
+                    sessionStorage.removeItem('token')
                     router.push('/login')
                     return Promise.reject(err)
                 }

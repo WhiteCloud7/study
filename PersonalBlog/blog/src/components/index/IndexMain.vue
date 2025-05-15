@@ -38,7 +38,7 @@ export default {
   min-height: 50vh;
 }
 .indexMain-container .el-footer{
-  min-height: 0;
+  min-height: 50px;
   background-color: rgba(58, 121, 208, 0.67);
 }
 </style>

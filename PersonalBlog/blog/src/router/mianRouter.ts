@@ -2,6 +2,7 @@ import { createRouter, createWebHistory, RouteRecordRaw } from 'vue-router'
 import index from '@/views/BlogIndex.vue'
 import indexRouter from '@/router/index'
 import projectRouter from '@/router/project'
+import articleRouter from "@/router/article";
 
 const routes: Array<RouteRecordRaw> = [
     {
@@ -39,7 +40,8 @@ const routes: Array<RouteRecordRaw> = [
         }]
     },
     ...indexRouter,
-    ...projectRouter
+    ...projectRouter,
+    ...articleRouter
 ]
 
 const router = createRouter({

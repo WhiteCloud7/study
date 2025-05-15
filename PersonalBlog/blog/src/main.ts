@@ -9,7 +9,7 @@ import { createHead } from '@vueuse/head';
 
 const app = createApp(App);
 const head = createHead();
-const isLogin = ref(localStorage.getItem('token') !== null);
+const isLogin = ref(sessionStorage.getItem('token') !== null);
 const currentChatObject = ref("");
 const currentUserName = ref("");
 

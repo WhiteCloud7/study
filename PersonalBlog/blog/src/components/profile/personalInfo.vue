@@ -62,7 +62,7 @@ function calculateAge(birthdayStr) {
 }
 
 function initProfile() {
-  axios.get("http://localhost:8081/profile", {
+  axios.get("http://59.110.48.56:8081/profile", {
     responseType: "json"
   }).then(res => {
     const data = res.data.data;

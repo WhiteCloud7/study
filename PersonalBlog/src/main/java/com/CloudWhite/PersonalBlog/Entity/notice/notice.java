@@ -18,8 +18,6 @@ public class notice {
     private int visitCount;
     @Schema(name="点赞数")
     private int likeCount;
-    @Schema(name="收藏数")
-    private int starCount;
     @Schema(name="通知标题")
     private String title;
     public notice() {
@@ -31,12 +29,11 @@ public class notice {
         this.title = title;
     }
 
-    public notice(int noticeId, String noticeMessage, int visitCount, int likeCount, int starCount, String title) {
+    public notice(int noticeId, String noticeMessage, int visitCount, int likeCount, String title) {
         this.noticeId = noticeId;
         this.noticeMessage = noticeMessage;
         this.visitCount = visitCount;
         this.likeCount = likeCount;
-        this.starCount = starCount;
         this.title = title;
     }
 
@@ -70,14 +67,6 @@ public class notice {
 
     public void setLikeCount(int likeCount) {
         this.likeCount = likeCount;
-    }
-
-    public int getStarCount() {
-        return starCount;
-    }
-
-    public void setStarCount(int starCount) {
-        this.starCount = starCount;
     }
 
     public String getTitle() {

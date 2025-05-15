@@ -16,6 +16,7 @@ import com.CloudWhite.PersonalBlog.Service.userService;
 import com.CloudWhite.PersonalBlog.Utils.JWTUtils;
 import jakarta.annotation.PostConstruct;
 import jakarta.transaction.Transactional;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.annotation.Order;
 import org.springframework.data.redis.core.StringRedisTemplate;
@@ -133,15 +134,18 @@ public class userServiceImpl implements userService {
         userDaoMybatis.setDefaultMessage(username, "欢迎访问我的博客！");
 
         // 缓存用户
-        newUser = userDao.findByUsername(username);
-        redisHashTemplate.setHashObject("user",username,newUser);
+        userInfo userInfo = new userInfo(userId,username);
+        redisHashTemplate.setHashObject("user",username,userInfo);
         return "注册成功";
     }
 
     public void saveProfile(user user){
         int userId = UserContext.getCurrentToken().getUserId();
+        String username = UserContext.getCurrentToken().getUsername();
         user.setUserId(userId);
         userDaoMybatis.updateUserProfile(user);
+        userInfo userInfo = new userInfo(userId,username,user.getNikeName(),user.getSex(),user.getBirthday(),user.getPhone(),user.getQq(),user.getWechat(),user.getSchool(),user.getAvatar_src());
+        redisHashTemplate.setHashObject("user",userInfo.getUsername(),userInfo);
     }
 
     public String refreshToken(String refreshToken){
@@ -164,7 +168,7 @@ public class userServiceImpl implements userService {
             multipartFile.transferTo(path.resolve(newFilename).toFile());
 
             int userId = UserContext.getCurrentToken().getUserId();
-            userDaoMybatis.setUserAvatar("http://localhost:8081/uploads/" + username + "/" + newFilename, userId);
+            userDaoMybatis.setUserAvatar("http://59.110.48.56:8081/uploads/" + username + "/" + newFilename, userId);
 
             return "/uploads/" + newFilename;
         } catch (IOException e) {

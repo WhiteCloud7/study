@@ -1,5 +1,6 @@
 package com.CloudWhite.PersonalBlog.Controller;
 
+import com.CloudWhite.PersonalBlog.Entity.DTO.messageDto;
 import com.CloudWhite.PersonalBlog.Entity.message;
 import com.CloudWhite.PersonalBlog.Model.ResponseEntity;
 import com.CloudWhite.PersonalBlog.Service.messageService;
@@ -23,8 +24,8 @@ public class messageController {
     @PostMapping("/sendMessage")
     @Description("发送消息")
     @LoginRequired
-    public ResponseEntity sendMessage(@RequestBody message message){
-        message newMessage = messageService.sendMessage(message);
+    public ResponseEntity sendMessage(@RequestBody messageDto messageDto){
+        messageDto newMessage = messageService.sendMessage(messageDto);
         if(newMessage!=null)
             return new ResponseEntity(newMessage);
         else
@@ -46,8 +47,8 @@ public class messageController {
 
     @GetMapping("/deleteMessage")
     @LoginRequired
-    public ResponseEntity deleteMessage(@RequestParam int messageId){
-        messageService.deleteMessage(messageId);
+    public ResponseEntity deleteMessage(@RequestParam String messageId,@RequestParam String receiveName,@RequestParam String sendTime){
+        messageService.deleteMessage(messageId, receiveName,sendTime);
         return new ResponseEntity();
     }
 

@@ -26,4 +26,6 @@ public interface projectDao extends JpaRepository<project,Integer> {
 
     @Query ("select p from project p where p.parentDirId = :parentId and p.fileName = :fileName")
     public project getNextDirsByParentIdAndFileName(int parentId,String fileName);
+
+    public boolean existsByParentDirIdAndFileName(byte parentDirId, String fileName);
 }

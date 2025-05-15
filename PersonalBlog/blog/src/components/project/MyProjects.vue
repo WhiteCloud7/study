@@ -22,9 +22,9 @@
     <div class="project-operationUtils">
       <el-tooltip content="复制" effect="light" placement="top"><div class="project-operationIcon" @click="copy"><i class="fa-sharp fa-regular fa-copy " :style="{color: utilsColor,cursor:utilsColor==='black'?'pointer':'default'}"></i></div></el-tooltip>
       <el-tooltip content="剪贴" effect="light" placement="top"><div class="project-operationIcon" @click="cut"><i class="fa-sharp-duotone fa-solid fa-scissors " :style="{color: utilsColor,cursor:utilsColor==='black'?'pointer':'default'}"></i></div></el-tooltip>
-      <el-tooltip content="粘贴" effect="light" placement="top"><div class="project-operationIcon" @click="paste"><i class="fa-regular fa-paste " :style="{color: pasteColor,cursor:pasteColor==='black'?'pointer':'default'}"></i></div></el-tooltip>
+      <el-tooltip content="粘贴" effect="light" placement="top"><div v-loading.fullscreen.lock="isPaste" element-loading-text="正在粘贴..." class="project-operationIcon" @click="paste"><i class="fa-regular fa-paste " :style="{color: pasteColor,cursor:pasteColor==='black'?'pointer':'default'}"></i></div></el-tooltip>
       <el-tooltip content="重命名" effect="light" placement="top"><div class="project-operationIcon" @click="rename"><i class="fa-solid fa-pen-to-square" :style="{color: utilsColor,cursor:utilsColor==='black'?'pointer':'default'}"></i></div></el-tooltip>
-      <el-tooltip content="删除" effect="light" placement="top"><div class="project-operationIcon" @click="deleteFile"><i class="fa-regular fa-trash-can" :style="{color: utilsColor,cursor:utilsColor==='black'?'pointer':'default'}"></i></div></el-tooltip>
+      <el-tooltip content="删除" effect="light" placement="top"><div v-loading.fullscreen.lock="isDelete" element-loading-text="删除中..." class="project-operationIcon" @click="deleteFile"><i class="fa-regular fa-trash-can" :style="{color: utilsColor,cursor:utilsColor==='black'?'pointer':'default'}"></i></div></el-tooltip>
     </div>
     <div class="projectUtils-sort">
       <el-select class="projectUtils-sortSelect"
@@ -64,9 +64,11 @@
         >{{ order.value }}</el-option>
       </el-select>
     </div>
+    <input type="file" style="margin-left: 10px" @change="handleFileChange" />
+    <div v-loading.fullscreen.lock="isUploading" element-loading-text="正在上传..."></div>
   </div>
   <el-dialog v-model="dialogVisible" title="请输入新建文件名" width="500">
-    <el-input type="text" maxlength="20" v-model="newFileName"></el-input>
+    <el-input type="text" @keydown.enter="addFile" maxlength="20" v-model="newFileName"></el-input>
       <el-button @click="addFile" style="margin-left: 150px;margin-top: 12px">确认</el-button>
       <el-button @click="dialogVisible=false" style="margin-left: 40px;margin-top: 12px">取消</el-button>
   </el-dialog>
@@ -92,9 +94,12 @@
 import { useRoute, useRouter } from 'vue-router'
 import {onMounted, onUnmounted, ref, watch} from 'vue'
 import axios from 'axios'
+import axiosToken from "@/axios"
 import '@fortawesome/fontawesome-free/css/all.css'
 import TheDirectory from "@/components/project/TheDirectory";
 import {useHead} from "@vueuse/head";
+import {cloneDeep} from "lodash";
+import {ElMessage} from "element-plus";
 
 const router = useRouter();
 const route = useRoute();
@@ -111,11 +116,17 @@ const isAsc = ref(true);
 const shearPlate = ref([]);
 const isCopy = ref(false);
 let isProgrammaticChange = ref(false);  // 监控是否为程序内部变化
+const uploadHeaders = { Authorization: `Bearer ${sessionStorage.getItem('token')}`};
 
 const sortMethod = ref('');
 const sortOrder = ref('');
 const sortMethods = [{name:'name',value:'名称'},{name:'modifyTime',value:'修改日期'},{name:'type',value:'类型'}];
 const sortOrders = [{name:'asc',value:'递增'},{name:'desc',value:'递减'}];
+const shearPath = ref();
+const isUploading = ref(false)
+const isPaste = ref(false);
+const isDelete = ref(false);
+let cancelTokenSource = null
 
 useHead({
   title:"个人项目"
@@ -130,7 +141,7 @@ const navigateTo = (index) => {
   }
   if (path != '') {
     sessionStorage.setItem('filePath', JSON.stringify(levels));
-    axios.get(`http://localhost:8081/project/${path}`, {
+    axios.get(`http://59.110.48.56:8081/project/${path}`, {
       responseType: "json"
     }).then(res => {
       currentDirectors.value = res.data;
@@ -157,6 +168,47 @@ function formatDateToMySQL(date) {
   return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
 }
 
+const handleFileChange = async (event) => {
+  const file = event.target.files[0]
+  if (!file) return
+
+  const formData = new FormData()
+  formData.append('file', file)
+  formData.append('filePath', filePath.value)
+
+  isUploading.value = true
+  cancelTokenSource = axios.CancelToken.source()
+
+  try {
+    await axiosToken.post('http://59.110.48.56:8081/uploadFile', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+      cancelToken: cancelTokenSource.token,
+    })
+
+    ElMessage.success("上传成功")
+    initDirectory()
+  } catch (err) {
+    if (axios.isCancel(err)) {
+      ElMessage.warning("上传已取消")
+    } else {
+      ElMessage.error("上传失败")
+      console.error('上传失败', err)
+    }
+  } finally {
+    isUploading.value = false
+    cancelTokenSource = null
+  }
+}
+
+const cancelUpload = () => {
+  if (cancelTokenSource) {
+    cancelTokenSource.cancel("用户取消上传")
+    isUploading.value = false
+  }
+}
+
 function getFileType(fileName){
   const fileNameArray = fileName.split('');
   let result;
@@ -181,6 +233,19 @@ function handleCheck(isClick, fileId) {
   utilsColor.value = hasTrueClick ? 'black' : 'lightgray';
 }
 
+const handleAvatarSuccess = (res) => {
+  if(res.data==="上传文件为空")
+    alert("上传文件为空!");
+  else if(res.data==="上传失败")
+    alert("上传失败!");
+  else{
+    initDirectory();
+    const is = confirm('上传成功!');
+    if(is)
+      initDirectory();
+  }
+};
+
 function addFile(){
   initRename();
   const createFileTime = new Date();
@@ -190,7 +255,7 @@ function addFile(){
   params.append('type',getFileType(newFileName.value))
   params.append('filePath',filePath.value)
   if(newFileName.value!=null&&newFileName.value!=''){
-    axios.post("http://localhost:8081/addFile",params,{
+    axios.post("http://59.110.48.56:8081/addFile",params,{
     }).then(res =>{
       newFileName.value = '';
       const data = res.data;
@@ -260,7 +325,7 @@ function copy(e){
     e.preventDefault();
   else{
     initRename();
-    shearPlate.value = [];
+    shearPath.value = cloneDeep(filePath.value);
     const isClick = checks.value.filter(map => map.isClick === true);
     shearPlate.value = isClick.map(map => map.fileId);
     isCopy.value = true;
@@ -272,7 +337,7 @@ function cut(e){
     e.preventDefault();
   else{
     initRename();
-    shearPlate.value = [];
+    shearPath.value = cloneDeep(filePath.value);
     const isClick = checks.value.filter(map => map.isClick === true);
     shearPlate.value = isClick.map(map => map.fileId);
     isCopy.value = false;
@@ -287,8 +352,10 @@ function paste(e){
     shearPlate.value.forEach(fileId => {
       formData.append('fileIds[]', fileId);
     });
+    formData.append("shearPath",shearPath.value);
+    isPaste.value = true;
     if(isCopy.value){
-      axios.post("http://localhost:8081/copyPaste",formData,{
+      axios.post("http://59.110.48.56:8081/copyPaste",formData,{
         headers: {
           'Content-Type': 'application/x-www-form-urlencoded'
         }
@@ -301,9 +368,11 @@ function paste(e){
         }
       }).catch(err =>{
         console.log(err);
-      })
+      }).finally(()=>{
+      isPaste.value = false;
+    });
     }else {
-      axios.post("http://localhost:8081/cutPaste",formData,{
+      axios.post("http://59.110.48.56:8081/cutPaste",formData,{
         headers: {
           'Content-Type': 'application/x-www-form-urlencoded'
         }
@@ -316,7 +385,9 @@ function paste(e){
         }
       }).catch(err =>{
         console.log(err);
-      })
+      }).finally(()=>{
+        isPaste.value = false;
+      });
     }
   }else{
     e.preventDefault();
@@ -342,14 +413,15 @@ function rename(){
 function handleRename(newFileName){
   const clickId = checks.value.find(c=>c.isClick===true).fileId;
   const clickIndex = currentDirectors.value.findIndex(c=>c.fileId===clickId);
-  console.log(clickId);
   isRename.value[clickIndex] = false;
   const oldName = currentDirectors.value.find(c=>c.fileId===clickId).fileName;
   currentDirectors.value.find(c=>c.fileId===clickId).fileName = newFileName;
-  axios.get("http://localhost:8081/rename",{
+  console.log(filePath.value.join("/"))
+  axios.get("http://59.110.48.56:8081/rename",{
     params:{
       newFileName:newFileName,
-      fileId:clickId
+      fileId:clickId,
+      fPath:filePath.value.join("/")
     }
   }).catch(err=>{
     console.log(err);
@@ -360,16 +432,20 @@ function deleteFile(e){
   if(utilsColor.value==='black'){
     const isClicks = checks.value.filter(c=>c.isClick===true)
     const deleteFiles = isClicks.map(d=>d.fileId);
-    axios.get("http://localhost:8081/deleteFile",{
+    isDelete.value = true;
+    axios.get("http://59.110.48.56:8081/deleteFile",{
       params:{
         deleteFiles:deleteFiles.join(','),
+        filePath:filePath.value.join("/")
       }
     }).then(res=>{
       initRename();
       currentDirectors.value = currentDirectors.value.filter(c => !deleteFiles.includes(c.fileId));
     }).catch(err=>{
       console.log(err);
-    })
+    }).finally(()=>{
+      isDelete.value = false;
+    });
   }else{
     e.preventDefault();
   }
@@ -379,7 +455,7 @@ function goNextDir(fileId,currentDirName) {
   if(getFileType(currentDirName)=='文件夹'){
     filePath.value.push(currentDirName);
     isProgrammaticChange.value = true;  // 标记为程序跳转
-    axios.get("http://localhost:8081/getNextDirs", {
+    axios.get("http://59.110.48.56:8081/getNextDirs", {
       params: {
         fileId:fileId
       },
@@ -401,7 +477,7 @@ function goNextDir(fileId,currentDirName) {
 }
 
 function initDirectory() {
-  axios.get("http://localhost:8081/getTheFirstDirectory", {
+  axios.get("http://59.110.48.56:8081/getTheFirstDirectory", {
     responseType: "json"
   }).then(res => {
     currentDirectors.value = res.data;
@@ -439,7 +515,7 @@ watch(() => route.params, (newParams) => {
   // 请求相应的目录数据
   if (path !== '/project') {
     path=path.replace('/project','');
-    axios.get(`http://localhost:8081/project${path}`, { responseType: 'json' })
+    axios.get(`http://59.110.48.56:8081/project${path}`, { responseType: 'json' })
         .then(res => {
           currentDirectors.value = res.data;
           filePath.value = [];
@@ -503,7 +579,7 @@ onUnmounted(()=>{
 .projectUtils-add{
   font-style: normal;
   cursor: pointer;
-  width: 100px;
+  min-width: 100px;
   height: 90%;
 }
 .project-operationUtils{
@@ -523,7 +599,7 @@ onUnmounted(()=>{
   flex-direction: row;
   width: 240px;
   height: 100%;
-  margin-left: 600px;
+  margin-left: 550px;
 }
 .projectUtils-sortSelect{
   width: 120px;
@@ -543,5 +619,17 @@ onUnmounted(()=>{
   min-height: 90%;
   overflow-y: auto;
   border: 1px solid black;
+}
+.project-cancelUpload{
+  padding: 0;
+  font-size: 20px;
+  width: 10%;
+  height: 8%;
+  position: absolute;
+  left: 45%;
+  right: 45%;
+  top: 70%;
+  bottom: 22%;
+  z-index: 500;
 }
 </style>

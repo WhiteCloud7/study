@@ -35,7 +35,7 @@ function save(){
   params.append("noticeId", props.noticeId);
   params.append("title",noticeTitle.value);
   params.append("messageText", messageText.value);
-  axios.post("http://localhost:8081/saveNotice",params,{
+  axios.post("http://59.110.48.56:8081/saveNotice",params,{
     headers: {
       "Content-Type": "application/x-www-form-urlencoded"
     }

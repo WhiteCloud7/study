@@ -7,7 +7,7 @@
         <el-avatar :src="avatar" size="100" style="margin-left: 48px"></el-avatar>
         <el-upload
             class="avatar-uploader"
-            action="http://localhost:8081/uploadAvatar"
+            action="http://59.110.48.56:8081/uploadAvatar"
             :show-file-list="false"
             :on-success="handleAvatarSuccess"
             :headers="uploadHeaders"
@@ -101,7 +101,7 @@ function calculateAge(birthdayStr) {
 }
 
 function initProfile() {
-  axios.get("http://localhost:8081/profile", {
+  axios.get("http://59.110.48.56:8081/profile", {
     responseType: "json"
   }).then(res => {
     const data = res.data.data;
@@ -142,7 +142,7 @@ watch(birthday, (newBirthday) => {
 
 // 保存资料
 function saveProfile() {
-  axios.post("http://localhost:8081/saveProfile", {
+  axios.post("http://59.110.48.56:8081/saveProfile", {
     nikeName: nickname.value,
     sex: sex.value,
     birthday: birthday.value===null?null:birthday.value.toLocaleString(),
@@ -173,7 +173,7 @@ function cancelEdit() {
 }
 
 // 处理头像上传成功
-  const handleAvatarSuccess = (res) => {
+const handleAvatarSuccess = (res) => {
   if(res.data==="上传文件为空")
     alert("上传文件为空!");
   else if(res.data==="上传失败")
@@ -199,7 +199,7 @@ const beforeAvatarUpload = (file) => {
   return isJpgOrPng && isLt2M;
 };
 
-const uploadHeaders = { Authorization: `Bearer ${localStorage.getItem('token')}`};
+const uploadHeaders = { Authorization: `Bearer ${sessionStorage.getItem('token')}`};
 </script>
 
 <style scoped>

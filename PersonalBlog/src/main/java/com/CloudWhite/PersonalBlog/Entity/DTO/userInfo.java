@@ -58,6 +58,11 @@ public class userInfo {
         this.avatar_src = avatar_src;
     }
 
+    public userInfo(int userId, String username) {
+        this.userId = userId;
+        this.username = username;
+    }
+
     public int getUserId() {
         return userId;
     }

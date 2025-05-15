@@ -9,6 +9,9 @@ import com.CloudWhite.PersonalBlog.Model.UserContext;
 import com.CloudWhite.PersonalBlog.Service.userService;
 import com.CloudWhite.PersonalBlog.Utils.Annotation.LoginRequired;
 import com.CloudWhite.PersonalBlog.Utils.Annotation.PermissionRequired;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
@@ -32,9 +35,15 @@ public class userController{
     @PermissionRequired(type = "admin")
     public ResponseEntity permissionCheck(){
         return new ResponseEntity();}
-    @PostMapping("/refreshToken")
-    public ResponseEntity refreshToken(String refreshToken){
-        return new ResponseEntity(refreshToken);
+    @GetMapping("/refreshToken")
+    public ResponseEntity refreshToken(HttpServletRequest request){
+        String refreshToken = null;
+        for (Cookie cookie : request.getCookies()) {
+            if(cookie.getName().equals("refreshToken")){
+                refreshToken = cookie.getValue();
+            }
+        }
+        return new ResponseEntity(userService.refreshToken(refreshToken));
     }
 
     @GetMapping("/profile")
@@ -44,8 +53,21 @@ public class userController{
     }
 
     @GetMapping("/login")
-    public Object login(@RequestParam String username,@RequestParam String password){
-        return userService.login(username,password);
+    public ResponseEntity login(@RequestParam String username, @RequestParam String password, HttpServletResponse response){
+        ResponseEntity res = userService.login(username,password);
+        if(res.getCode().equals("200")){
+            Cookie cookie = new Cookie("refreshToken", ((String[])res.getData())[1]);
+            cookie.setPath("/"); // 根路径，前端所有接口都能带上
+            cookie.setHttpOnly(true); // JavaScript 无法访问，提升安全性
+            cookie.setMaxAge(7 * 24 * 60 * 60); // 7天
+            cookie.setSecure(false); // 若部署到 HTTPS，请设为 true
+            response.addCookie(cookie);
+            String accessToken = ((String[])res.getData())[0];
+            res.setData(accessToken);
+            return res;
+        } else {
+            return userService.login(username,password);
+        }
     }
 
     @GetMapping("/register")

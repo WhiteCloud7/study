@@ -3,7 +3,27 @@
   <router-view></router-view>
 </template>
 <script setup>
-import {onMounted} from "vue";
+import {onMounted,getCurrentInstance} from "vue";
+import axios from "axios";
+const instance = getCurrentInstance();
+const isLogin = instance?.appContext.config.globalProperties.$isLogin;
+axios.defaults.withCredentials = true;
+
+function acquireToken(){
+  const token = sessionStorage.getItem("token");
+  if(token===null || token === undefined){
+    axios.get("http://59.110.48.56:8081/refreshToken",{
+    }).then(res=>{
+      const data = res.data.data;
+      if(data!==null){
+        sessionStorage.setItem("token",data);
+        isLogin.value = true;
+      }
+    }).catch(console.log)
+  }else{
+    isLogin.value = true;
+  }
+}
 
 onMounted(() => {
   let link = document.querySelector("link[rel~='icon']");
@@ -13,6 +33,8 @@ onMounted(() => {
     document.getElementsByTagName('head')[0].appendChild(link);
   }
   link.href = '/photo/logo.png';
+  acquireToken();
+  setInterval(acquireToken,1000*30*60);
 });
 </script>
 <style scoped>

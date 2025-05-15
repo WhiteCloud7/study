@@ -26,9 +26,9 @@
           ><template #reference>
               <el-avatar :src="avatar"></el-avatar>
             </template>
-            <div style="display: flex; flex-direction: column; gap: 8px;">
+            <div style="display: flex; flex-direction: column;">
               <el-button type="default" size="small" @click="goToProfile">个人中心</el-button>
-              <el-button type="danger" size="small" @click="logout">退出登录</el-button>
+              <el-button type="danger" size="small" @click="logout" :style="{marginLeft:'0'}">退出登录</el-button>
             </div>
           </el-popover>
         </div>
@@ -38,12 +38,11 @@
   </el-affix>
 </template>
 <script lang="js" setup>
-import {ref, getCurrentInstance, inject, onMounted} from 'vue'
+import {ref, getCurrentInstance, onMounted, watch} from 'vue'
 import {useRouter} from "vue-router";
 import axios from "@/axios";
 import cookie from 'js-cookie';
 
-const userId = inject("userId");
 const avatar = ref('');
 const activeIndex = ref('1');
 const instance = getCurrentInstance();
@@ -53,10 +52,10 @@ const router = useRouter();
 
 function logout(){
   isLogin.value = false;
-  localStorage.removeItem("refreshToken");
-  cookie.remove("token");
+  sessionStorage.removeItem("token");
+  cookie.remove("refreshToken");
 
-  axios.get("http://localhost:8081/logout",{
+  axios.get("http://59.110.48.56:8081/logout",{
     params:{username:username.value}
   }).catch(console.log);
 }
@@ -79,17 +78,24 @@ function goToProfile(){
 
 function initLogin(){
   if(isLogin.value===true){
-    axios.get("http://localhost:8081/profile", {
+    axios.get("http://59.110.48.56:8081/profile", {
       responseType: "json"
     }).then(res => {
       const data = res.data.data;
       username.value = data.username;
       avatar.value = data.avatar_src;
+      console.log(data)
     }).catch(err => {
       console.log(err);
     });
   }
 }
+
+watch(isLogin, (newVal) => {
+  if (newVal === true) {
+    initLogin();
+  }
+});
 
 onMounted(()=>{
   initLogin();

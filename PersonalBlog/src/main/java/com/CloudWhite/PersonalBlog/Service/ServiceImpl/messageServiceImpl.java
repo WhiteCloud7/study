@@ -4,6 +4,7 @@ import com.CloudWhite.PersonalBlog.Dao.messageDao;
 import com.CloudWhite.PersonalBlog.Dao.mybatisDao;
 import com.CloudWhite.PersonalBlog.Dao.userDao;
 import com.CloudWhite.PersonalBlog.Entity.DTO.CachedMessage;
+import com.CloudWhite.PersonalBlog.Entity.DTO.messageDto;
 import com.CloudWhite.PersonalBlog.Entity.DTO.userInfo;
 import com.CloudWhite.PersonalBlog.Entity.message;
 import com.CloudWhite.PersonalBlog.Model.Redis.redisCommonTemplate;
@@ -78,7 +79,7 @@ public class messageServiceImpl implements messageService {
         }
     }
 
-    public List<message> getAllMessages(String friendName){
+    public List<messageDto> getAllMessages(String friendName){
         String username = UserContext.getCurrentToken().getUsername();
         int userId = UserContext.getCurrentToken().getUserId();
         int friendId = redisHashTemplate.getHashObject("user",friendName, userInfo.class).getUserId();
@@ -87,41 +88,35 @@ public class messageServiceImpl implements messageService {
         List<CachedMessage> cachedMessages = redisListTemplate.range(redisKey, 0, -1, CachedMessage.class);
 
         if (cachedMessages != null && !cachedMessages.isEmpty()) {
-            List<message> collect = cachedMessages.stream()
-                    .map(msg -> new message(Integer.parseInt(msg.getMessage_id()), msg.getReceiver_name(), msg.getMessage(), msg.getSend_time()))
+            List<messageDto> collect = cachedMessages.stream()
+                    .map(msg -> new messageDto(msg.getMessage_id(), msg.getReceiver_name(), msg.getMessage(), msg.getSend_time()))
                     .collect(Collectors.toList());
             return collect;
         }
-
+        List<message> messages = messageDao.getAllMessages(friendName, username);
+        List<messageDto> messageDtos = new ArrayList<>();
+        for(message message : messages){
+            messageDto messageDto = new messageDto(String.valueOf(message.getMessageId()),message.getReceiverName(),message.getMessage(),message.getSendTime());
+            messageDtos.add(messageDto);
+        }
         // 如果 Redis 缓存为空，查询数据库
-        return messageDao.getAllMessages(friendName, username);
+        return messageDtos;
     }
 
-    public static String generate9DigitIdFromUUID() {
-        UUID uuid = UUID.randomUUID();
-        // 计算UUID的哈希值
-        int hashCode = uuid.hashCode();
-        // 转为正数
-        long positiveHash = Math.abs((long) hashCode);
-        // 转换为9位数字字符串（不足补零）
-        return String.format("%09d", positiveHash % 1_000_000_000L);
-    }
-
-    public message sendMessage(message message) {
+    public messageDto sendMessage(messageDto messageDto) {
         String username = UserContext.getCurrentToken().getUsername();
-        message.setSenderName(username);
         String formattedTime = LocalDateTime.now().format(DATE_TIME_FORMATTER);
-        message.setSendTime(formattedTime);
+        messageDto.setSendTime(formattedTime);
         // 写入 Redis
         int senderId = UserContext.getCurrentToken().getUserId();
-        int receiverId = redisHashTemplate.getHashObject("user",message.getReceiverName(), userInfo.class).getUserId();
+        int receiverId = redisHashTemplate.getHashObject("user",messageDto.getReceiverName(), userInfo.class).getUserId();
         String redisKey = buildRedisKey(senderId, receiverId);
-        String messageId = generate9DigitIdFromUUID();
-        CachedMessage cached = new CachedMessage(senderId, receiverId, messageId,message.getSenderName(),
-                message.getReceiverName(), message.getMessage(), message.getSendTime());
+        String messageId = UUID.randomUUID().toString();
+        CachedMessage cached = new CachedMessage(senderId, receiverId, messageId,username,
+                messageDto.getReceiverName(), messageDto.getMessage(), messageDto.getSendTime());
         redisListTemplate.setObjectRight(redisKey, cached);
-        message.setMessageId(Integer.parseInt(messageId));
-        return message;
+        messageDto.setMessageId(messageId);
+        return messageDto;
     }
     public List<String[]> getSentMessage(String friendName) {
         String username = UserContext.getCurrentToken().getUsername();
@@ -133,19 +128,20 @@ public class messageServiceImpl implements messageService {
         if (cached != null && !cached.isEmpty()) {
             return cached.stream()
                     .filter(msg -> msg.getSender_name().equals(username))
-                    .map(msg -> new String[]{msg.getMessage(), msg.getSend_time()})
+                    .map(msg -> new String[]{msg.getMessage_id(),msg.getReceiver_name(),msg.getMessage(), msg.getSend_time()})
                     .collect(Collectors.toList());
         }
         return messageDao.getSentMessages(username, friendName);
     }
 
-    public void deleteMessage(int messageId) {
+    public void deleteMessage(String messageId,String receiveName,String sendTime) {
+        String username = UserContext.getCurrentToken().getUsername();
         Set<String> keys = stringRedisTemplate.keys("chat:*");
         for (String key : keys) {
             List<CachedMessage> cachedMessages = redisListTemplate.range(key, 0, -1, CachedMessage.class);
             if (cachedMessages == null || cachedMessages.isEmpty()) continue;
             for (CachedMessage msg : cachedMessages) {
-                if (String.valueOf(messageId).equals(msg.getMessage_id())) {
+                if (messageId.equals(msg.getMessage_id())) {
                     redisListTemplate.remove(key, msg,1);
 //                    // 删除消息时，同时记录“删除日志”
 //                    redisListTemplate.setObjectRight("message");
@@ -154,7 +150,7 @@ public class messageServiceImpl implements messageService {
             }
         }
         // 如果未在 Redis 中找到，说明可能已落库，尝试删除数据库
-        message message = messageDao.findByMessageId(messageId);
+        message message = messageDao.getDeleteMessage(username,receiveName,sendTime);
         if (message != null) {
             messageDao.delete(message);
         }
@@ -186,6 +182,7 @@ public class messageServiceImpl implements messageService {
         return messageDao.getReceiveMessages(friendName, username, sendTime);
     }
 
+    @NoAop
     public String getLastNewTime(String friendName){
         String username = UserContext.getCurrentToken().getUsername();
         int userId = UserContext.getCurrentToken().getUserId();

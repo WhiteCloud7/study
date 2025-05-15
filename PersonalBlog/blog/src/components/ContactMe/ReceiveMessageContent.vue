@@ -35,7 +35,8 @@ const props = defineProps({
   message: String,
   receiveTime: String,
   activeReceiveTime: String,
-  receiverProfile:Object
+  receiverProfile:Object,
+  receiveReceiverName:String
 })
 const dialogVisible = ref(false);
 const emit = defineEmits(["deleteReceiveMessage", "updateActiveReceiveTime"]);
@@ -46,9 +47,11 @@ function showOptions() {
 }
 
 function deleteMessage(){
-  axios.get("http://localhost:8081/deleteMessage",{
+  axios.get("http://59.110.48.56:8081/deleteMessage",{
     params:{
       messageId:props.messageId,
+      receiveName:props.receiveReceiverName,
+      sendTime:props.receiveTime
     },
   }).then(() => {
     emit("deleteReceiveMessage", props.messageId);
@@ -77,19 +80,22 @@ onUnmounted(() => {
 });
 </script>
 <style>
-.contact-receive{
-  min-width: 1em;
-  max-width: 600px;
-  min-height: 1em;
-  max-height: 20em;
-  margin-left: 240px;
+.contact-receive {
   display: inline-flex;
-  flex-direction: row-reverse;
+  align-items: center;
+  max-width: 600px;
+  margin-left: 10px;
   margin-top: 8px;
-  padding: 2px;
+  border-radius: 6px;
+  padding: 4px;
   position: relative;
 }
-.contact-receiveContent{
+
+.contact-receiveAvatar {
+  flex-shrink: 0;
+}
+
+.contact-receiveContent {
   display: inline-block;
   padding: 6px 10px;
   background-color: #f5f5f5;
@@ -107,7 +113,7 @@ onUnmounted(() => {
 .contact-receive-messageOption {
   position: absolute;
   top: 100%;
-  left: 500px;
+  left: 40px;
   width: 80px;
   display: flex;
   gap: 1px;

@@ -10,10 +10,6 @@
       </el-icon>
       <label class="iconLabel2">{{ getLabelFormat(likeCount) }}</label>
 
-      <el-icon class="icon2" @click="toggleStar">
-        <component :is="isStar ? StarFilled : Star" />
-      </el-icon>
-      <label class="iconLabel2">{{ getLabelFormat(starCount) }}</label>
       <el-icon class="icon2"><ChatDotRound /></el-icon>
       <el-button class="back" @click="emit('back')">返回</el-button>
     </div>
@@ -23,7 +19,7 @@
 <script setup>
 import {ref, computed, watch, onMounted, nextTick, getCurrentInstance} from "vue";
 import { defineProps, defineEmits } from "vue";
-import { Star, StarFilled, ChatDotRound } from "@element-plus/icons-vue";
+import {ChatDotRound } from "@element-plus/icons-vue";
 import axios from "axios";
 import axiosToken from "@/axios";
 import {useRouter} from "vue-router";
@@ -31,27 +27,21 @@ import {useRouter} from "vue-router";
 const props = defineProps({
   noticeId: Number,
   likeCount: Number,
-  starCount: Number,
   isLiked: Boolean,
-  isStarred: Boolean,
   messageArray: Array,
   title: String
 });
 
-const emit = defineEmits(["updateLike", "updateStar", "back"]);
+const emit = defineEmits(["updateLike","back"]);
 const instance = getCurrentInstance();
 const isLogin = instance?.appContext.config.globalProperties.$isLogin;
 const router = useRouter();
 const likeCount = ref(props.likeCount);
-const starCount = ref(props.starCount);
 const isLike = ref(props.isLiked);
-const isStar = ref(props.isStarred);
 
 // 防止 prop 更新失效
 watch(() => props.likeCount, val => (likeCount.value = val));
-watch(() => props.starCount, val => (starCount.value = val));
 watch(() => props.isLiked, val => (isLike.value = val));
-watch(() => props.isStarred, val => (isStar.value = val));
 
 const likeIcon = computed(() =>
     require(`@/assets/photo/${isLike.value ? "likefill.png" : "like.png"}`)
@@ -62,26 +52,11 @@ function toggleLike() {
     isLike.value = !isLike.value;
     likeCount.value += isLike.value ? 1 : -1;
 
-    axiosToken.get("http://localhost:8081/updateLikeCount", {
+    axiosToken.get("http://59.110.48.56:8081/updateLikeCount", {
       params: { noticeId: props.noticeId}
     }).catch(console.log);
 
     emit("updateLike", props.noticeId, likeCount.value, isLike.value);
-  }else {
-    router.push("/login");
-  }
-}
-
-function toggleStar() {
-  if(isLogin.value===true){
-    isStar.value = !isStar.value;
-    starCount.value += isStar.value ? 1 : -1;
-
-    axiosToken.get("http://localhost:8081/updateStarCount", {
-      params: { noticeId: props.noticeId }
-    }).catch(console.log);
-
-    emit("updateStar", props.noticeId, starCount.value, isStar.value);
   }else {
     router.push("/login");
   }

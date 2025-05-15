@@ -16,6 +16,8 @@
           :active-receive-time="activeReceiveTime"
           :avatar-src="currentUserAvatar"
           :receiver-profile="receiverProfile"
+          :receive-receiver-name="currentUserName"
+          :send-receiver-name="currentChatObject"
           @deleteSendMessage="deleteMessage"
           @deleteReceiveMessage="deleteMessage"
           @updateActiveReceiveTime="updateActiveReceiveTime"
@@ -77,7 +79,7 @@ const handleKeyDown = (event) => {
 const sendMessageHandler = async () => {
   if (sendMessage.value.trim() !== "") {
     const params = {receiverName: currentChatObject.value, message: sendMessage.value}
-    axios.post("http://localhost:8081/sendMessage", JSON.stringify(params), {
+    axios.post("http://59.110.48.56:8081/sendMessage", JSON.stringify(params), {
       headers: {
         "Content-Type": "application/json"
       },
@@ -103,7 +105,7 @@ const sendMessageHandler = async () => {
 };
 
 function getLastNewTime(){
-  axios.get("http://localhost:8081/getLastNewTime",{
+  axios.get("http://59.110.48.56:8081/getLastNewTime",{
     params:{
       friendName: currentChatObject.value,
     },
@@ -116,7 +118,7 @@ function getLastNewTime(){
 
 function receiveMessage(){
   if(allMessages.value.length === 0){return}
-  axios.get("http://localhost:8081/getReceiveMessage",{
+  axios.get("http://59.110.48.56:8081/getReceiveMessage",{
     params:{
       friendName: currentChatObject.value,
       currentNewMessageTime: lastNewTime.value
@@ -162,13 +164,14 @@ watch(currentChatObject,()=>{
 })
 
 function initMessage() {
-  axios.get("http://localhost:8081/getAllMessages", {
+  axios.get("http://59.110.48.56:8081/getAllMessages", {
     params: {
       friendName: currentChatObject.value
     },
     responseType: "json"
   }).then(res => {
     const gotMessages = res.data.data;
+    console.log(gotMessages);
     if (gotMessages !== null) {
       const sorted = gotMessages.sort((a, b) => new Date(a.sendTime) - new Date(b.sendTime));
       allMessages.value = sorted;
@@ -181,7 +184,7 @@ function initMessage() {
 }
 
 function initCurrentUser(){
-  axios.get("http://localhost:8081/profile", {
+  axios.get("http://59.110.48.56:8081/profile", {
     responseType: "json"
   }).then(res => {
     const data = res.data.data;
@@ -193,7 +196,7 @@ function initCurrentUser(){
 }
 
 function initCurrentChatObject(){
-  axios.get("http://localhost:8081/getFriendBasicInfoByUsername", {
+  axios.get("http://59.110.48.56:8081/getFriendBasicInfoByUsername", {
     params:{friendName:currentChatObject.value},
     responseType: "json"
   }).then(res => {

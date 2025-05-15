@@ -31,27 +31,7 @@
                  style="font-size: 8px;width:45px;height:10px;margin-bottom: 0">查看详细</el-button>
       <p class="myArticles-time"></p>
     </div>
-    <el-divider style="margin:6px"></el-divider>
-
-    <div>
-      <teleport to="body">
-        <transition name="fade">
-          <article-detail
-              v-if="articleDetailId === article.articleId"
-              :content="articleContent(article.articleContent)"
-              :article-id="article.articleId"
-              :like-count="getLikeCount(article.articleId)"
-              :star-count="getStarCount(article.articleId)"
-              :is-liked="getIsLike(article.articleId)"
-              :is-starred="getIsStar(article.articleId)"
-              @updateStar="updateStar"
-              @updateLike="updateLike"
-              @back="back"
-          /></transition>
-      </teleport>
-    </div>
   </article>
-  <global-mask v-if="isMask"></global-mask>
 </template>
 
 <script setup>
@@ -61,9 +41,6 @@ import {useRouter} from "vue-router";
 import axios from 'axios';
 import axiosToken from '@/axios';
 import { Star, StarFilled, View } from '@element-plus/icons-vue';
-// 引入自定义的全局遮罩组件和文章详情组件
-import GlobalMask from "@/components/public/GlobalMask";
-import ArticleDetail from "@/components/article/articleDetail";
 
 // 定义响应式数据，用于存储点赞、收藏、浏览状态及对应的数量
 const isLike = ref([]); // 是否已点赞
@@ -101,7 +78,7 @@ const isStarredValue = computed(() => {
 // 点赞按钮的点击事件处理函数
 function toggleLike(articleId){
   if(isLogin.value===true){
-    axiosToken.get("http://localhost:8081/updateArticleLikeCount",{
+    axiosToken.get("http://59.110.48.56:8081/updateArticleLikeCount",{
       params:{
         articleId:articleId,
       },
@@ -124,7 +101,7 @@ function toggleLike(articleId){
 // 收藏按钮的点击事件处理函数
 function toggleStar(articleId){
   if(isLogin.value===true){
-    axiosToken.get("http://localhost:8081/updateArticleStarCount",{
+    axiosToken.get("http://59.110.48.56:8081/updateArticleStarCount",{
       params:{
         articleId:articleId,
       },
@@ -145,7 +122,7 @@ function toggleStar(articleId){
 }
 
 function toggleVisit(articleId){
-  axios.get("http://localhost:8081/updateArticleVisitCount",{
+  axios.get("http://59.110.48.56:8081/updateArticleVisitCount",{
     params:{
       articleId:articleId,
     },
@@ -155,46 +132,13 @@ function toggleVisit(articleId){
   visitCount.value.find(l => l.articleId === articleId).visitCount = operationValue.value+1;
 }
 
-// 更新点赞状态和数量的函数，用于接收子组件传递的更新数据
-const updateLike = (newLikeCount, newIsLiked, articleId) => {
-  initCurrentArticleInfo(articleId);
-  likeCount.value.find(l => l.articleId === articleId).likeCount = newLikeCount;
-  isLike.value.find(i => i.articleId === articleId).like = newIsLiked;
-};
-
-// 更新收藏状态和数量的函数，用于接收子组件传递的更新数据
-const updateStar = (newStarCount, newIsStarred, articleId) => {
-  initCurrentArticleInfo(articleId);
-  starCount.value.find(l => l.articleId === articleId).starCount = newStarCount;
-  isStarred.value.find(i => i.articleId === articleId).star = newIsStarred;
-};
-
-// 定义响应式数据，用于控制全局遮罩的显示和隐藏
-const isMask = ref(false);
-
-// 定义响应式数据，用于存储编辑文章组件的引用
-const editNotice = ref(null);
-// 编辑文章的异步函数，用于动态引入编辑文章组件并显示遮罩
-async function edit() {
-  const { default: edit } = await import("@/components/index/Main/EditNotice.vue");
-  editNotice.value = edit;
-  isMask.value = true;
-}
-
 // 定义响应式数据，用于存储文章详情组件的引用
 const articleDetailId = ref(null);
 // 查看文章详情的异步函数，用于动态引入文章详情组件、增加浏览数量并显示遮罩
 function detail(articleId) {
   toggleVisit(articleId);
-  articleDetailId.value = articleId;
-  isMask.value = true;
+  router.push(`/article/articleId=${articleId}`);
 }
-
-// 返回按钮的点击事件处理函数，用于关闭文章详情组件并隐藏遮罩
-const back = () => {
-  articleDetailId.value = null;
-  isMask.value = false;
-};
 
 function articleContent(article) {
   return article ? article.split('\r\n') : [];
@@ -233,18 +177,8 @@ const getStarCount = (articleId) => {
   return item? item.starCount : 0;
 };
 
-const getIsLike = (articleId) => {
-  const item = isLike.value.find(l => l.articleId === articleId);
-  return item? item.like : false;
-};
-
-const getIsStar = (articleId) => {
-  const item = isStarred.value.find(l => l.articleId === articleId);
-  return item? item.star : false
-};
-
 function initArticle(){
-  axios.get("http://localhost:8081/initArticle",{
+  axios.get("http://59.110.48.56:8081/initArticle",{
     responseType:"json"
   }).then(res=>{
     const data = res.data;
@@ -284,7 +218,7 @@ function initArticle(){
 }
 
 function initCurrentArticleInfo(articleId){
-  axiosToken.get("http://localhost:8081/initCurrentArticleInfo", {
+  axiosToken.get("http://59.110.48.56:8081/initCurrentArticleInfo", {
     params:{articleId:articleId},
     responseType: "json"
   }).then(res => {
@@ -297,7 +231,7 @@ function initCurrentArticleInfo(articleId){
 }
 
 function initArticleInfo() {
-  axiosToken.get("http://localhost:8081/getArticleInfo", {
+  axiosToken.get("http://59.110.48.56:8081/getArticleInfo", {
     responseType: "json"
   }).then(res => {
     const data = res.data.data;

@@ -52,7 +52,7 @@ function save() {
   params.append("title", articleTitle.value)
   params.append("content", articleText.value)
 
-  axios.post("http://localhost:8081/saveArticle", params, {
+  axios.post("http://59.110.48.56:8081/saveArticle", params, {
     responseType: 'text',
     headers: {
       "Content-Type": "application/x-www-form-urlencoded"

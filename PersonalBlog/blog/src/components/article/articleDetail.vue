@@ -1,4 +1,5 @@
 <template>
+  <p>ajshdhjasghjd</p>
   <div class="myArticles-articleDetail">
     <div class="myArticles-content">
       <p v-for="c in content" :key="c">{{c}}</p>
@@ -20,31 +21,22 @@
 
 <script setup>
 // 引入必要的 Vue 函数和 Element Plus 图标
-import { computed, defineProps, ref, defineEmits } from "vue";
+import {computed, ref, onMounted} from "vue";
 import { Star, StarFilled, ChatDotRound } from '@element-plus/icons-vue';
 import axiosToken from "@/axios";
-// 定义组件的自定义事件
-const emit = defineEmits(["back", "updateLike", "updateStar"]);
-
-// 定义组件接收的 props
-const props = defineProps({
-  content:Array,
-  articleId:Number,
-  likeCount: Number,
-  starCount: Number,
-  isLiked: Boolean,
-  isStarred: Boolean
-});
-
+import axios from "axios";
 // 基于 props 初始化响应式数据
 // 点赞数量
-const likeCount = ref(props.likeCount);
+const likeCount = ref(0);
 // 收藏数量
-const starCount = ref(props.starCount);
+const starCount = ref(0);
 // 是否已点赞状态
-const isLike = ref(props.isLiked);
+const isLike = ref(false);
 // 是否已收藏状态
-const isStar = ref(props.isStarred);
+const isStar = ref(false);
+const content = ref("");
+const props = defineProps({
+  articleId: Number});
 
 // 计算点赞图标路径的计算属性
 const likeIcon = computed(() => {
@@ -53,7 +45,7 @@ const likeIcon = computed(() => {
 
 // 点赞按钮点击处理函数
 const toggleLike = () => {
-  axiosToken.get("http://localhost:8081/updateArticleLikeCount",{
+  axiosToken.get("http://59.110.48.56:8081/updateArticleLikeCount",{
     params:{
       articleId:props.articleId,
     },
@@ -71,7 +63,7 @@ const toggleLike = () => {
 
 // 收藏按钮点击处理函数
 const toggleStar = () => {
-  axiosToken.get("http://localhost:8081/updateArticleStarCount",{
+  axiosToken.get("http://59.110.48.56:8081/updateArticleStarCount",{
     params:{
       articleId:props.articleId,
     },
@@ -83,13 +75,30 @@ const toggleStar = () => {
       starCount.value++;
     }
     isStar.value =!isStar.value;
-    emit("updateStar", starCount.value, isStar.value,props.articleId);
   }).catch(console.log)
 };
 // 返回按钮点击处理函数
 const back = () => {
-  emit("back");
+
 };
+
+function initCurrentArticleInfo(articleId) {
+  console.log(props.articleId)
+  axiosToken.get("http://59.110.48.56:8081/initCurrentArticleInfo", {
+    params: {articleId: props.articleId},
+    responseType: "json"
+  }).then(res => {
+    const data = res.data.data;
+    isLike.value.find(l => l.articleId === articleId).like = data.like;
+    isStarred.value.find(s => s.articleId === articleId).star = data.star;
+  }).catch(err => {
+    console.log(err);
+  });
+}
+
+onMounted(()=>{
+  initCurrentArticleInfo()
+})
 </script>
 
 <style>

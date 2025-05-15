@@ -37,7 +37,7 @@ const password = ref('');
 const handleRegister = () => {
   console.log(password.value);
   if(passwordCheck.value===password.value) {
-    axios.get("http://localhost:8081/register", {
+    axios.get("http://59.110.48.56:8081/register", {
       params: {
         username: username.value,
         password: password.value

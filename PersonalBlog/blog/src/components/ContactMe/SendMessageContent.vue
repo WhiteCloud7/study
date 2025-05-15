@@ -36,7 +36,8 @@ const props = defineProps({
   message: String,
   sendTime: String,
   activeSendTime: String,
-  avatarSrc:String
+  avatarSrc:String,
+  sendReceiverName:String
 })
 const dialogVisible = ref(false);
 const emit = defineEmits(["deleteSendMessage", "updateActiveSendTime"]);
@@ -47,9 +48,11 @@ function showOptions() {
 }
 
 function deleteMessage(){
-  axios.get("http://localhost:8081/deleteMessage",{
+  axios.get("http://59.110.48.56:8081/deleteMessage",{
     params:{
       messageId:props.messageId,
+      receiveName:props.sendReceiverName,
+      sendTime:props.sendTime
     },
   }).then(() => {
     emit("deleteSendMessage", props.messageId);
@@ -87,22 +90,19 @@ onUnmounted(() => {
 });
 </script>
 <style>
-.contact-send {
-  display: inline-flex;
-  align-items: center;
+.contact-send{
+  min-width: 1em;
   max-width: 600px;
-  margin-left: 10px;
+  min-height: 40px;
+  max-height: 20em;
+  margin-left: 240px;
+  display: inline-flex;
+  flex-direction: row-reverse;
   margin-top: 8px;
-  border-radius: 6px;
-  padding: 4px;
+  padding: 2px;
   position: relative;
 }
-
-.contact-sendAvatar {
-  flex-shrink: 0;
-}
-
-.contact-sendContent {
+.contact-sendContent{
   display: inline-block;
   padding: 6px 10px;
   background-color: #f5f5f5;
@@ -120,7 +120,7 @@ onUnmounted(() => {
 .contact-messageOption {
   position: absolute;
   top: 100%;
-  left: 40px;
+  left: 500px;
   width: 80px;
   display: flex;
   gap: 1px;

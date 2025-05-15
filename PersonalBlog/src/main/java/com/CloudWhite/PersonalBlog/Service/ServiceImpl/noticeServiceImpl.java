@@ -14,10 +14,12 @@ import com.CloudWhite.PersonalBlog.Utils.redisUtils;
 import jakarta.annotation.PostConstruct;
 import jakarta.annotation.Resource;
 import jakarta.transaction.Transactional;
+import org.apache.ibatis.logging.stdout.StdOutImpl;
 import org.redisson.api.RBloomFilter;
 import org.redisson.api.RLock;
 import org.redisson.api.RedissonClient;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.annotation.Order;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
@@ -55,7 +57,7 @@ public class noticeServiceImpl implements noticeService {
     public void initNotice(){
         List<noticeInfo> noticeInfos = noticeInfoDao.findAll();
         for(noticeInfo noticeInfo : noticeInfos){
-            redisStringTemplate.setObject("noticeInfo:"+noticeInfo.getNoticeId(),noticeInfo);
+            redisStringTemplate.setObject("noticeInfo:"+noticeInfo.getNoticeId()+"-"+noticeInfo.getUserId(),noticeInfo);
         }
         List<notice> notices = noticeDao.findAll();
         for(notice notice : notices){
@@ -69,15 +71,16 @@ public class noticeServiceImpl implements noticeService {
         RBloomFilter<Integer> bloomFilter2 = redissonClient.getBloomFilter("noticeInfo-bloom");
         if (!bloomFilter.isExists()||!bloomFilter2.isExists()) {
             // 初始化布隆过滤器，100000 是预估数量，0.01 是误判率
-            bloomFilter.tryInit(100000, 0.01);
-            bloomFilter2.tryInit(100000, 0.01);
+            bloomFilter.tryInit(10, 0.01);
+            bloomFilter2.tryInit(10, 0.01);
             // 加载已有 ID
-            List<Integer> allNoticeInfoIds = noticeInfoDao.getAllNoticeIds();
+            List<Integer> allNoticeInfoIds = noticeInfoDao.getAllNoticeInfoIds();
             for (Integer id : allNoticeInfoIds) {
                 bloomFilter.add(id);
             }
             List<Integer> allNoticeIds = noticeDao.getAllNoticeIds();
             for (Integer id : allNoticeIds) {
+                System.out.println(id);
                 bloomFilter2.add(id);
             }
         }
@@ -96,7 +99,7 @@ public class noticeServiceImpl implements noticeService {
     public noticeInfo getNoticeInfo(int noticeId){
         int userId = UserContext.getCurrentToken().getUserId();
         return redisUtils.queryWithPassThrough(
-                "noticeInfo:" + noticeId,
+                "noticeInfo:" + noticeId+"-"+userId,
                 noticeInfo.class,
                 () -> noticeInfoDao.findByNoticeIdAndUserId(noticeId, userId),
                 "noticeInfo-lock:" + noticeId,
@@ -132,67 +135,39 @@ public class noticeServiceImpl implements noticeService {
     public void addLike(int noticeId) {
         int userId = UserContext.getCurrentToken().getUserId();
         String redisNoticeKey = "notice:" + noticeId;
-        String redisNoticeInfoKey = "noticeInfo:" + noticeId;
+        String redisNoticeInfoKey = "noticeInfo:" + noticeId + "-" + userId;
 
+        // 查缓存中的 notice，如果不存在就查数据库
         notice cacheNotice = redisStringTemplate.getObject(redisNoticeKey, notice.class);
+        if (cacheNotice == null) {
+            cacheNotice = noticeDao.findByNoticeId(noticeId);
+            if (cacheNotice == null) {
+                // 防御式处理：非法 noticeId
+                throw new IllegalArgumentException("Notice 不存在: " + noticeId);
+            }
+            redisStringTemplate.setObject(redisNoticeKey, cacheNotice);
+        }
+
+        // 查用户点赞信息（不查数据库）
         noticeInfo cacheNoticeInfo = redisStringTemplate.getObject(redisNoticeInfoKey, noticeInfo.class);
 
-        // 优先处理缓存
-        if (cacheNotice != null && cacheNoticeInfo != null) {
+        if (cacheNoticeInfo == null) {
+            // 用户首次点赞，构造记录
+            cacheNoticeInfo = new noticeInfo();
+            cacheNoticeInfo.setNoticeId(noticeId);
+            cacheNoticeInfo.setUserId(userId);
+            cacheNoticeInfo.setLike(true);
+            cacheNotice.setLikeCount(cacheNotice.getLikeCount() + 1);
+        } else {
+            // 用户已经点过赞，执行点赞状态切换
             boolean isLike = cacheNoticeInfo.isLike();
             cacheNoticeInfo.setLike(!isLike);
             cacheNotice.setLikeCount(cacheNotice.getLikeCount() + (isLike ? -1 : 1));
-            redisStringTemplate.setObject(redisNoticeKey, cacheNotice);
-            redisStringTemplate.setObject(redisNoticeInfoKey, cacheNoticeInfo);
-            return;
         }
-
-        // 查询数据库
-        notice notice = noticeDao.findByNoticeId(noticeId);
-        noticeInfo noticeInfo = noticeInfoDao.findByNoticeIdAndUserId(noticeId, userId);
-
-        if (notice != null && noticeInfo != null) {
-            boolean isLike = noticeInfo.isLike();
-            noticeInfo.setLike(!isLike);
-            notice.setLikeCount(notice.getLikeCount() + (isLike ? -1 : 1));
-            noticeDao.save(notice);
-            noticeInfoDao.save(noticeInfo);
-            redisStringTemplate.setObject(redisNoticeKey, notice);
-            redisStringTemplate.setObject(redisNoticeInfoKey, noticeInfo);
-        }
-    }
-
-    public void addStar(int noticeId) {
-        int userId = UserContext.getCurrentToken().getUserId();
-        String redisNoticeKey = "notice:" + noticeId;
-        String redisNoticeInfoKey = "noticeInfo:" + noticeId;
-
-        // 尝试从缓存读取
-        notice cacheNotice = redisStringTemplate.getObject(redisNoticeKey, notice.class);
-        noticeInfo cacheNoticeInfo = redisStringTemplate.getObject(redisNoticeInfoKey, noticeInfo.class);
-
-        if (cacheNotice != null && cacheNoticeInfo != null) {
-            boolean isStar = cacheNoticeInfo.isStar();
-            cacheNoticeInfo.setStar(!isStar);
-            cacheNotice.setStarCount(cacheNotice.getStarCount() + (isStar ? -1 : 1));
-            redisStringTemplate.setObject(redisNoticeKey, cacheNotice);
-            redisStringTemplate.setObject(redisNoticeInfoKey, cacheNoticeInfo);
-            return;
-        }
-
-        // 查询数据库并处理
-        notice notice = noticeDao.findByNoticeId(noticeId);
-        noticeInfo noticeInfo = noticeInfoDao.findByNoticeIdAndUserId(noticeId, userId);
-
-        if (notice != null && noticeInfo != null) {
-            boolean isStar = noticeInfo.isStar();
-            noticeInfo.setStar(!isStar);
-            notice.setStarCount(notice.getStarCount() + (isStar ? -1 : 1));
-            noticeDao.save(notice);
-            noticeInfoDao.save(noticeInfo);
-            redisStringTemplate.setObject(redisNoticeKey, notice);
-            redisStringTemplate.setObject(redisNoticeInfoKey, noticeInfo);
-        }
+        // 更新缓存
+        redisStringTemplate.setObject(redisNoticeKey, cacheNotice);
+        redisStringTemplate.setObject(redisNoticeInfoKey, cacheNoticeInfo);
+        redisCommonTemplate.setExpire(redisNoticeInfoKey,2,TimeUnit.DAYS);
     }
 
     public void saveNotice(int noticeId,String title,String newNotice){
@@ -210,17 +185,62 @@ public class noticeServiceImpl implements noticeService {
     @Scheduled(fixedRate = 1000*60)
     @NoAop
     public void updateNoticeDb(){
-        List<notice> cacheNotice = new ArrayList<>();
-        Set<String> keys = stringRedisTemplate.keys("notice:*");
-        for(String key : keys){
-            cacheNotice.add(redisStringTemplate.getObject(key,notice.class));
+        try{
+            List<notice> cacheNotice = new ArrayList<>();
+            Set<String> keys = stringRedisTemplate.keys("notice:*");
+            for(String key : keys){
+                cacheNotice.add(redisStringTemplate.getObject(key,notice.class));
+            }
+            List<noticeInfo> cacheNoticeInfo = new ArrayList<>();
+            Set<String> infoKeys = stringRedisTemplate.keys("noticeInfo:*");
+            for(String key : infoKeys){
+                cacheNoticeInfo.add(redisStringTemplate.getObject(key,noticeInfo.class));
+            }
+            noticeDao.saveAll(cacheNotice);
+            for(noticeInfo cache : cacheNoticeInfo){
+                if(cache.getNoticeinfoId()==0){
+                    mybatisDao.saveNoticeInfo(cache);
+                    int noticeInfoId = noticeInfoDao.getNoticeInfoId(cache.getUserId(),cache.getNoticeId());
+                    cache.setNoticeinfoId(noticeInfoId);
+                    redisStringTemplate.setObject("noticeInfo:" + cache.getNoticeId() + "-" + cache.getUserId(),cache);
+                    redisCommonTemplate.setExpire("noticeInfo:" + cache.getNoticeId() + "-" + cache.getUserId(),2,TimeUnit.DAYS);
+                }
+                else {
+                    noticeInfoDao.save(cache);
+                }
+            }
+        }catch (Exception e){}
+    }
+
+    @Scheduled( cron = "0 0 3 * * ?")
+    public void updateRedis(){
+        initNotice();
+    }
+
+    @Scheduled(fixedRate = 1000 * 50*10)
+    @NoAop
+    public void updateBloomFilter() {
+        String bloomKey1 = "notice-bloom";
+        String bloomKey2 = "noticeInfo-bloom";
+
+        // 删除旧的过滤器（清空数据）
+        redissonClient.getBloomFilter(bloomKey1).delete();
+        redissonClient.getBloomFilter(bloomKey2).delete();
+
+        // 重新初始化
+        RBloomFilter<Integer> bloomFilter = redissonClient.getBloomFilter(bloomKey1);
+        RBloomFilter<Integer> bloomFilter2 = redissonClient.getBloomFilter(bloomKey2);
+        bloomFilter.tryInit(10, 0.01);
+        bloomFilter2.tryInit(10, 0.01);
+
+        // 加载数据
+        List<Integer> allNoticeInfoIds = noticeInfoDao.getAllNoticeInfoIds();
+        for (Integer id : allNoticeInfoIds) {
+            bloomFilter.add(id);
         }
-        List<noticeInfo> cacheNoticeInfo = new ArrayList<>();
-        Set<String> infoKeys = stringRedisTemplate.keys("noticeInfo:*");
-        for(String key : infoKeys){
-            cacheNoticeInfo.add(redisStringTemplate.getObject(key,noticeInfo.class));
+        List<Integer> allNoticeIds = noticeDao.getAllNoticeIds();
+        for (Integer id : allNoticeIds) {
+            bloomFilter2.add(id);
         }
-        noticeDao.saveAll(cacheNotice);
-        noticeInfoDao.saveAll(cacheNoticeInfo);
     }
 }

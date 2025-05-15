@@ -15,7 +15,7 @@ public class CorsConfig {
         // 允许的跨域请求源，可以使用具体的域名，也可以使用通配符 "*" 允许所有源
         // 注意：在生产环境中，建议使用具体的域名，避免使用通配符，以增强安全性
         config.addAllowedOriginPattern("*");
-        // 允许的请求方法，如 GET、POST、PUT、DELETE 等
+        // 允许的请求方法，如 GET、POST、PUT、DELETE 等c
         config.addAllowedMethod("*");
         // 允许的请求头，如 Content-Type、Authorization 等
         config.addAllowedHeader("*");

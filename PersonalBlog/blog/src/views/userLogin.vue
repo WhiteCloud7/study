@@ -34,13 +34,13 @@ function goToRegister(){
 
 function initUser(){
   isLogin.value = false;
-  localStorage.removeItem("refreshToken");
-  cookie.remove("token");
+  sessionStorage.removeItem("token");
+  cookie.remove("refreshToken");
 }
 
 function handleLogin(){
   console.log(isLogin.value);
-  axios.get("http://localhost:8081/login",{
+  axios.get("http://59.110.48.56:8081/login",{
     params:{
       username:username.value,
       password:password.value
@@ -53,10 +53,11 @@ function handleLogin(){
       alert("账号不存在")
     else {
       initUser();
-      isLogin.value = true;
-      localStorage.setItem("token", data.data[0]);
-      cookie.set("refreshToken",data.data[1],{expires:7});
-      location.assign("/index");
+      if(data.data!==null){
+        isLogin.value = true;
+        sessionStorage.setItem("token", data.data);
+        location.assign("/index");
+      }
     }
   }).catch(err=>{
     console.log(err);

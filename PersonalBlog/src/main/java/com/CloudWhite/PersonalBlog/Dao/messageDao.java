@@ -22,4 +22,8 @@ public interface messageDao extends JpaRepository<message,Integer> {
     public List<String[]> getReceiveMessages(@Param("friendName") String friendName, @Param("username") String username,@Param("sendTime") String sendTime );
 
     boolean existsBySenderNameAndReceiverNameAndSendTime(String sender,String receiver,String sendTime);
+
+    @Query(value = "SELECT * FROM message WHERE (receiver_name = :receiverName AND sender_name = :senderName AND send_time = :sendTime) \n" +
+            "OR (receiver_name = :senderName AND sender_name = :receiverName AND send_time = :sendTime);",nativeQuery = true)
+    message getDeleteMessage(String senderName,String receiverName,String sendTime);
 }

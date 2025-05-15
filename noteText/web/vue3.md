@@ -506,6 +506,9 @@ axios.post("http://localhost:8081/form/updateUserInfo", params, {
   }})
 //当然如果请求的参数后端也可以接收前端得json数据，用map来接收
 ```
+3. 取消请求 
+一种是比较旧的方法，先定义一个变量如cancelTokenSource，在发送请求前获取CancelToken实例调用source方法，`cancelTokenSource = axios.CancelToken.source()`，发送时配置加上`cancelToken: cancelTokenSource.token`，然后想取消将将定义的变量置空即可，这个趋于底层更稳定
+而比较新的就是`let abortController: AbortController | null = null`，发送前new一下AbortController对象，同样发送时配置加上`signal: abortController.signal`，然后调用abort方法即可，这个趋于上层，更清晰
 # 弹窗
 实现弹窗可以用我上面懒加载组件方法，同时vue提供了一个 <teleport> 标签，使用很简单用该标签包围懒加载或其他形式实现弹窗的组件即可，还可搭配 <transition>标签（包围在teleport内弹窗组件外）实现弹窗的淡入淡出的动画效果。它和直接用组件标签的区别是，它不会影响页面的布局，而是将组件渲染到指定的位置。  
 而实现渲染到指定位置用的是to属性，它的值可以是一个字符串或一个对象，就是渲染的位置，如：`<teleport to="body">`，这样就会将组件渲染到body标签内。  

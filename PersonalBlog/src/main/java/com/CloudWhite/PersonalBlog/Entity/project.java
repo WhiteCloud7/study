@@ -37,6 +37,14 @@ public class project {
         this.parentDirId = parentDirId;
     }
 
+    public project(String fileName, String modifyTime, String type, byte dirLevel, int parentDirId) {
+        this.fileName = fileName;
+        this.modifyTime = modifyTime;
+        this.type = type;
+        this.dirLevel = dirLevel;
+        this.parentDirId = parentDirId;
+    }
+
     public int getFileId() {
         return fileId;
     }

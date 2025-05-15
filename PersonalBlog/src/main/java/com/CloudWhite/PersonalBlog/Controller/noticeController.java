@@ -47,14 +47,6 @@ public class noticeController {
         return new ResponseEntity();
     }
 
-    @GetMapping("/updateStarCount")
-    @LoginRequired
-    @Description("更新收藏数")
-    public ResponseEntity updateStarCount(int noticeId){
-        noticeService.addStar(noticeId);
-        return new ResponseEntity();
-    }
-
     @PostMapping("/saveNotice")
     @Description("保存更改的通知")
     @PermissionRequired(type = "admin")

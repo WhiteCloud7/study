@@ -16,6 +16,7 @@ public class article {
     @Schema(name = "文章标题")
     private String title;
     @Schema(name = "文章内容")
+    @Column(columnDefinition = "TEXT")
     private String articleContent;
     @Schema(name = "文章访问数")
     private int visitCount;

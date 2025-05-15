@@ -14,11 +14,6 @@
         </el-icon>
         <label class="iconLabel">{{ formatCount(notice.likeCount) }}</label>
 
-        <el-icon class="icon" @click="toggleStar(notice.noticeId)">
-          <component :is="isStarred[notice.noticeId] ? StarFilled : Star" />
-        </el-icon>
-        <label class="iconLabel">{{ formatCount(notice.starCount) }}</label>
-
         <el-button @click="edit(notice.noticeId)" class="button">编辑</el-button>
         <el-button @click="detail(notice.noticeId)" class="button">查看详细</el-button>
       </div>
@@ -29,13 +24,10 @@
               v-if="noticeDetail"
               :notice-id="currentNoticeId"
               :like-count="currentLike"
-              :star-count="currentStar"
               :is-liked="currentIsLike"
-              :is-starred="currentIsStarred"
               :message-array="messageContent(currentMessage)"
               :title="currentNoticeTitle"
               @updateLike="updateLike"
-              @updateStar="updateStar"
               @back="back"
           />
         </transition>
@@ -60,7 +52,7 @@
 import {ref, onMounted, nextTick, getCurrentInstance} from 'vue';
 import axios from 'axios';
 import axiosToken from '@/axios';
-import { Star, StarFilled, View } from '@element-plus/icons-vue';
+import { View } from '@element-plus/icons-vue';
 import GlobalMask from '@/components/public/GlobalMask.vue';
 import EditNotice from '@/components/index/Main/EditNotice.vue';
 import NoticeDetail from '@/components/index/Main/noticeDetail.vue';
@@ -71,12 +63,9 @@ const isLogin = instance?.appContext.config.globalProperties.$isLogin;
 const router = useRouter();
 const notices = ref([]);
 const isLike = ref({});
-const isStarred = ref({});
 
 const currentLike = ref(0);
-const currentStar = ref(0);
 const currentIsLike = ref(false);
-const currentIsStarred = ref(false);
 const currentMessage = ref('');
 const currentNoticeId = ref(null);
 const currentNoticeTitle = ref('');
@@ -125,27 +114,10 @@ function toggleLike(noticeId) {
     notice.likeCount += isLike.value[noticeId] ? -1 : 1;
     isLike.value[noticeId] = !isLike.value[noticeId];
 
-    axiosToken.get("http://localhost:8081/updateLikeCount", {
+    axiosToken.get("http://59.110.48.56:8081/updateLikeCount", {
       params: { noticeId }
     }).catch(console.log);
   }else{
-    router.push("login");
-  }
-}
-
-function toggleStar(noticeId) {
-  if(isLogin.value===true){
-    const notice = getCurrentNotice(noticeId);
-    if (!notice) return;
-    notice.starCount += isStarred.value[noticeId] ? -1 : 1;
-    isStarred.value[noticeId] = !isStarred.value[noticeId];
-
-    axiosToken.get("http://localhost:8081/updateStarCount", {
-      params: { noticeId}
-    }).catch(err=>{
-      console.log(err)
-    });
-  }else {
     router.push("login");
   }
 }
@@ -158,14 +130,6 @@ function updateLike(id, count, liked) {
   }
 }
 
-function updateStar(id, count, starred) {
-  const notice = getCurrentNotice(id);
-  if (notice) {
-    notice.starCount = count;
-    isStarred.value[id] = starred;
-  }
-}
-
 async function detail(noticeId) {
   if(isLogin.value===true){
 
@@ -174,23 +138,21 @@ async function detail(noticeId) {
   if (!notice) return;
 
   notice.visitCount++;
-  await axios.get("http://localhost:8081/updateVisitCount", {
+  await axios.get("http://59.110.48.56:8081/updateVisitCount", {
     params: { noticeId }
   }).catch(console.log);
 
   currentNoticeId.value = noticeId;
   currentMessage.value = notice.noticeMessage;
   currentLike.value = notice.likeCount;
-  currentStar.value = notice.starCount;
   currentIsLike.value = isLike.value[noticeId];
-  currentIsStarred.value = isStarred.value[noticeId];
   currentNoticeTitle.value = notice.title;
   noticeDetail.value = NoticeDetail;
   isMask.value = true;
 }
 
 async function edit(noticeId) {
-  await axiosToken.get("http://localhost:8081/permissionCheck", null).then(res=>{
+  await axiosToken.get("http://59.110.48.56:8081/permissionCheck", null).then(res=>{
     const notice = getCurrentNotice(noticeId);
     if (!notice) return;
 
@@ -215,17 +177,16 @@ function editBack() {
 
 async function initNotice() {
   try {
-    const res = await axios.get("http://localhost:8081/getNotice");
+    const res = await axios.get("http://59.110.48.56:8081/getNotice");
     notices.value = res.data;
 
     for (let notice of notices.value) {
       const id = notice.noticeId;
-      const info = await axiosToken.get("http://localhost:8081/getNoticeInfo", {
+      const info = await axiosToken.get("http://59.110.48.56:8081/getNoticeInfo", {
         params: { noticeId: id}
       });
       isLike.value[id] = info.data.data.like;
-      isStarred.value[id] = info.data.data.star;
-      console.log(info.data.data);
+      console.log(isLike.value[id]);
     }
   } catch (err) {
     console.log(err);
@@ -331,7 +292,7 @@ onMounted(async () => {
 .button {
   position: relative;
   bottom: 3px;
-  left: 10px;
+  left: 70px;
   width: 68px;
   border: 1px solid black;
 }

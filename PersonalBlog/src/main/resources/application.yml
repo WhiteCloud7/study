@@ -7,24 +7,28 @@ logging:
 #????
 server:
   port: 8081
-
 spring:
   application:
     name: PersonalBlog
-  #???
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/personalblog?useUnicode=true&characterEncoding=utf-8&useSSL=false&serverTimezone=Asia/Shanghai
+    url: jdbc:mysql://59.110.48.56:3306/personalblog?useUnicode=true&characterEncoding=utf-8&useSSL=false&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true
     username: root
     password: 123456
     hikari:
       max-lifetime: 1770000
       maximum-pool-size: 4
+  jpa:
+    properties:
+      hibernate.dialect: org.hibernate.dialect.MySQL8Dialect
+    hibernate:
+      ddl-auto: none
+  #    show-sql: true
   #redis
   data:
     redis:
       database: 0
-      host: 127.0.0.1
+      host: 59.110.48.56
       port: 6379
       password: 123456
       jedis:
@@ -33,17 +37,17 @@ spring:
           min-idle: 0
           max-active: -1
           max-wait: 5000
+  servlet:
+    multipart:
+      enabled: true
+      max-file-size: 1024MB
+      max-request-size: 1024MB
   #web
   web:
     resources:
       static-locations: file:./uploads/
   mvc:
     static-path-pattern: /uploads/**
-#  jpa:
-#    show-sql: true
-#    properties:
-#      hibernate:
-#        format_sql: true
 
 #mybatis
 mybatis:

@@ -10,7 +10,6 @@ public interface noticeService {
     public List<notice> getNoticeList();
     public void addVisitCount(int noticeId);
     public void addLike(int noticeId);
-    public void addStar(int noticeId);
     public void addComment(int noticeId);
     public void saveNotice(int noticeId,String title,String newNotice);
 }

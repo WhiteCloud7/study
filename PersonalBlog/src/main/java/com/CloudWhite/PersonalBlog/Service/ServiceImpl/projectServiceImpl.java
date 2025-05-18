@@ -5,15 +5,22 @@ import com.CloudWhite.PersonalBlog.Dao.projectDao;
 import com.CloudWhite.PersonalBlog.Entity.project;
 import com.CloudWhite.PersonalBlog.Model.UserContext;
 import com.CloudWhite.PersonalBlog.Service.projectService;
+import com.CloudWhite.PersonalBlog.Utils.zipUtils;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.InputStreamResource;
+import org.springframework.core.io.Resource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.*;
 import java.net.URLDecoder;
+import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -27,14 +34,15 @@ import java.util.zip.ZipInputStream;
 @Service
 @Transactional
 public class projectServiceImpl implements projectService {
+    private zipUtils zipUtils;
     private String baseDir = System.getProperty("user.dir") + "/uploads/project";
     private projectDao projectDao;
     @PersistenceContext
     private EntityManager entityManager;
     private mybatisDao mybatisDao;
-
     @Autowired
-    public projectServiceImpl(projectDao projectDao,mybatisDao mybatisDao) {
+    public projectServiceImpl(com.CloudWhite.PersonalBlog.Utils.zipUtils zipUtils, com.CloudWhite.PersonalBlog.Dao.projectDao projectDao, com.CloudWhite.PersonalBlog.Dao.mybatisDao mybatisDao) {
+        this.zipUtils = zipUtils;
         this.projectDao = projectDao;
         this.mybatisDao = mybatisDao;
     }
@@ -359,6 +367,53 @@ public class projectServiceImpl implements projectService {
             }
         } finally {
             Files.deleteIfExists(zipFilePath);
+        }
+    }
+
+    public ResponseEntity<Resource> download(String filePath,int fileId) throws IOException {
+        project project = projectDao.findByFileId(fileId);
+        if (project == null) {
+            return ResponseEntity.notFound().build();
+        }
+
+        String path = getAbsolutePath(filePath,project.getFileName());
+        File file = new File(path);
+
+        if (!file.exists()) {
+            return ResponseEntity.notFound().build();
+        }
+        if (!"文件夹".equals(project.getType())) {
+            // 普通文件
+            InputStreamResource resource = new InputStreamResource(new FileInputStream(file));
+            return ResponseEntity.ok()
+                    .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + URLEncoder.encode(project.getFileName(),StandardCharsets.UTF_8) + "\"")
+                    .contentLength(file.length())
+                    .contentType(MediaType.APPLICATION_OCTET_STREAM)
+                    .body(resource);
+        } else {
+            // 是文件夹：先压缩
+            String zipFileName = file.getName() + "_" + System.currentTimeMillis() + ".zip";
+            File zipFile = new File(System.getProperty("java.io.tmpdir"), zipFileName);
+            zipUtils.zipFolder(file, zipFile); // 实现压缩逻辑
+            InputStreamResource resource = new InputStreamResource(new FileInputStream(zipFile));
+            // 使用 StreamingResponseBody + 自定义回调在完成后删除临时文件
+            ResponseEntity<Resource> response = ResponseEntity.ok()
+                    .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + URLEncoder.encode(zipFile.getName(),StandardCharsets.UTF_8) + "\"")
+                    .contentLength(zipFile.length())
+                    .contentType(MediaType.APPLICATION_OCTET_STREAM)
+                    .body(resource);
+
+            // 异步删除
+            new Thread(() -> {
+                try {
+                    Thread.sleep(10_000); // 等待 10 秒，确保文件已下载完
+                    Files.deleteIfExists(zipFile.toPath());
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }).start();
+
+            return response;
         }
     }
 }

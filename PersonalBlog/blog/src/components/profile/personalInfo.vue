@@ -31,14 +31,18 @@
       <span>毕业院校:</span>
       <span class="profile-info">{{ school }}</span>
     </div>
+    <el-button v-if="route.path.slice(0,route.path.lastIndexOf('/'))==='userProfile'" style="width: 100px" @click="addFriend(username)">添加好友</el-button>
   </div>
 </template>
 
 <script setup>
-import { inject, onMounted, ref, watchEffect } from "vue";
-import cookie from "js-cookie";
+import { onMounted, ref, watchEffect } from "vue";
 import axios from '@/axios';
+import {getCurrentInstance} from "vue";
+import {useRouter,useRoute} from "vue-router";
 
+const router = useRouter();
+const route = useRoute();
 const avatar = ref('');
 const nickname = ref('');
 const sex = ref('');
@@ -48,7 +52,11 @@ const phone = ref('');
 const qq = ref('');
 const wechat = ref('');
 const school = ref('');
-
+const instance = getCurrentInstance();
+const isLogin = instance?.appContext.config.globalProperties.$isLogin;
+const props = defineProps({
+  username:String
+})
 // 计算年龄的函数
 function calculateAge(birthdayStr) {
   const birthDate = new Date(birthdayStr);
@@ -62,24 +70,61 @@ function calculateAge(birthdayStr) {
 }
 
 function initProfile() {
-  axios.get("http://59.110.48.56:8081/profile", {
-    responseType: "json"
-  }).then(res => {
-    const data = res.data.data;
-    console.log(data);
-    avatar.value = data.avatar_src;
-    nickname.value = data.nikeName;
-    sex.value = data.sex;
-    birthday.value = data.birthday;
-    phone.value = data.phone;
-    qq.value = data.qq;
-    wechat.value = data.wechat;
-    school.value = data.school;
-    // 初始化年龄
-    age.value = calculateAge(birthday.value);
-  }).catch(err => {
-    console.log(err);
-  });
+  if(props.username===null||props.username===undefined){
+    axios.get("http://localhost:8081/profile", {
+      responseType: "json"
+    }).then(res => {
+      const data = res.data.data;
+      avatar.value = data.avatar_src;
+      nickname.value = data.nikeName;
+      sex.value = data.sex;
+      birthday.value = data.birthday;
+      phone.value = data.phone;
+      qq.value = data.qq;
+      wechat.value = data.wechat;
+      school.value = data.school;
+      // 初始化年龄
+      age.value = calculateAge(birthday.value);
+    }).catch(err => {
+      console.log(err);
+    });
+  }else{
+    axios.get("http://localhost:8081/friendProfile", {
+      params:{
+        username:props.username
+      },
+      responseType: "json"
+    }).then(res => {
+      const data = res.data.data;
+      avatar.value = data.avatar_src;
+      nickname.value = data.nikeName;
+      sex.value = data.sex;
+      birthday.value = data.birthday;
+      phone.value = data.phone;
+      qq.value = data.qq;
+      wechat.value = data.wechat;
+      school.value = data.school;
+      // 初始化年龄
+      age.value = calculateAge(birthday.value);
+    }).catch(err => {
+      console.log(err);
+    });
+  }
+}
+
+function addFriend(username){
+  if(isLogin.value===true){
+    axios.get("http://localhost:8081/addFriend",{
+      params:{
+        username:username,
+      }
+    }).then(()=>{
+      if(confirm("添加成功！确认返回聊天界面"))
+        router.push("/contactMe")
+    }).catch(console.log)
+  }else {
+    router.push("/login");
+  }
 }
 
 onMounted(() => {

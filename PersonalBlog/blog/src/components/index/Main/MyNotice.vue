@@ -16,6 +16,7 @@
 
         <el-button @click="edit(notice.noticeId)" class="button">编辑</el-button>
         <el-button @click="detail(notice.noticeId)" class="button">查看详细</el-button>
+        <el-button @click="deleteNotice(notice.noticeId)" class="button">删除</el-button>
       </div>
 
       <teleport to="body">
@@ -49,7 +50,7 @@
 </template>
 
 <script setup>
-import {ref, onMounted, nextTick, getCurrentInstance} from 'vue';
+import {ref, onMounted, nextTick, getCurrentInstance, defineProps, watch} from 'vue';
 import axios from 'axios';
 import axiosToken from '@/axios';
 import { View } from '@element-plus/icons-vue';
@@ -57,12 +58,14 @@ import GlobalMask from '@/components/public/GlobalMask.vue';
 import EditNotice from '@/components/index/Main/EditNotice.vue';
 import NoticeDetail from '@/components/index/Main/noticeDetail.vue';
 import {useRouter} from "vue-router";
+import {useRoute} from "vue-router";
 
 const instance = getCurrentInstance();
 const isLogin = instance?.appContext.config.globalProperties.$isLogin;
 const router = useRouter();
 const notices = ref([]);
 const isLike = ref({});
+const route = useRoute();
 
 const currentLike = ref(0);
 const currentIsLike = ref(false);
@@ -114,7 +117,7 @@ function toggleLike(noticeId) {
     notice.likeCount += isLike.value[noticeId] ? -1 : 1;
     isLike.value[noticeId] = !isLike.value[noticeId];
 
-    axiosToken.get("http://59.110.48.56:8081/updateLikeCount", {
+    axiosToken.get("http://localhost:8081/updateLikeCount", {
       params: { noticeId }
     }).catch(console.log);
   }else{
@@ -138,7 +141,7 @@ async function detail(noticeId) {
   if (!notice) return;
 
   notice.visitCount++;
-  await axios.get("http://59.110.48.56:8081/updateVisitCount", {
+  await axios.get("http://localhost:8081/updateVisitCount", {
     params: { noticeId }
   }).catch(console.log);
 
@@ -151,8 +154,23 @@ async function detail(noticeId) {
   isMask.value = true;
 }
 
+function deleteNotice(noticeId){
+  if(notices.value.length > 1){
+    axiosToken.get("http://localhost:8081/deleteNotice",{
+      params:{
+        noticeId:noticeId
+      }
+    }).then(()=>{
+      alert('删除成功');
+      location.reload();
+    }).catch(console.log)
+  }else{
+    alert("至少保留一个通知！")
+  }
+}
+
 async function edit(noticeId) {
-  await axiosToken.get("http://59.110.48.56:8081/permissionCheck", null).then(res=>{
+  await axiosToken.get("http://localhost:8081/permissionCheck", null).then(res=>{
     const notice = getCurrentNotice(noticeId);
     if (!notice) return;
 
@@ -176,21 +194,22 @@ function editBack() {
 }
 
 async function initNotice() {
-  try {
-    const res = await axios.get("http://59.110.48.56:8081/getNotice");
-    notices.value = res.data;
-
-    for (let notice of notices.value) {
-      const id = notice.noticeId;
-      const info = await axiosToken.get("http://59.110.48.56:8081/getNoticeInfo", {
-        params: { noticeId: id}
-      });
-      isLike.value[id] = info.data.data.like;
-      console.log(isLike.value[id]);
-    }
-  } catch (err) {
-    console.log(err);
-  }
+    axios.get("http://localhost:8081/getNotice"
+    ).then(res=>{
+      notices.value = res.data;
+      if(isLogin.value === true){
+        for (let notice of notices.value) {
+          const id = notice.noticeId;
+          axiosToken.get("http://localhost:8081/getNoticeInfo", {
+            params: { noticeId: id}
+          }).then(info=>{
+            notices.value.sort((a,b)=>a.noticeId-b.noticeId);
+            if(info.data.data!==null)
+              isLike.value[id] = info.data.data.like;
+          }).catch(console.log);
+        }
+      }
+    }).catch(console.log);
 }
 
 const getLabelFontSize = () => {
@@ -221,6 +240,15 @@ const getLabelFontSize = () => {
     iconLabel.style.bottom = bottom;
   }
 };
+
+watch(()=>route.path,(newPath)=>{
+  if(newPath==='/index/newNotice'){
+    if(isLogin.value===true){
+      editNotice.value = EditNotice;
+      isMask.value = true;
+    }
+  }
+})
 
 onMounted(async () => {
   await initNotice();
@@ -292,7 +320,7 @@ onMounted(async () => {
 .button {
   position: relative;
   bottom: 3px;
-  left: 70px;
+  left: 10px;
   width: 68px;
   border: 1px solid black;
 }

@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <title>登录</title>
+</head>
+<body>
+<!-- 指定表单提交地址为 /login，请求方法为 POST -->
+<form action="/login" method="post">
+    <!-- 用户名输入框，name 属性为 username -->
+    <input type="text" name="username" placeholder="输入账号">
+    <!-- 密码输入框，name 属性为 password，type 为 password 以隐藏输入内容 -->
+    <input type="password" name="password" placeholder="输入密码">
+    <input type="submit" value="登录">
+</form>
+<!-- 显示登录错误信息 -->
+<p style="color: red;">
+    <!-- 使用 Thymeleaf 表达式显示错误信息，若有错误则显示 -->
+    <span th:if="${param.error}">用户名或密码错误，请重试！</span>
+</p>
+</body>
+</html>

@@ -64,15 +64,18 @@ public class messageServiceImpl implements messageService {
     @PostConstruct
     @Order(2)
     public void initAllChatCache() {
+        Set<String> keys = stringRedisTemplate.keys("chat:*");
+        for (String key : keys) {
+            redisCommonTemplate.deleteKey(key);
+        }
         List<CachedMessage> messages = mybatisDao.getAllRecentMessagesForAllFriends();
         Map<String, List<CachedMessage>> grouped = messages.stream()
                 .collect(Collectors.groupingBy(msg -> buildRedisKey(msg.getUser_id(), msg.getFriend_id())));
 
         for (Map.Entry<String, List<CachedMessage>> entry : grouped.entrySet()) {
             String redisKey = entry.getKey();
-            redisCommonTemplate.deleteKey(redisKey); // 先删
             List<CachedMessage> messageList = entry.getValue();
-            Collections.reverse(messageList); // 保证最旧在左
+            Collections.reverse(messageList);
             for (CachedMessage msg : messageList) {
                 redisListTemplate.setObjectRight(redisKey, msg); // 从右加入，右是最新消息
             }
@@ -84,9 +87,7 @@ public class messageServiceImpl implements messageService {
         int userId = UserContext.getCurrentToken().getUserId();
         int friendId = redisHashTemplate.getHashObject("user",friendName, userInfo.class).getUserId();
         String redisKey = buildRedisKey(userId, friendId);
-
         List<CachedMessage> cachedMessages = redisListTemplate.range(redisKey, 0, -1, CachedMessage.class);
-
         if (cachedMessages != null && !cachedMessages.isEmpty()) {
             List<messageDto> collect = cachedMessages.stream()
                     .map(msg -> new messageDto(msg.getMessage_id(), msg.getReceiver_name(), msg.getMessage(), msg.getSend_time()))
@@ -99,7 +100,21 @@ public class messageServiceImpl implements messageService {
             messageDto messageDto = new messageDto(String.valueOf(message.getMessageId()),message.getReceiverName(),message.getMessage(),message.getSendTime());
             messageDtos.add(messageDto);
         }
-        // 如果 Redis 缓存为空，查询数据库
+        return messageDtos;
+    }
+
+    public List<messageDto> getOlderMessages(String friendName, String beforeTime){
+        int friendId = userDao.findUserIdByUserName(friendName);
+        int userId = UserContext.getCurrentToken().getUserId();
+        String username = UserContext.getCurrentToken().getUsername();
+        List<message> messages = messageDao.getOlderMessage(username,friendName,beforeTime);
+        List<messageDto> messageDtos = new ArrayList<>();
+        for(message message : messages){
+            messageDto messageDto = new messageDto(String.valueOf(message.getMessageId()),message.getReceiverName(),message.getMessage(),message.getSendTime());
+            messageDtos.add(messageDto);
+            CachedMessage cm = new CachedMessage(userId, friendId, String.valueOf(message.getMessageId()),message.getSenderName(), message.getReceiverName(), message.getMessage(), message.getSendTime());
+            redisListTemplate.setObjectRight(buildRedisKey(userId, friendId), cm);
+        }
         return messageDtos;
     }
 
@@ -183,15 +198,18 @@ public class messageServiceImpl implements messageService {
     }
 
     @NoAop
-    public String getLastNewTime(String friendName){
-        String username = UserContext.getCurrentToken().getUsername();
+    public String getLastNewTime(String friendName) {
         int userId = UserContext.getCurrentToken().getUserId();
         int friendId = redisHashTemplate.getHashObject("user", friendName, userInfo.class).getUserId();
         String redisKey = buildRedisKey(userId, friendId);
 
-        List<CachedMessage> cachedMessages = redisListTemplate.range(redisKey, -1, -1, CachedMessage.class);
-        return cachedMessages.get(0).getSend_time();
+        List<CachedMessage> cached = redisListTemplate.range(redisKey, -1, -1, CachedMessage.class);
+        if (cached == null || cached.isEmpty()) {
+            return null;
+        }
+        return cached.get(0).getSend_time();
     }
+
 
     @Scheduled(fixedDelay = (1000*60*60*24))
     public void RestMessageTable(){

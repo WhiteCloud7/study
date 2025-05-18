@@ -20,7 +20,7 @@ const instance = getCurrentInstance();
 const currentChatObject = instance?.appContext.config.globalProperties.$currentChatObject;
 
 const getFriendBasicInfo = () => {
-  axios.get("http://59.110.48.56:8081/getFriendBasicInfo", {
+  axios.get("http://localhost:8081/getFriendBasicInfo", {
     responseType: "json"
   }).then(res => {
     friendList.value = res.data.data;

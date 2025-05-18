@@ -25,6 +25,7 @@
       <el-tooltip content="粘贴" effect="light" placement="top"><div v-loading.fullscreen.lock="isPaste" element-loading-text="正在粘贴..." class="project-operationIcon" @click="paste"><i class="fa-regular fa-paste " :style="{color: pasteColor,cursor:pasteColor==='black'?'pointer':'default'}"></i></div></el-tooltip>
       <el-tooltip content="重命名" effect="light" placement="top"><div class="project-operationIcon" @click="rename"><i class="fa-solid fa-pen-to-square" :style="{color: utilsColor,cursor:utilsColor==='black'?'pointer':'default'}"></i></div></el-tooltip>
       <el-tooltip content="删除" effect="light" placement="top"><div v-loading.fullscreen.lock="isDelete" element-loading-text="删除中..." class="project-operationIcon" @click="deleteFile"><i class="fa-regular fa-trash-can" :style="{color: utilsColor,cursor:utilsColor==='black'?'pointer':'default'}"></i></div></el-tooltip>
+      <el-tooltip content="下载" effect="light" placement="top"><div class="project-operationIcon" @click="download"><i class="fa-solid fa-download" :style="{color: utilsColor,cursor:utilsColor==='black'?'pointer':'default'}"></i></div></el-tooltip>
     </div>
     <div class="projectUtils-sort">
       <el-select class="projectUtils-sortSelect"
@@ -91,6 +92,7 @@
 </template>
 
 <script setup>
+import {getCurrentInstance} from "vue";
 import { useRoute, useRouter } from 'vue-router'
 import {onMounted, onUnmounted, ref, watch} from 'vue'
 import axios from 'axios'
@@ -104,6 +106,8 @@ import {ElMessage} from "element-plus";
 const router = useRouter();
 const route = useRoute();
 
+const instance = getCurrentInstance();
+const isLogin = instance.appContext.config.globalProperties.$isLogin;
 const currentDirectors = ref([]);
 const filePath = ref([]);
 const newFileName = ref("");
@@ -141,7 +145,7 @@ const navigateTo = (index) => {
   }
   if (path != '') {
     sessionStorage.setItem('filePath', JSON.stringify(levels));
-    axios.get(`http://59.110.48.56:8081/project/${path}`, {
+    axios.get(`http://localhost:8081/project/${path}`, {
       responseType: "json"
     }).then(res => {
       currentDirectors.value = res.data;
@@ -180,7 +184,7 @@ const handleFileChange = async (event) => {
   cancelTokenSource = axios.CancelToken.source()
 
   try {
-    await axiosToken.post('http://59.110.48.56:8081/uploadFile', formData, {
+    await axiosToken.post('http://localhost:8081/uploadFile', formData, {
       headers: {
         'Content-Type': 'multipart/form-data',
       },
@@ -255,7 +259,7 @@ function addFile(){
   params.append('type',getFileType(newFileName.value))
   params.append('filePath',filePath.value)
   if(newFileName.value!=null&&newFileName.value!=''){
-    axios.post("http://59.110.48.56:8081/addFile",params,{
+    axios.post("http://localhost:8081/addFile",params,{
     }).then(res =>{
       newFileName.value = '';
       const data = res.data;
@@ -355,7 +359,7 @@ function paste(e){
     formData.append("shearPath",shearPath.value);
     isPaste.value = true;
     if(isCopy.value){
-      axios.post("http://59.110.48.56:8081/copyPaste",formData,{
+      axios.post("http://localhost:8081/copyPaste",formData,{
         headers: {
           'Content-Type': 'application/x-www-form-urlencoded'
         }
@@ -372,7 +376,7 @@ function paste(e){
       isPaste.value = false;
     });
     }else {
-      axios.post("http://59.110.48.56:8081/cutPaste",formData,{
+      axios.post("http://localhost:8081/cutPaste",formData,{
         headers: {
           'Content-Type': 'application/x-www-form-urlencoded'
         }
@@ -417,7 +421,7 @@ function handleRename(newFileName){
   const oldName = currentDirectors.value.find(c=>c.fileId===clickId).fileName;
   currentDirectors.value.find(c=>c.fileId===clickId).fileName = newFileName;
   console.log(filePath.value.join("/"))
-  axios.get("http://59.110.48.56:8081/rename",{
+  axios.get("http://localhost:8081/rename",{
     params:{
       newFileName:newFileName,
       fileId:clickId,
@@ -433,7 +437,7 @@ function deleteFile(e){
     const isClicks = checks.value.filter(c=>c.isClick===true)
     const deleteFiles = isClicks.map(d=>d.fileId);
     isDelete.value = true;
-    axios.get("http://59.110.48.56:8081/deleteFile",{
+    axios.get("http://localhost:8081/deleteFile",{
       params:{
         deleteFiles:deleteFiles.join(','),
         filePath:filePath.value.join("/")
@@ -451,11 +455,53 @@ function deleteFile(e){
   }
 }
 
+function download() {
+  const fileIdList = checks.value.filter(c => c.isClick === true);
+  if(isLogin.value!=true){
+    router.push('/login');
+    return;
+  }
+  if (fileIdList.length !== 1) {
+    alert("一次只支持下载一个文件！");
+    return;
+  }
+  const fileId = fileIdList[0].fileId;
+  axiosToken.get("http://localhost:8081/download", {
+    params: {
+      filePath: encodeURIComponent(filePath.value),
+      fileId: fileId
+    },
+    responseType: 'blob' // 👈 必须加
+  }).then(res => {
+    const blob = new Blob([res.data]);
+    const downloadUrl = window.URL.createObjectURL(blob);
+    // 提取文件名（可选，依赖后端是否设置 Content-Disposition）
+    const disposition = res.headers['content-disposition'];
+    let fileName = '下载文件';
+    if (disposition && disposition.includes('filename=')) {
+      fileName = decodeURIComponent(disposition.split('filename=')[1].slice(1,disposition.split('filename=')[1].length-1));
+    }
+    // 创建 a 标签触发下载
+    const a = document.createElement('a');
+    a.href = downloadUrl;
+    a.download = fileName;
+    document.body.appendChild(a);
+    a.click();
+    // 清理
+    a.remove();
+    window.URL.revokeObjectURL(downloadUrl);
+  }).catch(err => {
+    console.error("下载失败", err);
+    ElMessage.error("下载失败！");
+  });
+}
+
+
 function goNextDir(fileId,currentDirName) {
   if(getFileType(currentDirName)=='文件夹'){
     filePath.value.push(currentDirName);
     isProgrammaticChange.value = true;  // 标记为程序跳转
-    axios.get("http://59.110.48.56:8081/getNextDirs", {
+    axios.get("http://localhost:8081/getNextDirs", {
       params: {
         fileId:fileId
       },
@@ -477,7 +523,7 @@ function goNextDir(fileId,currentDirName) {
 }
 
 function initDirectory() {
-  axios.get("http://59.110.48.56:8081/getTheFirstDirectory", {
+  axios.get("http://localhost:8081/getTheFirstDirectory", {
     responseType: "json"
   }).then(res => {
     currentDirectors.value = res.data;
@@ -515,7 +561,7 @@ watch(() => route.params, (newParams) => {
   // 请求相应的目录数据
   if (path !== '/project') {
     path=path.replace('/project','');
-    axios.get(`http://59.110.48.56:8081/project${path}`, { responseType: 'json' })
+    axios.get(`http://localhost:8081/project${path}`, { responseType: 'json' })
         .then(res => {
           currentDirectors.value = res.data;
           filePath.value = [];

@@ -12,11 +12,12 @@ public interface userService {
     public void permissionCheck();
     public List<user> findAll();
     public userInfo getUserByUserId();
+    public userInfo getUserByUsername(String username) ;
     public ResponseEntity login(String username, String password);
     public String register(String username,String password);
-    public void saveProfile(user user);
+    public String saveProfile(user user);
     public String refreshToken(String refreshToken);
     public String updateAvatar(MultipartFile multipartFile);
-
     public void logout(String username);
+    public void addFriend(String username);
 }

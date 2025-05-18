@@ -63,4 +63,9 @@ public class messageController {
     public ResponseEntity getLastNewTime(String friendName){
         return new ResponseEntity(messageService.getLastNewTime(friendName));
     }
+    @GetMapping("/getOlderMessages")
+    @LoginRequired
+    public ResponseEntity getOlderMessages(String friendName,String beforeTime){
+        return new ResponseEntity(messageService.getOlderMessages(friendName,beforeTime));
+    }
 }

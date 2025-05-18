@@ -6,14 +6,16 @@
     </div>
     <el-button-group class="button-set">
       <el-button class="edit-button" @click="edit">编辑</el-button>
-      <el-button class="edit-button" @click="save">保存</el-button>
+      <el-button class="edit-button" @click="save" v-if="route.path!=='/index/newNotice'">保存</el-button>
+      <el-button class="edit-button" @click="newNotice" v-if="route.path==='/index/newNotice'">发布</el-button>
       <el-button class="edit-back" @click="editBack">返回</el-button>
     </el-button-group>
   </div>
 </template>
 <script setup>
-import {defineEmits,defineProps,ref} from "vue";
+import {defineEmits, defineProps, onBeforeUnmount, onMounted, ref} from "vue";
 import axios from "@/axios";
+import {useRouter,useRoute} from "vue-router";
 const props = defineProps({
   message: String,
   noticeId: Number,
@@ -24,6 +26,8 @@ const emit = defineEmits(["editBack"]);
 const isReadOnly = ref(true);
 const cursorType = ref("default");
 const noticeTitle = ref(props.title);
+const router = useRouter();
+const route = useRoute();
 
 function edit(){
   isReadOnly.value = !isReadOnly.value;
@@ -35,7 +39,7 @@ function save(){
   params.append("noticeId", props.noticeId);
   params.append("title",noticeTitle.value);
   params.append("messageText", messageText.value);
-  axios.post("http://59.110.48.56:8081/saveNotice",params,{
+  axios.post("http://localhost:8081/saveNotice",params,{
     headers: {
       "Content-Type": "application/x-www-form-urlencoded"
     }
@@ -51,9 +55,32 @@ function save(){
   });
 }
 
-const editBack = () => {
-  emit("editBack");
-};
+function newNotice(){
+  const params = new URLSearchParams();
+  params.append("title",noticeTitle.value);
+  params.append("noticeContent", messageText.value);
+  axios.post("http://localhost:8081/newNotice",params,{
+    headers: {
+      "Content-Type": "application/x-www-form-urlencoded"
+    }
+  }).then(res =>{
+    if(res.data.message=="发布成功"){
+      confirm("发布成功！");
+      router.push("/index");
+      window.location.reload();
+    }
+    else
+      alert("发布失败!");
+  }).catch(err =>{
+    console.log(err);
+  });
+}
+
+function editBack(){
+  if(route.path === "/index/newNotice")
+    router.push("/index");
+  emit('editBack')
+}
 </script>
 <style>
 .editNotice{

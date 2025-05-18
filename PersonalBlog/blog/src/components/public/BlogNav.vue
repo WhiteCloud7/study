@@ -28,6 +28,8 @@
             </template>
             <div style="display: flex; flex-direction: column;">
               <el-button type="default" size="small" @click="goToProfile">个人中心</el-button>
+              <el-button type="default" size="small" @click="newNotice" :style="{marginLeft:'0'}" v-if="route.path==='/index'">发送通知</el-button>
+              <el-button type="default" size="small" @click="newArticle" :style="{marginLeft:'0'}">发送文章</el-button>
               <el-button type="danger" size="small" @click="logout" :style="{marginLeft:'0'}">退出登录</el-button>
             </div>
           </el-popover>
@@ -37,9 +39,10 @@
     </el-menu>
   </el-affix>
 </template>
-<script lang="js" setup>
-import {ref, getCurrentInstance, onMounted, watch} from 'vue'
-import {useRouter} from "vue-router";
+<script setup>
+import {ref, getCurrentInstance, onMounted, watch,defineEmits} from 'vue'
+import {useRouter,useRoute} from "vue-router";
+import a from "axios";
 import axios from "@/axios";
 import cookie from 'js-cookie';
 
@@ -49,14 +52,19 @@ const instance = getCurrentInstance();
 const isLogin = instance?.appContext.config.globalProperties.$isLogin;
 const username = ref("");
 const router = useRouter();
+const route = useRoute();
+
+function newNotice(){
+  axios.get("http://localhost:8081/checkPremession").then(()=>{router.push("/index/newNotice")}).catch(console.log);
+}
 
 function logout(){
-  isLogin.value = false;
-  sessionStorage.removeItem("token");
-  cookie.remove("refreshToken");
-
-  axios.get("http://59.110.48.56:8081/logout",{
+  a.get("http://localhost:8081/logout",{
     params:{username:username.value}
+  }).then(()=>{
+    isLogin.value = false;
+    sessionStorage.removeItem("token");
+    cookie.remove("refreshToken");
   }).catch(console.log);
 }
 
@@ -66,6 +74,10 @@ const handleSelect = (key, keyPath) => {
   }else{
     router.push(key);
   }
+}
+
+function newArticle(){
+  axios.get("http://localhost:8081/checkPremession").then(()=>{router.push("/article/add");}).catch(console.log);
 }
 
 function goToLogin(){
@@ -78,7 +90,7 @@ function goToProfile(){
 
 function initLogin(){
   if(isLogin.value===true){
-    axios.get("http://59.110.48.56:8081/profile", {
+    axios.get("http://localhost:8081/profile", {
       responseType: "json"
     }).then(res => {
       const data = res.data.data;

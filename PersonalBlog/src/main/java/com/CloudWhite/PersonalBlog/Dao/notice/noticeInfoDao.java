@@ -14,4 +14,5 @@ public interface noticeInfoDao extends JpaRepository<noticeInfo,Integer> {
 
     @Query(value = "SELECT noticeinfo_id FROM noticeinfo WHERE user_id=:userId AND notice_id = :noticeId",nativeQuery = true)
     public int getNoticeInfoId(int userId,int noticeId);
+    public List<noticeInfo> findAllByNoticeId(int noticeId);
 }

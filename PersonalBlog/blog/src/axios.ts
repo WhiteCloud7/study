@@ -24,7 +24,7 @@ function addRefreshSubscriber(cb: Function) {
 
 // 创建 axios 实例
 const axiosInstance: AxiosInstance = axios.create({
-    baseURL: 'http://59.110.48.56:8081',
+    baseURL: 'http://localhost:8081',
     timeout: 10000
 })
 axiosInstance.defaults.withCredentials = true;
@@ -45,10 +45,20 @@ axiosInstance.interceptors.request.use(
 // 响应拦截器
 axiosInstance.interceptors.response.use(
     (response: AxiosResponse) => {
+        const contentType = response.headers['content-type']
+        const isFileDownload = contentType?.includes('application/octet-stream') || contentType?.includes('application/pdf')
+
+        // 跳过统一结构校验
+        if (isFileDownload || response.config.url?.includes('/download')) {
+            return response
+        }
+
+        // 默认 JSON 响应结构检查
         if (response.data?.code !== "200") {
             ElMessage.error(response.data?.message || '请求失败')
             return Promise.reject(response.data)
         }
+
         return response
     },
     async (error) => {
@@ -58,31 +68,28 @@ axiosInstance.interceptors.response.use(
         if (status === 401 && !originalRequest._retry) {
             originalRequest._retry = true
 
-            const refreshToken = cookie.get("refreshToken");
+            const refreshToken = cookie.get("refreshToken")
             if (!refreshToken) {
-                router.push('/login')
+                await router.push('/login')
                 return Promise.reject(error)
             }
 
             if (!isRefreshing) {
                 isRefreshing = true
                 try {
-                    axios.get("http://59.110.48.56:8081/refreshToken",{
-                    }).then(res=>{
-                        const data = res.data.data;
-                        if(data!==null){
-                            sessionStorage.setItem("token",data);
-                            isLogin.value = true;
-                            const newToken = res.data.token
-                            sessionStorage.setItem('token', newToken)
-                            isRefreshing = false
-                            onRefreshed(newToken)
-                        }
-                    }).catch(console.log)
+                    const res = await axios.get("http://localhost:8081/refreshToken")
+                    const data = res.data.data
+                    if (data !== null) {
+                        const newToken = res.data.token
+                        sessionStorage.setItem("token", newToken)
+                        isRefreshing = false
+                        isLogin.value = true
+                        onRefreshed(newToken)
+                    }
                 } catch (err) {
                     isRefreshing = false
                     sessionStorage.removeItem('token')
-                    router.push('/login')
+                    await router.push('/login')
                     return Promise.reject(err)
                 }
             }
@@ -94,12 +101,10 @@ axiosInstance.interceptors.response.use(
                 })
             })
         }
-
         // 其他错误处理
         if (status === 403) ElMessage.error('没有权限访问')
         else if (status === 401) ElMessage.error('登录过期，请重新登录')
         else if (status === 500) ElMessage.error('服务器错误')
-        // else ElMessage.error(error.response?.data?.message || '请求出错')
 
         return Promise.reject(error)
     }

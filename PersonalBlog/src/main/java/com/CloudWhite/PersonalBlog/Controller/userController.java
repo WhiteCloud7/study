@@ -1,6 +1,7 @@
 package com.CloudWhite.PersonalBlog.Controller;
 
 import com.CloudWhite.PersonalBlog.Dao.userDaoMybatis;
+import com.CloudWhite.PersonalBlog.Entity.DTO.userInfo;
 import com.CloudWhite.PersonalBlog.Entity.role;
 import com.CloudWhite.PersonalBlog.Entity.user;
 import com.CloudWhite.PersonalBlog.Model.Redis.redisStringTemplateConfig;
@@ -51,6 +52,16 @@ public class userController{
     public ResponseEntity profile(){
         return new ResponseEntity("200","查询成功",userService.getUserByUserId());
     }
+    @GetMapping("/friendProfile")
+    public ResponseEntity friendProfile(String username) {
+        return new ResponseEntity(userService.getUserByUsername(username));
+    }
+
+    @GetMapping("/addFriend")
+    @LoginRequired
+    public ResponseEntity addFriend(String username){
+        return new ResponseEntity();
+    }
 
     @GetMapping("/login")
     public ResponseEntity login(@RequestParam String username, @RequestParam String password, HttpServletResponse response){
@@ -78,8 +89,7 @@ public class userController{
     @PostMapping ("/saveProfile")
     @LoginRequired
     public ResponseEntity saveProfile(@RequestBody user user){
-        userService.saveProfile(user);
-        return new ResponseEntity();
+        return new ResponseEntity(userService.saveProfile(user));
     }
 
     @PostMapping("/uploadAvatar")

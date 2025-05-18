@@ -19,4 +19,5 @@ public class redisCommonTemplate {
     public void setExpire(String key, long timeout, TimeUnit unit) {
         stringRedisTemplate.expire(key, timeout, unit);
     }
+
 }

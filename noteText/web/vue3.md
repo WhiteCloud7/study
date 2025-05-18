@@ -260,6 +260,58 @@ function handleSentData(data) { //接收数据，对应emit里的参数2
 }
 ```
 语法糖里的emits是由defineEmits代替，其他流程一样。
+## 同级组件通信
+1. 借助事件总线（Event Bus）实现参数传递
+如下例:
+```js
+//创建一个事件总线对象，这里是vue3的语法糖,这里可以单独写一个js文件，然后引入
+import { ref, reactive, provide, inject, defineComponent, defineEmits, defineProps } from 'vue';
+export const eventBus = reactive({
+  events: {},
+  on(event, callback) {
+    this.events[event] = this.events[event] || [];
+    this.events[event].push(callback);
+  },
+  emit(event, data) {
+    if (this.events[event]) {
+      this.events[event].forEach(callback => callback(data));
+    }
+  },
+  off(event, callback) {
+    if (this.events[event]) {
+      this.events[event] = this.events[event].filter(fn => fn !== callback);
+    }
+  }
+});
+//发送组件
+<script setup>
+import { ref } from 'vue';
+import { eventBus } from './event-bus.js';
+
+const sendMessage = () => {
+  eventBus.emit('message', '这是 setup 语法糖传递的参数');
+}
+</script>
+//接收组件
+<script setup>
+import { onMounted, onBeforeUnmount } from 'vue';
+import { eventBus } from './event-bus.js';
+
+const handleMessage = (message) => {
+  console.log('接收到的消息:', message);
+}
+
+onMounted(() => {
+  eventBus.on('message', handleMessage);
+});
+
+onBeforeUnmount(() => {
+  eventBus.off('message', handleMessage);
+});
+</script>
+```
+组合式api自行推测
+2. 如果兄弟组件有公共父组件,那可以用父组件来传递,即上面的自定义事件
 ## defineExpose将子组件的方法暴露给父组件
 ```js
 //这是语法糖的新概念
@@ -314,6 +366,8 @@ setup语法糖是Vue3中新增的一个语法糖，用于简化代码，直接�
 先说一下前端的响应式，**响应式是指当数据发生变化时，视图会自动更新。这个作用是为了让用户在不刷新页面的情况下，看到数据的变化，同时不刷新，也无需从数据库中获取数据，而是从缓存中获取数据，从而提高了用户体验。**
 ### ref
 ref是Vue3中新增的一个函数，用于创建一个响应式的引用类型数据。ref函数接受一个参数，即初始值，返回一个包含value属性的对象。value属性是响应式的，当value属性发生变化时，视图会自动更新。它一般用于将基本类型数据处理成响应式数据。***注意需要要value对数据操作，很多时候出错都是由于少了value***（*注意那个是响应式数据，如`const nn = { name: 'num', value: 0 };const n = reactive(nn);`，这里nn不是，n才是，所以注意显示数据用n而不是nn*）
+#### 深拷贝
+深拷贝很少用到,但ref里的value属性是响应式的，所以会经常用到深拷贝,有deepCopy和deepClone两个函数,都返回一个深拷贝的对象。
 ### reactive
 和ref类似，只不过一班用于处理对象。另外，这个不是用value操作数据，而是用对象的key操作数据。
 ### toRef和toRefs

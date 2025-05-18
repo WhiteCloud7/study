@@ -3,7 +3,7 @@
   <router-view></router-view>
 </template>
 <script setup>
-import {onMounted,getCurrentInstance} from "vue";
+import {onMounted,getCurrentInstance,ref} from "vue";
 import axios from "axios";
 const instance = getCurrentInstance();
 const isLogin = instance?.appContext.config.globalProperties.$isLogin;
@@ -12,7 +12,7 @@ axios.defaults.withCredentials = true;
 function acquireToken(){
   const token = sessionStorage.getItem("token");
   if(token===null || token === undefined){
-    axios.get("http://59.110.48.56:8081/refreshToken",{
+    axios.get("http://localhost:8081/refreshToken",{
     }).then(res=>{
       const data = res.data.data;
       if(data!==null){

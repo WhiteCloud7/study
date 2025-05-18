@@ -19,6 +19,12 @@ export default[
     }]
   },
   {
+    path: '/index/newNotice',
+    name: 'newNotice',
+    component: index,
+    meta:{showNav:true},
+  },
+  {
     path: '/resume',
     name: 'resume',
     meta:{showNav:true},

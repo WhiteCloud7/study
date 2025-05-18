@@ -3,8 +3,8 @@
     <header class="contact-chatDetail">
       <p class="contact-chatDetailContent">{{receiverProfile.nikeName}}</p>
     </header>
-    <main class="contact-chatRecord">
-      <component
+    <main class="contact-chatRecord" ref="chatContainer" @scroll="onScroll">
+    <component
           v-for="msg in allMessages"
           :key="msg.messageId"
           :is="msg.receiverName === currentUserName ? ReceiveMessageContent : SendMessageContent"
@@ -59,6 +59,60 @@ const activeReceiveTime = ref("");
 const currentUserAvatar = ref();
 const receiverProfile = ref([]);
 const lastNewTime = ref();
+const chatContainer = ref(null);
+const loadingOlder = ref(false);          // 防抖 + 避免并发
+const finishedAll = ref(false);           // 是否已加载完全部历史
+function scrollToBottom() {
+  nextTick(() => {
+    if (chatContainer.value) {
+      chatContainer.value.scrollTop = chatContainer.value.scrollHeight;
+    }
+  });
+}
+
+function onScroll() {
+  if (!chatContainer.value || loadingOlder.value || finishedAll.value) return;
+  if (chatContainer.value.scrollTop === 0) {
+    loadOlderMessages();
+  }
+}
+
+async function loadOlderMessages() {
+  loadingOlder.value = true;
+  // 1) 找到当前最早一条消息的时间/ID，作为游标
+  const firstMsg = allMessages.value[0];
+  if (!firstMsg) { loadingOlder.value = false; return; }
+  const cursorTime = firstMsg.sendTime;
+  // 2) 记录插入前的 scrollHeight
+  const prevHeight = chatContainer.value.scrollHeight;
+  try {
+    // 3) 调接口拿更早 10 条
+    const res = await axios.get("http://localhost:8081/getOlderMessages", {
+      params: {
+        friendName: currentChatObject.value,
+        beforeTime: cursorTime,
+      }
+    });
+    const older = res.data.data;          // 后端返回按 sendTime 升序/降序均可
+    console.log(older)
+    if (!older || older.length === 0) {
+      finishedAll.value = true;           // 再无旧数据
+    } else {
+      // 4) 将旧消息插入到数组头部
+      //    如果后端降序返回，可先 reverse()
+      allMessages.value.unshift(...older.reverse());
+      allMessages.value.sort((a, b) => new Date(a.sendTime) - new Date(b.sendTime));
+      await nextTick();                   // 等 DOM 更新完
+      // 5) 还原滚动位置，避免抖动
+      const newHeight = chatContainer.value.scrollHeight;
+      chatContainer.value.scrollTop = newHeight - prevHeight;
+    }
+  } catch (err) {
+    console.error("加载旧消息失败", err);
+  } finally {
+    loadingOlder.value = false;
+  }
+}
 
 // 键盘按下事件处理函数
 const handleKeyDown = (event) => {
@@ -79,7 +133,7 @@ const handleKeyDown = (event) => {
 const sendMessageHandler = async () => {
   if (sendMessage.value.trim() !== "") {
     const params = {receiverName: currentChatObject.value, message: sendMessage.value}
-    axios.post("http://59.110.48.56:8081/sendMessage", JSON.stringify(params), {
+    axios.post("http://localhost:8081/sendMessage", JSON.stringify(params), {
       headers: {
         "Content-Type": "application/json"
       },
@@ -98,27 +152,24 @@ const sendMessageHandler = async () => {
         });
         allMessages.value.sort((a, b) => new Date(a.sendTime) - new Date(b.sendTime));
         sendMessage.value = "";
+        scrollToBottom();
       }
     });
   }else
     confirm("消息不能为空！");
 };
 
-function getLastNewTime(){
-  axios.get("http://59.110.48.56:8081/getLastNewTime",{
-    params:{
-      friendName: currentChatObject.value,
-    },
-  }).then(res=> {
-    const data = res.data.data;
-    lastNewTime.value = data;
-    console.log(data);
-  });
+function getLastNewTime() {
+  axios.get("/getLastNewTime", { params: { friendName: currentChatObject.value } })
+      .then(res => {
+        lastNewTime.value = res.data.data;
+      });
 }
 
 function receiveMessage(){
-  if(allMessages.value.length === 0){return}
-  axios.get("http://59.110.48.56:8081/getReceiveMessage",{
+  allMessages.value.sort((a, b) => new Date(a.sendTime) - new Date(b.sendTime));
+  if(allMessages.value.length === 0||lastNewTime.value===null){return}
+  axios.get("http://localhost:8081/getReceiveMessage",{
     params:{
       friendName: currentChatObject.value,
       currentNewMessageTime: lastNewTime.value
@@ -156,6 +207,7 @@ function deleteMessage(messageId) {
   if (index !== -1) {
     allMessages.value.splice(index, 1);
   }
+  allMessages.value.sort((a, b) => new Date(a.sendTime) - new Date(b.sendTime));
 }
 
 watch(currentChatObject,()=>{
@@ -164,17 +216,17 @@ watch(currentChatObject,()=>{
 })
 
 function initMessage() {
-  axios.get("http://59.110.48.56:8081/getAllMessages", {
+  axios.get("http://localhost:8081/getAllMessages", {
     params: {
       friendName: currentChatObject.value
     },
     responseType: "json"
   }).then(res => {
     const gotMessages = res.data.data;
-    console.log(gotMessages);
     if (gotMessages !== null) {
       const sorted = gotMessages.sort((a, b) => new Date(a.sendTime) - new Date(b.sendTime));
       allMessages.value = sorted;
+      scrollToBottom();
     } else {
       allMessages.value = [];
     }
@@ -184,7 +236,7 @@ function initMessage() {
 }
 
 function initCurrentUser(){
-  axios.get("http://59.110.48.56:8081/profile", {
+  axios.get("http://localhost:8081/profile", {
     responseType: "json"
   }).then(res => {
     const data = res.data.data;
@@ -196,12 +248,11 @@ function initCurrentUser(){
 }
 
 function initCurrentChatObject(){
-  axios.get("http://59.110.48.56:8081/getFriendBasicInfoByUsername", {
+  axios.get("http://localhost:8081/getFriendBasicInfoByUsername", {
     params:{friendName:currentChatObject.value},
     responseType: "json"
   }).then(res => {
     receiverProfile.value = res.data.data;
-    console.log("会话对象", receiverProfile.value)
   }).catch(err => {
     console.log(err);
   });

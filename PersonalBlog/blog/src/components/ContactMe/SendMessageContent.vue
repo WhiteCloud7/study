@@ -48,7 +48,7 @@ function showOptions() {
 }
 
 function deleteMessage(){
-  axios.get("http://59.110.48.56:8081/deleteMessage",{
+  axios.get("http://localhost:8081/deleteMessage",{
     params:{
       messageId:props.messageId,
       receiveName:props.sendReceiverName,

@@ -1,9 +1,10 @@
 <template>
-  <p>ajshdhjasghjd</p>
-  <div class="myArticles-articleDetail">
-    <div class="myArticles-content">
-      <p v-for="c in content" :key="c">{{c}}</p>
-    </div>
+  <div class="myArticles-articleDetail" v-loading.fullscreen.lock="isLoading">
+      <Editor
+          api-key="lifs7sk02yr110bbdvq7tcxiwlnr1p29cqe9sz0j1do78teq"
+          :init="editorInit"
+          @init="onEditorInit"
+      />
     <div class="myArticles-articleDetailIconGroup">
       <el-icon class="myArticles-articleDetailIcon" @click="toggleLike">
         <img :src="likeIcon" class="myArticles-articleDetailIconImg" />
@@ -24,7 +25,9 @@
 import {computed, ref, onMounted} from "vue";
 import { Star, StarFilled, ChatDotRound } from '@element-plus/icons-vue';
 import axiosToken from "@/axios";
-import axios from "axios";
+import {useRouter} from "vue-router";
+import { marked } from 'marked'
+import Editor from '@tinymce/tinymce-vue'
 // 基于 props 初始化响应式数据
 // 点赞数量
 const likeCount = ref(0);
@@ -34,9 +37,25 @@ const starCount = ref(0);
 const isLike = ref(false);
 // 是否已收藏状态
 const isStar = ref(false);
-const content = ref("");
+const content = ref("" );
+const editorRef = ref(null);
+const htmlContent = ref();
+const isLoading = ref(false);
+const editorInit = {
+  menubar: false,
+  toolbar: false,
+  statusbar: false,
+  plugins: 'codesample',
+  height: 500,
+  readonly: 1,
+  content_style: 'body { font-size:16px; padding:10px; }',
+};
+
+
+const router = useRouter();
 const props = defineProps({
-  articleId: Number});
+  articleId: Number
+});
 
 // 计算点赞图标路径的计算属性
 const likeIcon = computed(() => {
@@ -45,7 +64,7 @@ const likeIcon = computed(() => {
 
 // 点赞按钮点击处理函数
 const toggleLike = () => {
-  axiosToken.get("http://59.110.48.56:8081/updateArticleLikeCount",{
+  axiosToken.get("http://localhost:8081/updateArticleLikeCount",{
     params:{
       articleId:props.articleId,
     },
@@ -57,13 +76,12 @@ const toggleLike = () => {
       likeCount.value++;
     }
     isLike.value =!isLike.value;
-    emit("updateLike", likeCount.value, isLike.value,props.articleId);
   }).catch(console.log)
 };
 
 // 收藏按钮点击处理函数
 const toggleStar = () => {
-  axiosToken.get("http://59.110.48.56:8081/updateArticleStarCount",{
+  axiosToken.get("http://localhost:8081/updateArticleStarCount",{
     params:{
       articleId:props.articleId,
     },
@@ -79,25 +97,64 @@ const toggleStar = () => {
 };
 // 返回按钮点击处理函数
 const back = () => {
-
+  router.push("/article");
 };
 
-function initCurrentArticleInfo(articleId) {
-  console.log(props.articleId)
-  axiosToken.get("http://59.110.48.56:8081/initCurrentArticleInfo", {
+function initCurrentArticleInfo() {
+  axiosToken.get("http://localhost:8081/initCurrentArticleInfo", {
     params: {articleId: props.articleId},
     responseType: "json"
   }).then(res => {
     const data = res.data.data;
-    isLike.value.find(l => l.articleId === articleId).like = data.like;
-    isStarred.value.find(s => s.articleId === articleId).star = data.star;
+    isLike.value = data.like;
+    isStar.value = data.star;
   }).catch(err => {
     console.log(err);
   });
 }
 
+const onEditorInit = (evt, editor) => {
+  editorRef.value = editor;
+  if (htmlContent.value) {
+    editor.setContent(htmlContent.value);
+  }
+};
+
+function initCurrentArticle() {
+  axiosToken.get("http://localhost:8081/initCurrentArticle", {
+    params: { articleId: props.articleId },
+    responseType: "json"
+  }).then(res => {
+    const data = res.data.data;
+    console.log(editorInit);
+    likeCount.value = data.likeCount;
+    starCount.value = data.starCount;
+    const html = marked.parse(data.articleContent);
+    htmlContent.value = html;
+    if (editorRef.value) {
+      editorRef.value.setContent(html);
+    } else {
+      const timer = setInterval(() => {
+        if (editorRef.value) {
+          editorRef.value.setContent(html);
+          clearInterval(timer);
+        }
+      }, 100);
+    }
+  }).catch(console.log);
+}
+
+function loading(){
+  isLoading.value = true;
+  setTimeout(()=>{
+    isLoading.value = false;
+  },1000);
+}
+
 onMounted(()=>{
+  initCurrentArticle(),
   initCurrentArticleInfo()
+  loading();
 })
 </script>
 
@@ -117,7 +174,7 @@ onMounted(()=>{
 
 /* 文章内容区域样式 */
 .myArticles-content {
-  padding: 16px;
+  padding: 22px;
   width: 100%;
   min-height: 90%;
   overflow-y: auto;

@@ -58,4 +58,21 @@ public class noticeController {
             return new ResponseEntity("200","保存失败",null);
         }
     }
+
+    @PostMapping("/newNotice")
+    @PermissionRequired(type = "admin")
+    public ResponseEntity newNotice(@RequestParam String title,@RequestParam String noticeContent){
+        try {
+            noticeService.newNotice(title,noticeContent);
+            return new ResponseEntity("200","发布成功",null);
+        }catch (Exception e){
+            return new ResponseEntity("200","发布失败",null);
+        }
+    }
+    @GetMapping("/deleteNotice")
+    @PermissionRequired(type = "admin")
+    public ResponseEntity deleteNotice(int noticeId){
+        noticeService.deleteNotice(noticeId);
+        return new ResponseEntity();
+    }
 }

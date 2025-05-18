@@ -4,11 +4,13 @@ import com.CloudWhite.PersonalBlog.Dao.projectDao;
 import com.CloudWhite.PersonalBlog.Entity.project;
 import com.CloudWhite.PersonalBlog.Model.ResponseEntity;
 import com.CloudWhite.PersonalBlog.Service.projectService;
+import com.CloudWhite.PersonalBlog.Utils.Annotation.LoginRequired;
 import com.CloudWhite.PersonalBlog.Utils.Annotation.PermissionRequired;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.Resource;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -94,5 +96,14 @@ public class projectController {
     public ResponseEntity updateFile(MultipartFile file,@RequestParam("filePath") String filePath){
         filePath = filePath == null || filePath.isEmpty()? "" : filePath;
         return new ResponseEntity(projectService.uploadFile(file,filePath));
+    }
+
+    @GetMapping("download")
+    @LoginRequired
+    public org.springframework.http.ResponseEntity<Resource> download(String filePath, int fileId) throws IOException {
+        filePath = filePath == null || filePath.isEmpty()? "" : filePath;
+        filePath = URLDecoder.decode(filePath,StandardCharsets.UTF_8);
+        System.out.println(filePath+" "+fileId);
+        return projectService.download(filePath,fileId);
     }
 }

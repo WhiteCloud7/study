@@ -14,13 +14,13 @@ public class CorsConfig {
         CorsConfiguration config = new CorsConfiguration();
         // 允许的跨域请求源，可以使用具体的域名，也可以使用通配符 "*" 允许所有源
         // 注意：在生产环境中，建议使用具体的域名，避免使用通配符，以增强安全性
-        config.addAllowedOriginPattern("*");
+        config.addAllowedOriginPattern("http://localhost:8080");
         // 允许的请求方法，如 GET、POST、PUT、DELETE 等c
         config.addAllowedMethod("*");
         // 允许的请求头，如 Content-Type、Authorization 等
         config.addAllowedHeader("*");
         // 允许浏览器获取的响应头
-        config.addExposedHeader("*");
+        config.addExposedHeader("Content-Disposition");
         // 是否允许携带凭证，如 Cookie、HTTP 认证信息等
         config.setAllowCredentials(true);
         // 预检请求的缓存时间（秒），在此时间内，相同的预检请求将不再发送

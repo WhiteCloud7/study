@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>用户管理系统</title>
+    <link rel="stylesheet" href="css/index.css" />
+</head>
+<body>
+<header class="box"></header>
+<nav>
+    <span>
+        <header>用户管理系统</header>
+        <a href="index.html" title="转到首页">首页</a>
+        <a href="say.html" id="writter">作者的话</a>
+    </span>
+</nav>
+<div class="mask" id="mask"></div>
+<main >
+    <fieldset>
+        <legend style="display: inline;text-align: center">选择你要对用户的操作</legend>
+        <form class="operationForm">
+            <div>
+                <select name="operationType" id="operationType">
+                    <option value="search">查找</option>
+                    <option value="delete">删除</option>
+                    <option value="add">添加</option>
+                    <option value="alter">修改</option>
+                </select>
+                <input type="text" id="searchContent">
+                <button type="button" name="operationSelected" onclick="performOperation()">确认操作</button>
+            </div>
+        </form>
+    </fieldset>
+    <table>
+        <caption>用户信息表</caption>
+        <thead>
+            <tr>
+                <th scope="col"></th>
+                <th scope="col" hidden></th>
+                <th scope="col">用户名</th>
+                <th scope="col">性别</th>
+                <th scope="col">电话号码</th>
+                <th scope="col">邮箱</th>
+            </tr>
+        </thead>
+        <tbody class="userInfo">
+        </tbody>
+    </table>
+</main>
+<section  id="addUserSection" hidden>
+    <form class="addUser" id="addUserForm" >
+        <p>添加用户</p>
+        <div class="row">
+            <label for="addUsername">用户名</label>
+            <input type="text" id="addUsername" name="addUsername" required placeholder="请输入用户名">
+        </div>
+        <div class="row">
+            <label for="addSex">性别</label>
+            <input type="text" id="addSex" name="addSex" required placeholder="请输入性别">
+        </div>
+        <div class="row">
+            <label for="addPhone">电话号码</label>
+            <input type="text" id="addPhone" name="addPhone" required placeholder="请输入电话号码">
+        </div>
+        <div class="row">
+            <label for="addEmail">邮箱</label>
+            <input type="text" id="addEmail" name="addEmail" required placeholder="请输入邮箱">
+        </div>
+        <div class="button-group">
+            <button type="submit" name="addUser">确认添加</button>
+            <button type="reset">重置</button>
+            <button type="button" name="back" onclick="Back()">返回</button>
+        </div>
+    </form>
+</section>
+<section id="alterUserSection" hidden>
+    <form method="post" class="alterUser" id="alterUser">
+        <p>修改用户信息</p>
+        <div class="row">
+            <label for="alterUsername">用户名</label>
+            <input type="text" id="alterUsername" name="alterUsername" placeholder="请输入用户名">
+        </div>
+        <div class="row">
+            <label for="alterSex">性别</label>
+            <input type="text" id="alterSex" name="alterSex" placeholder="请输入性别">
+        </div>
+        <div class="row">
+            <label for="alterPhone">电话号码</label>
+            <input type="text" id="alterPhone" name="alterPhone" placeholder="请输入电话号码">
+        </div>
+        <div class="row">
+            <label for="alterEmail">邮箱</label>
+            <input type="text" id="alterEmail" name="addEmail" placeholder="请输入邮箱">
+        </div>
+        <div class="button-group">
+            <button type="submit" name="alterUser">确认修改</button>
+            <button type="reset">重置</button>
+            <button type="button" name="back" onclick="Back()">返回</button>
+        </div>
+    </form>
+</section>
+<footer>
+</footer>
+<script src="js/index.js"></script>
+</body>
+</html>

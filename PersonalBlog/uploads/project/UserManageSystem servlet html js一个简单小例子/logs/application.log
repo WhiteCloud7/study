@@ -1,0 +1,3 @@
+2025-03-05 18:46:02.513 [main] INFO  com.WhiteCloud.Controller.test - 这是一条info级别的日志
+2025-03-05 18:46:02.515 [main] WARN  com.WhiteCloud.Controller.test - 这是一条warn级别的日志
+2025-03-05 18:46:02.516 [main] ERROR com.WhiteCloud.Controller.test - 这是一条error级别的日志

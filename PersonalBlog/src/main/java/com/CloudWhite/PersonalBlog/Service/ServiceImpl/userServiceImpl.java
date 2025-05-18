@@ -1,6 +1,7 @@
 package com.CloudWhite.PersonalBlog.Service.ServiceImpl;
 
 import com.CloudWhite.PersonalBlog.Dao.DTO.tokenDao;
+import com.CloudWhite.PersonalBlog.Dao.mybatisDao;
 import com.CloudWhite.PersonalBlog.Dao.userDao;
 import com.CloudWhite.PersonalBlog.Dao.userDaoMybatis;
 import com.CloudWhite.PersonalBlog.Entity.DTO.token;
@@ -16,7 +17,6 @@ import com.CloudWhite.PersonalBlog.Service.userService;
 import com.CloudWhite.PersonalBlog.Utils.JWTUtils;
 import jakarta.annotation.PostConstruct;
 import jakarta.transaction.Transactional;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.annotation.Order;
 import org.springframework.data.redis.core.StringRedisTemplate;
@@ -30,7 +30,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
-import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 @Service
@@ -44,15 +43,17 @@ public class userServiceImpl implements userService {
     private userDaoMybatis userDaoMybatis;
     private BCryptPasswordEncoder bCryptPasswordEncoder;
     private StringRedisTemplate stringRedisTemplate;
+    private mybatisDao mybatisDao;
     @Autowired
-    public userServiceImpl(com.CloudWhite.PersonalBlog.Dao.userDao userDao, com.CloudWhite.PersonalBlog.Dao.DTO.tokenDao tokenDao, redisStringTemplateConfig redisStringTemplate, redisHashTemplateConfig redisHashTemplate, com.CloudWhite.PersonalBlog.Dao.userDaoMybatis userDaoMybatis,redisCommonTemplate redisCommonTemplate,StringRedisTemplate stringRedisTemplate) {
+    public userServiceImpl(com.CloudWhite.PersonalBlog.Dao.userDao userDao, com.CloudWhite.PersonalBlog.Dao.DTO.tokenDao tokenDao, redisStringTemplateConfig redisStringTemplate, redisHashTemplateConfig redisHashTemplate, com.CloudWhite.PersonalBlog.Model.Redis.redisCommonTemplate redisCommonTemplate, com.CloudWhite.PersonalBlog.Dao.userDaoMybatis userDaoMybatis, StringRedisTemplate stringRedisTemplate, mybatisDao mybatisDao) {
         this.userDao = userDao;
         this.tokenDao = tokenDao;
         this.redisStringTemplate = redisStringTemplate;
         this.redisHashTemplate = redisHashTemplate;
-        this.userDaoMybatis = userDaoMybatis;
         this.redisCommonTemplate = redisCommonTemplate;
+        this.userDaoMybatis = userDaoMybatis;
         this.stringRedisTemplate = stringRedisTemplate;
+        this.mybatisDao = mybatisDao;
     }
 
     @PostConstruct
@@ -87,6 +88,27 @@ public class userServiceImpl implements userService {
 
         redisHashTemplate.setHashObject("user",username,dto);
         return dto;
+    }
+
+    public userInfo getUserByUsername(String username) {
+        int userId = UserContext.getCurrentToken().getUserId();
+        userInfo cachedUserInfo = redisHashTemplate.getHashObject("user",username,userInfo.class);
+        if (cachedUserInfo != null) {
+            return cachedUserInfo;
+        }
+        user user = userDao.findByUserId(userId);
+        if (user == null) {
+            return null;
+        }
+        userInfo dto = new userInfo(user.getUsername(),user.getNikeName(), user.getSex(), user.getBirthday(), user.getPhone(),user.getQq(), user.getWechat(),  user.getSchool(),user.getAvatar_src());
+        redisHashTemplate.setHashObject("user",username,dto);
+        return dto;
+    }
+
+    public void addFriend(String username){
+        int friendId = userDao.findUserIdByUserName(username);
+        int userId = UserContext.getCurrentToken().getUserId();
+        mybatisDao.saveNewFriend(userId,friendId);
     }
 
     public ResponseEntity login(String username,String password){
@@ -139,13 +161,17 @@ public class userServiceImpl implements userService {
         return "注册成功";
     }
 
-    public void saveProfile(user user){
+    public String saveProfile(user user){
         int userId = UserContext.getCurrentToken().getUserId();
         String username = UserContext.getCurrentToken().getUsername();
         user.setUserId(userId);
+        if(user.getNikeName()!=null&&userDao.findNikeNameByUserName(username).equals(user.getNikeName())){
+            return "昵称已被使用！";
+        }
         userDaoMybatis.updateUserProfile(user);
         userInfo userInfo = new userInfo(userId,username,user.getNikeName(),user.getSex(),user.getBirthday(),user.getPhone(),user.getQq(),user.getWechat(),user.getSchool(),user.getAvatar_src());
         redisHashTemplate.setHashObject("user",userInfo.getUsername(),userInfo);
+        return "保存成功";
     }
 
     public String refreshToken(String refreshToken){
@@ -168,7 +194,7 @@ public class userServiceImpl implements userService {
             multipartFile.transferTo(path.resolve(newFilename).toFile());
 
             int userId = UserContext.getCurrentToken().getUserId();
-            userDaoMybatis.setUserAvatar("http://59.110.48.56:8081/uploads/" + username + "/" + newFilename, userId);
+            userDaoMybatis.setUserAvatar("http://localhost:8081/uploads/" + username + "/" + newFilename, userId);
 
             return "/uploads/" + newFilename;
         } catch (IOException e) {

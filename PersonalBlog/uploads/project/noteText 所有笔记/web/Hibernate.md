@@ -1,0 +1,1 @@
+SpringBoot对于JPA的Hibernate部分过于模糊，这里新写一个文档详细介绍Hibernate的使用。

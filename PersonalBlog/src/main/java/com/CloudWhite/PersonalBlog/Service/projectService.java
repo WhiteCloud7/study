@@ -1,7 +1,8 @@
 package com.CloudWhite.PersonalBlog.Service;
 
 import com.CloudWhite.PersonalBlog.Entity.project;
-import jakarta.servlet.http.HttpServletRequest;
+import org.springframework.core.io.Resource;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -18,4 +19,5 @@ public interface projectService {
     public List<project> cutPaste(int []fileIds,String filePath,String shearPth) throws IOException;
 
     public String uploadFile(MultipartFile file,String filePath);
+    public ResponseEntity<Resource> download(String filePath, int fileId) throws IOException;
 }

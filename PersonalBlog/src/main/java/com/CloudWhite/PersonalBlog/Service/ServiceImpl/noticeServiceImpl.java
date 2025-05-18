@@ -23,6 +23,7 @@ import org.springframework.core.annotation.Order;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -55,6 +56,14 @@ public class noticeServiceImpl implements noticeService {
 
     @PostConstruct
     public void initNotice(){
+        Set<String> keys = stringRedisTemplate.keys("notice:*");
+        for (String key : keys) {
+            redisCommonTemplate.deleteKey(key);
+        }
+        Set<String> keys2 = stringRedisTemplate.keys("noticeInfo:*");
+        for (String key : keys2) {
+            redisCommonTemplate.deleteKey(key);
+        }
         List<noticeInfo> noticeInfos = noticeInfoDao.findAll();
         for(noticeInfo noticeInfo : noticeInfos){
             redisStringTemplate.setObject("noticeInfo:"+noticeInfo.getNoticeId()+"-"+noticeInfo.getUserId(),noticeInfo);
@@ -176,6 +185,25 @@ public class noticeServiceImpl implements noticeService {
         notice.setTitle(title);
         notice.setNoticeMessage(newNotice);
         noticeDao.save(notice);
+        redisStringTemplate.setObject("notice:"+notice.getNoticeId(),notice);
+    }
+
+    public void newNotice(String title,String noticeContent){
+        notice notice = new notice(noticeContent,title);
+        noticeDao.save(notice);
+        redisStringTemplate.setObject("notice:"+notice.getNoticeId(),notice);
+        initNotice();
+    }
+
+    public void deleteNotice(int noticeId){
+        notice notice = noticeDao.findByNoticeId(noticeId);
+        List<noticeInfo> noticeInfos = noticeInfoDao.findAllByNoticeId(noticeId);
+        for (noticeInfo noticeInfo : noticeInfos) {
+            System.out.println(noticeInfo.getNoticeId());
+        }
+        noticeInfoDao.deleteAll(noticeInfos);
+        noticeDao.delete(notice);
+        initNotice();
     }
 
     public void addComment(int noticeId){

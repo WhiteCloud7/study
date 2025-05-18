@@ -1,8 +1,8 @@
 <template>
   <article class="myArticles-article"  v-for="article in articles" :key="article.articleId">
     <div class="myArticles-authorDetail">
-      <el-avatar :src="article.user.avatar_src" style="width: 20px;height: 20px;margin-top: 3px;  margin-left: 10px;"></el-avatar>
-      <p style="margin-left: 8px">{{article.user.nikeName}}</p>
+      <el-avatar :src="article.avatar_src" style="width: 20px;height: 20px;margin-top: 3px;  margin-left: 10px;"></el-avatar>
+      <p style="margin-left: 8px">{{article.nikeName}}</p>
     </div>
 
     <div class="myArticles-articlePreview">
@@ -29,6 +29,10 @@
       </div>
       <el-button @click="detail(article.articleId)" class="myArticles-button"
                  style="font-size: 8px;width:45px;height:10px;margin-bottom: 0">查看详细</el-button>
+      <el-button @click="edit(article.articleId)" class="myArticles-button"
+                 style="font-size: 8px;width:45px;height:10px;margin-bottom: 0">编辑</el-button>
+      <el-button @click="deleteArticle(article.articleId)" class="myArticles-button"
+                 style="font-size: 8px;width:45px;height:10px;margin-bottom: 0">删除</el-button>
       <p class="myArticles-time"></p>
     </div>
   </article>
@@ -36,7 +40,7 @@
 
 <script setup>
 // 引入 Vue 的响应式和计算属性相关函数，以及 Element Plus 的图标组件
-import {ref, computed, onMounted,getCurrentInstance} from 'vue';
+import {ref, computed, onMounted, getCurrentInstance, nextTick} from 'vue';
 import {useRouter} from "vue-router";
 import axios from 'axios';
 import axiosToken from '@/axios';
@@ -78,7 +82,7 @@ const isStarredValue = computed(() => {
 // 点赞按钮的点击事件处理函数
 function toggleLike(articleId){
   if(isLogin.value===true){
-    axiosToken.get("http://59.110.48.56:8081/updateArticleLikeCount",{
+    axiosToken.get("http://localhost:8081/updateArticleLikeCount",{
       params:{
         articleId:articleId,
       },
@@ -101,7 +105,7 @@ function toggleLike(articleId){
 // 收藏按钮的点击事件处理函数
 function toggleStar(articleId){
   if(isLogin.value===true){
-    axiosToken.get("http://59.110.48.56:8081/updateArticleStarCount",{
+    axiosToken.get("http://localhost:8081/updateArticleStarCount",{
       params:{
         articleId:articleId,
       },
@@ -109,6 +113,7 @@ function toggleStar(articleId){
     }).then(res=>{
       if(!isStarred.value.some(i => i.articleId === articleId))
         initCurrentArticleInfo(articleId);
+      nextTick();
       operationStatus.value = isStarred.value.find(i => i.articleId === articleId).star;
       operationValue.value = starCount.value.find(l => l.articleId === articleId).starCount;
 
@@ -122,7 +127,7 @@ function toggleStar(articleId){
 }
 
 function toggleVisit(articleId){
-  axios.get("http://59.110.48.56:8081/updateArticleVisitCount",{
+  axios.get("http://localhost:8081/updateArticleVisitCount",{
     params:{
       articleId:articleId,
     },
@@ -137,7 +142,24 @@ const articleDetailId = ref(null);
 // 查看文章详情的异步函数，用于动态引入文章详情组件、增加浏览数量并显示遮罩
 function detail(articleId) {
   toggleVisit(articleId);
-  router.push(`/article/articleId=${articleId}`);
+  router.push(`/article/${articleId}`);
+}
+function edit(articleId) {
+  axiosToken.get("http://localhost:8081/checkPremession")
+      .then(()=>{
+        router.push(`/article/edit/${articleId}`);
+      }).catch(console.log)
+}
+
+function deleteArticle(articleId){
+  axiosToken.get("http://localhost:8081/deleteArticle",{
+    params:{
+      articleId:articleId,
+    }
+  }).then(()=>{
+    confirm("删除成功!");
+    location.reload();
+  }).catch(console.log)
 }
 
 function articleContent(article) {
@@ -178,11 +200,12 @@ const getStarCount = (articleId) => {
 };
 
 function initArticle(){
-  axios.get("http://59.110.48.56:8081/initArticle",{
+  axios.get("http://localhost:8081/initArticle",{
     responseType:"json"
   }).then(res=>{
     const data = res.data;
     articles.value = data;
+    articles.value.map(a=>{a.title=a.title==="undefined"?"无标题":a.title;a.articleContent=a.articleContent==="undefined"?"无内容":a.articleContent})
 
     data.forEach(item => {
       const articleId = item.articleId;
@@ -212,13 +235,14 @@ function initArticle(){
     });
     if(isLogin.value===true)
       initArticleInfo();
+    articles.value.sort((a,b)=>a.articleId-b.articleId);
   }).catch(err=>{
     console.log(err);
   })
 }
 
 function initCurrentArticleInfo(articleId){
-  axiosToken.get("http://59.110.48.56:8081/initCurrentArticleInfo", {
+  axiosToken.get("http://localhost:8081/initCurrentArticleInfo", {
     params:{articleId:articleId},
     responseType: "json"
   }).then(res => {
@@ -231,10 +255,11 @@ function initCurrentArticleInfo(articleId){
 }
 
 function initArticleInfo() {
-  axiosToken.get("http://59.110.48.56:8081/getArticleInfo", {
+  axiosToken.get("http://localhost:8081/getArticleInfo", {
     responseType: "json"
   }).then(res => {
     const data = res.data.data;
+
     data.forEach(item => {
       const articleId = item.articleId;
       const like = item.like;

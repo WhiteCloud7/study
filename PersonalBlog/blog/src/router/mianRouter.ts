@@ -39,6 +39,20 @@ const routes: Array<RouteRecordRaw> = [
             component: () => import('@/components/profile/profileSetting.vue'),
         }]
     },
+    {
+        path:'/friendProfile/:username',
+        name:'friendProfile',
+        component: () => import('@/components/profile/personalInfo.vue'),
+        meta:{showNav:true},
+        props:true
+    },
+    {
+        path:'/userProfile/:username',
+        name:'userProfile',
+        component: () => import('@/components/profile/personalInfo.vue'),
+        meta:{showNav:true},
+        props:true
+    },
     ...indexRouter,
     ...projectRouter,
     ...articleRouter

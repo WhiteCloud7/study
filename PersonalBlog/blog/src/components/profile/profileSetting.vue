@@ -7,14 +7,14 @@
         <el-avatar :src="avatar" size="100" style="margin-left: 48px"></el-avatar>
         <el-upload
             class="avatar-uploader"
-            action="http://59.110.48.56:8081/uploadAvatar"
+            action="http://localhost:8081/api/uploadAvatar"
             :show-file-list="false"
             :on-success="handleAvatarSuccess"
             :headers="uploadHeaders"
             :before-upload="beforeAvatarUpload"
         >
           <i class="el-icon-upload"></i>
-          <el-button style="margin-left: 20px" @click>点击上传</el-button>
+          <el-button style="margin-left: 20px">点击上传</el-button>
         </el-upload>
       </div>
       <div class="profile-item">
@@ -101,7 +101,7 @@ function calculateAge(birthdayStr) {
 }
 
 function initProfile() {
-  axios.get("http://59.110.48.56:8081/profile", {
+  axios.get("http://localhost:8081/profile", {
     responseType: "json"
   }).then(res => {
     const data = res.data.data;
@@ -142,7 +142,7 @@ watch(birthday, (newBirthday) => {
 
 // 保存资料
 function saveProfile() {
-  axios.post("http://59.110.48.56:8081/saveProfile", {
+  axios.post("http://localhost:8081/saveProfile", {
     nikeName: nickname.value,
     sex: sex.value,
     birthday: birthday.value===null?null:birthday.value.toLocaleString(),
@@ -151,9 +151,11 @@ function saveProfile() {
     wechat: wechat.value,
     school: school.value,
     avatar: avatar.value
-  }).then(() => {
-    // 保存成功提示
-    alert('资料保存成功');
+  }).then(res => {
+    if(res.data.data==="昵称已被使用！")
+      alert("昵称已被使用！")
+    else
+      alert('资料保存成功');
   }).catch(err => {
     console.log(err);
     alert('资料保存失败，请稍后重试');

@@ -11,7 +11,7 @@
       <label class="iconLabel2">{{ getLabelFormat(likeCount) }}</label>
 
       <el-icon class="icon2"><ChatDotRound /></el-icon>
-      <el-button class="back" @click="emit('back')">返回</el-button>
+      <el-button class="back" @click="back">返回</el-button>
     </div>
   </div>
 </template>
@@ -20,9 +20,8 @@
 import {ref, computed, watch, onMounted, nextTick, getCurrentInstance} from "vue";
 import { defineProps, defineEmits } from "vue";
 import {ChatDotRound } from "@element-plus/icons-vue";
-import axios from "axios";
 import axiosToken from "@/axios";
-import {useRouter} from "vue-router";
+import {useRouter,useRoute} from "vue-router";
 
 const props = defineProps({
   noticeId: Number,
@@ -36,6 +35,7 @@ const emit = defineEmits(["updateLike","back"]);
 const instance = getCurrentInstance();
 const isLogin = instance?.appContext.config.globalProperties.$isLogin;
 const router = useRouter();
+const route = useRoute();
 const likeCount = ref(props.likeCount);
 const isLike = ref(props.isLiked);
 
@@ -52,7 +52,7 @@ function toggleLike() {
     isLike.value = !isLike.value;
     likeCount.value += isLike.value ? 1 : -1;
 
-    axiosToken.get("http://59.110.48.56:8081/updateLikeCount", {
+    axiosToken.get("http://localhost:8081/updateLikeCount", {
       params: { noticeId: props.noticeId}
     }).catch(console.log);
 
@@ -99,6 +99,10 @@ function getLabelStyle(){
     iconLabel.style.fontSize = fontsize;
     iconLabel.style.marginTop = "10px";
   }
+}
+
+function back(){
+  emit('back');
 }
 
 onMounted(async () => {

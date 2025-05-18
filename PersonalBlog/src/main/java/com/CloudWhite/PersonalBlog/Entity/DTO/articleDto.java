@@ -23,7 +23,8 @@ public class articleDto {
     @Schema(name = "作者用户ID")
     @Column(name = "user_id")
     private int userId;
-
+    private String nikeName;
+    private String avatar_src;
     public articleDto() {
     }
 
@@ -36,6 +37,19 @@ public class articleDto {
         this.starCount = starCount;
         this.commentCount = commentCount;
         this.userId = userId;
+    }
+
+    public articleDto(int articleId, String title, String articleContent, int visitCount, int likeCount, int starCount, int commentCount, int userId, String nikeName, String avatar_src) {
+        this.articleId = articleId;
+        this.title = title;
+        this.articleContent = articleContent;
+        this.visitCount = visitCount;
+        this.likeCount = likeCount;
+        this.starCount = starCount;
+        this.commentCount = commentCount;
+        this.userId = userId;
+        this.nikeName = nikeName;
+        this.avatar_src = avatar_src;
     }
 
     public int getArticleId() {
@@ -100,5 +114,21 @@ public class articleDto {
 
     public void setUserId(int userId) {
         this.userId = userId;
+    }
+
+    public String getNikeName() {
+        return nikeName;
+    }
+
+    public void setNikeName(String nikeName) {
+        this.nikeName = nikeName;
+    }
+
+    public String getAvatar_src() {
+        return avatar_src;
+    }
+
+    public void setAvatar_src(String avatar_src) {
+        this.avatar_src = avatar_src;
     }
 }

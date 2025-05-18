@@ -1,0 +1,772 @@
+<!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="UTF-8">
+            <title>&#x4e00;&#x4e9b;&#x5173;&#x952e;&#x5b57;</title>
+            <style>
+/* From extension vscode.github */
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
+
+.vscode-dark img[src$=\#gh-light-mode-only],
+.vscode-light img[src$=\#gh-dark-mode-only],
+.vscode-high-contrast:not(.vscode-high-contrast-light) img[src$=\#gh-light-mode-only],
+.vscode-high-contrast-light img[src$=\#gh-dark-mode-only] {
+	display: none;
+}
+
+</style>
+            <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex/dist/katex.min.css">
+<link href="https://cdn.jsdelivr.net/npm/katex-copytex@latest/dist/katex-copytex.min.css" rel="stylesheet" type="text/css">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/markdown.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/highlight.css">
+<style>
+            body {
+                font-family: -apple-system, BlinkMacSystemFont, 'Segoe WPC', 'Segoe UI', system-ui, 'Ubuntu', 'Droid Sans', sans-serif;
+                font-size: 14px;
+                line-height: 1.6;
+            }
+        </style>
+        <style>
+.task-list-item {
+    list-style-type: none;
+}
+
+.task-list-item-checkbox {
+    margin-left: -20px;
+    vertical-align: middle;
+    pointer-events: none;
+}
+</style>
+<style>
+:root {
+  --color-note: #0969da;
+  --color-tip: #1a7f37;
+  --color-warning: #9a6700;
+  --color-severe: #bc4c00;
+  --color-caution: #d1242f;
+  --color-important: #8250df;
+}
+
+</style>
+<style>
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-note: #2f81f7;
+    --color-tip: #3fb950;
+    --color-warning: #d29922;
+    --color-severe: #db6d28;
+    --color-caution: #f85149;
+    --color-important: #a371f7;
+  }
+}
+
+</style>
+<style>
+.markdown-alert {
+  padding: 0.5rem 1rem;
+  margin-bottom: 16px;
+  color: inherit;
+  border-left: .25em solid #888;
+}
+
+.markdown-alert>:first-child {
+  margin-top: 0
+}
+
+.markdown-alert>:last-child {
+  margin-bottom: 0
+}
+
+.markdown-alert .markdown-alert-title {
+  display: flex;
+  font-weight: 500;
+  align-items: center;
+  line-height: 1
+}
+
+.markdown-alert .markdown-alert-title .octicon {
+  margin-right: 0.5rem;
+  display: inline-block;
+  overflow: visible !important;
+  vertical-align: text-bottom;
+  fill: currentColor;
+}
+
+.markdown-alert.markdown-alert-note {
+  border-left-color: var(--color-note);
+}
+
+.markdown-alert.markdown-alert-note .markdown-alert-title {
+  color: var(--color-note);
+}
+
+.markdown-alert.markdown-alert-important {
+  border-left-color: var(--color-important);
+}
+
+.markdown-alert.markdown-alert-important .markdown-alert-title {
+  color: var(--color-important);
+}
+
+.markdown-alert.markdown-alert-warning {
+  border-left-color: var(--color-warning);
+}
+
+.markdown-alert.markdown-alert-warning .markdown-alert-title {
+  color: var(--color-warning);
+}
+
+.markdown-alert.markdown-alert-tip {
+  border-left-color: var(--color-tip);
+}
+
+.markdown-alert.markdown-alert-tip .markdown-alert-title {
+  color: var(--color-tip);
+}
+
+.markdown-alert.markdown-alert-caution {
+  border-left-color: var(--color-caution);
+}
+
+.markdown-alert.markdown-alert-caution .markdown-alert-title {
+  color: var(--color-caution);
+}
+
+</style>
+        
+        </head>
+        <body class="vscode-body vscode-light">
+            <h1 id="一些关键字">一些关键字</h1>
+<h2 id="this">this:</h2>
+<p><strong>记住就是当前对象的引用即可</strong>，例如</p>
+<pre><code class="language-java"><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">Person</span> {
+    <span class="hljs-keyword">private</span> String name;
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">setName</span><span class="hljs-params">(String name)</span> {
+        <span class="hljs-built_in">this</span>.name = name;
+    }
+}
+</code></pre>
+<p>这里就是当前对象的name，即当前对象的<code>private String name</code>，这里是处理同名，this()同理，而且this()必须放在第一行。另外，单独的this()表示调用当前类的无参构造函数，有参的话就是调用当前类的有参构造函数。</p>
+<h2 id="super">super:</h2>
+<p><strong>记住就是父类对象的引用即可</strong>，例如</p>
+<pre><code class="language-java"><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">Student</span> <span class="hljs-keyword">extends</span> <span class="hljs-title class_">Person</span> {
+    <span class="hljs-keyword">private</span> String name;
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">setName</span><span class="hljs-params">(String name)</span> {
+        <span class="hljs-built_in">super</span>.setName(name);
+    }
+}
+</code></pre>
+<p>那么这里就是父类的name，即父类的<code>private String name</code>，这里是处理同名，super()同理。
+其他的和this()一样，<strong>但是super()由于继承机制，必须放在重写的父类方法的内第一行，而不能放在重写父类方法的外部。</strong></p>
+<h2 id="static">static:</h2>
+<ul>
+<li>被static修饰的变量或者方法，是属于类的，而不是属于对象的，<em>即静态变量或者静态方法，可以直接通过类名来访问，而不需要实例化对象。</em></li>
+<li><strong>静态方法中不能使用this和super关键字</strong>，因为静态方法是属于类的，而不是属于对象的，所以this和super关键字是不能使用的。</li>
+<li><strong>静态类只能访问静态变量或者静态方法，反之非静态类可以随意访问静态变量或者静态方法</strong>。</li>
+<li><strong>static不是全局变量。一个属性被写在类最外部，那么这个属性就是全局变量。而static是将属性变成静态属性，可通过类名来直接访问</strong>。</li>
+<li>一个类实例化，该类中带static是属于类的而不是对象，故无论实例化多少个对象都共享该属性，而不带static的属性则每实例化一个都是不同的属性，例如</li>
+</ul>
+<pre><code class="language-java"><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">Person</span> {
+    <span class="hljs-keyword">private</span> <span class="hljs-keyword">static</span> String name;
+    <span class="hljs-keyword">private</span> String age;
+}
+</code></pre>
+<p><strong>age实例化的age1，age2，age3都是不同的，而name实例化的name1，name2，name3都是相同的</strong>。</p>
+<ul>
+<li><em><strong>static{}:静态代码块，在类加载时执行，且只执行一次。用于初始化静态资源。</strong></em></li>
+</ul>
+<pre><code class="language-java"><span class="hljs-keyword">class</span> <span class="hljs-title class_">MyBatisUtil</span>{
+    <span class="hljs-keyword">private</span> <span class="hljs-keyword">static</span> SqlSessionFactory ssf;
+    <span class="hljs-keyword">static</span> {
+        <span class="hljs-keyword">try</span> {
+            <span class="hljs-type">String</span> <span class="hljs-variable">resource</span> <span class="hljs-operator">=</span> <span class="hljs-string">&quot;mybatis-config.xml&quot;</span>;
+            <span class="hljs-type">InputStream</span> <span class="hljs-variable">is</span> <span class="hljs-operator">=</span> Resources.getResourceAsStream(resource);
+            ssf = <span class="hljs-keyword">new</span> <span class="hljs-title class_">SqlSessionFactoryBuilder</span>().build(is);
+        } <span class="hljs-keyword">catch</span> (IOException e) {
+            <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">RuntimeException</span>(e);
+        }
+    }
+
+    <span class="hljs-keyword">public</span> SqlSession <span class="hljs-title function_">getSession</span><span class="hljs-params">()</span>{
+        <span class="hljs-keyword">return</span> ssf.openSession();
+    }
+}
+</code></pre>
+<h2 id="这里要初始化sqlsessionfactory这个静态资源故用到了静态代码块">这里要初始化SqlSessionFactory这个静态资源，故用到了静态代码块。</h2>
+<h1 id="一些方法及一些必要的基本概念">一些方法及一些必要的基本概念</h1>
+<h2 id="newstring">newString():</h2>
+<p>new String(byte[] bytes, int offset, int length, String charsetName)</p>
+<ul>
+<li>bytes：这是一个 byte 类型的数组，它包含了需要转换为字符串的字节数据。在文件读取的场景中，这个数组通常是从文件中读取到的字节内容。</li>
+<li>offset：这是一个整数，表示从 bytes 数组的哪个位置开始进行转换。索引从 0 开始计数。例如，若 - - offset 为 0，则从数组的第一个字节开始转换。</li>
+<li>length：同样是一个整数，指定了要转换的字节数量。它决定了从 offset 位置开始，取多少个字节进行字符串转换。</li>
+<li>charsetName：<em><strong>这是一个字符串，代表了字符编码的名称,所以对于非utf-8编码的字节数组可用词方法转换</strong></em></li>
+</ul>
+<h2 id="try-catch">try-catch:</h2>
+<ul>
+<li>try-catch: 用于捕获异常，当try中的代码出现异常时，会跳转到catch中，catch中的代码会被执行,格式为</li>
+</ul>
+<pre><code class="language-java"><span class="hljs-keyword">try</span> {
+    <span class="hljs-comment">// 可能会抛出异常的代码 </span>
+}
+<span class="hljs-keyword">catch</span> (Exception e) {
+    <span class="hljs-comment">// 异常处理代码 </span>
+}
+</code></pre>
+<ul>
+<li>try-resource-catch: 除了捕获异常，还可以用于资源的释放，格式为</li>
+</ul>
+<pre><code class="language-java"><span class="hljs-keyword">try</span> (<span class="hljs-type">Resource</span> <span class="hljs-variable">resource</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">Resource</span>()) {
+    <span class="hljs-comment">// 使用资源的代码</span>
+}
+<span class="hljs-keyword">catch</span> (Exception e) {
+    <span class="hljs-comment">// 异常处理代码 </span>
+}
+</code></pre>
+<p><strong>注意，这里的资源是所有相关的资源都会关闭,<code>BufferedReader br = new BufferedReader(new InputStreamReader(socket.getInputStream()))</code>不仅关闭了BufferedReader还会关闭右边包括socket在内的所有资源。</strong></p>
+<ul>
+<li>try-finally-catch: 除了捕获异常，还可以用于资源的释放，格式为</li>
+</ul>
+<pre><code class="language-java"><span class="hljs-keyword">try</span> {
+    <span class="hljs-comment">// 可能会抛出异常的代码</span>
+}
+<span class="hljs-keyword">finally</span> {
+    <span class="hljs-comment">// 无论是否抛出异常，都会执行的代码</span>
+}
+</code></pre>
+<ul>
+<li><strong>一些必须要抛出异常的方法：如IO、Socket、线程、数据库等</strong>。</li>
+</ul>
+<h2 id="继承">继承：</h2>
+<ul>
+<li>父类可以有多个子类，子类可以有多个子类，但是子类只能有一个父类。</li>
+<li>子类继承父类的所有属性和方法，但是父类的私有属性和方法不能被继承，但在父类建立公共的方法来访问，如getter和setter方法。</li>
+<li><strong>子类直接使用父类的属性，<em>重写</em>父类的方法</strong>，也可以添加新的属性和方法。</li>
+</ul>
+<h2 id="接口">接口：</h2>
+<ul>
+<li>接口可以被多个类实现，一个类可以实现多个接口。</li>
+<li><strong>接口全部是抽象方法。而抽象类可以有抽象方法也可以有非抽象方法。</strong></li>
+<li>接口不能被实例化，但是可以被实现。</li>
+<li>接口可以继承接口，但是不能继承类。</li>
+</ul>
+<h2 id="内部类">内部类：</h2>
+<ol>
+<li><strong>成员内部类</strong>，格式为：</li>
+</ol>
+<pre><code class="language-java"><span class="hljs-keyword">class</span> <span class="hljs-title class_">Outer</span> {
+    <span class="hljs-keyword">class</span> <span class="hljs-title class_">Inner</span> {
+        <span class="hljs-comment">// 内部类的代码</span>
+    }
+}
+</code></pre>
+<ul>
+<li>成员内部类可以访问外部类的所有属性和方法，包括私有属性和方法。<em><strong>（除了静态内部类另外的都和成员内部类相同）</strong></em></li>
+<li>成员内部类可以被实例化，但是必须先实例化外部类，然后再实例化内部类,格式为：</li>
+</ul>
+<pre><code class="language-java"><span class="hljs-type">Outer</span> <span class="hljs-variable">outer</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">Outer</span>();
+Outer.<span class="hljs-type">Inner</span> <span class="hljs-variable">inner</span> <span class="hljs-operator">=</span> outer.<span class="hljs-keyword">new</span> <span class="hljs-title class_">Inner</span>();
+或
+Outer.<span class="hljs-type">Inner</span> <span class="hljs-variable">inner</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">Outer</span>().<span class="hljs-keyword">new</span> <span class="hljs-title class_">Inner</span>();
+</code></pre>
+<ol start="2">
+<li>静态内部类</li>
+</ol>
+<ul>
+<li>静态内部类可以访问外部类的所有<strong>静态</strong>属性和方法，包括私有静态属性和方法。</li>
+<li>静态内部类可以被实例化，但是不需要实例化外部类,格式为：<code>Outer.Inner inner = new Outer.Inner();</code></li>
+</ul>
+<ol start="3">
+<li>局部内部类
+局部内部类权限和成员内部类一样，但是局部内部类只能在方法中定义和使用，不能在类中定义和使用。</li>
+<li><strong>匿名内部类</strong>
+匿名内部类用于只是用一次的类，可以继承一个父类或者实现一个接口(都是重写方法)，继承和接口的格式都类似为：</li>
+</ol>
+<pre><code class="language-java"><span class="hljs-type">MyClass</span> <span class="hljs-variable">class</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">MyClass</span>(可选参数) {
+    <span class="hljs-comment">// 重写MyClass中的方法</span>
+}
+</code></pre>
+<h2 id="lambda表达式">lambda表达式：</h2>
+<p>lambda表达式的语法为：</p>
+<pre><code class="language-java">(参数列表) -&gt; {
+    <span class="hljs-comment">// 方法体</span>
+}
+如
+<span class="hljs-type">Thread</span> <span class="hljs-variable">t</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">Thread</span>(<span class="hljs-keyword">new</span> <span class="hljs-title class_">Runnable</span>() {
+    <span class="hljs-meta">@Override</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">run</span><span class="hljs-params">()</span> {
+        <span class="hljs-comment">// 方法体</span>
+    }
+});
+用lambda表达式表示为（由于run方法没有参数故参数列表也没有）：
+<span class="hljs-type">Thread</span> <span class="hljs-variable">t</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">Thread</span>(() -&gt; {
+                    <span class="hljs-comment">// 方法体</span>
+                }).start();
+
+</code></pre>
+<h2 id="数值转化">数值转化：</h2>
+<ul>
+<li>强制类型转换：<code>(类型)变量名</code>，高精度向低精度转换时会丢失精度，低精度向高精度转换时会自动转换，<em>精度排行：byte(8) &lt; short(16) &lt; int(32) &lt; long(64) &lt; float(32) &lt; double(64)。</em>
+如<code>short a= 8;int b = (int)a</code></li>
+<li>字符串和数值的转换（以int为例）：字符转整型有<code>Integer.parseInt(String s)</code>和<code>Integer.valueOf(String s)</code>，整型转字符有<code>String.valueOf(int i)</code>和<code>Integer.toString(int i)</code>。</li>
+<li>日期和字符串的转换：时间和字符串:format parse 格式:××formatter，例如：</li>
+</ul>
+<pre><code class="language-java">    <span class="hljs-comment">// 获取当前日期时间</span>
+    <span class="hljs-type">LocalDateTime</span> <span class="hljs-variable">now</span> <span class="hljs-operator">=</span> LocalDateTime.now();
+    <span class="hljs-comment">// 定义日期格式</span>
+    <span class="hljs-type">DateTimeFormatter</span> <span class="hljs-variable">formatter</span> <span class="hljs-operator">=</span> DateTimeFormatter.ofPattern(<span class="hljs-string">&quot;yyyy-MM-dd HH:mm:ss&quot;</span>);
+    <span class="hljs-comment">// 将日期转换为字符串</span>
+    <span class="hljs-type">String</span> <span class="hljs-variable">dateString</span> <span class="hljs-operator">=</span> now.format(formatter);
+  
+    <span class="hljs-comment">// 定义日期字符串</span>
+    <span class="hljs-type">String</span> <span class="hljs-variable">dateString</span> <span class="hljs-operator">=</span> <span class="hljs-string">&quot;2024-10-01 12:30:00&quot;</span>;
+    <span class="hljs-comment">// 定义日期格式</span>
+    <span class="hljs-type">DateTimeFormatter</span> <span class="hljs-variable">formatter</span> <span class="hljs-operator">=</span> DateTimeFormatter.ofPattern(<span class="hljs-string">&quot;yyyy-MM-dd HH:mm:ss&quot;</span>);
+    <span class="hljs-comment">// 将字符串转换为日期</span>
+    <span class="hljs-type">LocalDateTime</span> <span class="hljs-variable">date</span> <span class="hljs-operator">=</span> LocalDateTime.parse(dateString, formatter);
+</code></pre>
+<h2 id="计时">计时：</h2>
+<ul>
+<li>System.currentTimeMillis()-start(start为在开始计时的System.currentTimeMillis())</li>
+<li>用schedule
+<ul>
+<li>schedule(TimerTask task, long delay)：在指定延迟delay（以毫秒为单位）后执行task任务。</li>
+<li>schedule(TimerTask task, Date time)：在指定的Date时间执行task任务。</li>
+<li>schedule(TimerTask task, long delay, long period)：在延迟delay毫秒后开始执行task任务，之后每隔period毫秒重复执行。</li>
+<li>schedule(TimerTask task, Date firstTime, long period)：在firstTime指定的时间开始执行task任务，之后每隔period毫秒重复执行。</li>
+<li>使用固定格式：</li>
+</ul>
+<pre><code class="language-java"><span class="hljs-type">Timer</span> <span class="hljs-variable">timer</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">Timer</span>();
+<span class="hljs-type">TimerTask</span> <span class="hljs-variable">timerTask</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">TimerTask</span>() {
+<span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">run</span><span class="hljs-params">()</span>{
+    <span class="hljs-comment">// 任务代码</span>
+		};
+timer.schedule(参数);}
+</code></pre>
+</li>
+</ul>
+<hr>
+<h1 id="io流">IO流：</h1>
+<p>参考博客：(IO流)[<a href="https://blog.csdn.net/a1405/article/details/116766237">https://blog.csdn.net/a1405/article/details/116766237</a>]</p>
+<p><em><strong>IO流，读的时候通过输入流读取数据，写的时候写入输出流，然后通过转到相应对象</strong></em></p>
+<h2 id="字节流">字节流</h2>
+<p>字节流以字节为单位进行数据的读写操作，可处理任意类型的数据，如图片、音频、视频等，在文件上传、下载、传输等场景中广泛应用。使用时需注意关闭输入输出流，否则可能导致数据写入失败。</p>
+<ul>
+<li>节点流
+FileInputStream 和 FileOutputStream：用于文件的读取和写入操作，可实现文件复制等功能。在开发中，文件的上传、下载等操作常使用这两个节点流，通常会与装饰后的处理流配合使用。（<strong>这个读写的对象都是文件</strong>）</li>
+<li>处理流:ByteArrayInputStream 和 ByteArrayOutputStream：这个内部维护了一个字节数组，即<strong>读写的对象是字节数组</strong>。
+那么除了以上还能想到可以将字节数组转化为字节流，就是直接创造一个输入流对象，参数是你要转的字节数组即可。
+以及反过来，那么前提是输入流里有数据可以转换，读取后（<strong>注意读取返回的是int</strong>），这里有的话就用输出处理流write写入输出流，<strong>输出流可用toString方法转成字符</strong>。</li>
+<li>缓冲流：BufferedInputStream 和 BufferedOutputStream 是字节流的缓冲流，是一个装饰装饰字节流（即获取字节流对象），通过设置缓冲区，减少与数据源的交互次数，提高数据传输效率。(<strong>节点流每次只能读一个字节，而缓冲流可以一次读多个字节即字节数组</strong>)</li>
+</ul>
+<h2 id="字符流">字符流</h2>
+<p>字符流以字符为单位进行数据的读写操作，主要用于处理纯文本文件。在进行纯文本文件的 I/O 操作时，通常会配合处理流一起使用。</p>
+<ul>
+<li>节点流
+FileReader 和 FileWriter：用于纯文本文件的读取和写入操作，针对文本数据的处理更加方便。</li>
+<li>处理流:
+StringReader 和 StringWriter：这个内部维护了一个字符串或字符数组等等，即<strong>读写的对象是字符串或字符数组等</strong>。
+那么除了以上还能想到可以将字符串等转化为字节流，就是直接创造一个输入处理流对象，参数是你要转的字符串等即可。
+以及反过来，那么前提是流里面字符串等有数据可以转换，读取后（<strong>注意读取返回的是int</strong>），这是有的话就用输出处理流write方法一下输出流，同理<strong>输出流可用toString方法转成字符</strong>。</li>
+<li>缓冲流：BufferedReader 和 BufferedWriter 是字符流的缓冲流，同样通过设置缓冲区，提高文本数据的读写效率，并且 BufferedReader 提供了按行读取的便捷方法。(<strong>节点流每次只能读一个字符，而缓冲流可以自动识别换行符读一行</strong>)</li>
+<li>转换流：InputStreamReader 和 OutputStreamWriter 用于在字节流和字符流之间进行转换，可指定字符编码，默认编码为 UTF - 8。在处理不同编码的文本文件时非常有用。</li>
+</ul>
+<h1 id="socket网络编程">Socket网络编程：</h1>
+<h2 id="socket">Socket:</h2>
+<p>参考博客：(Scoket)[<a href="https://blog.csdn.net/weixin_49561506/article/details/131554978">https://blog.csdn.net/weixin_49561506/article/details/131554978</a>]</p>
+<ol>
+<li>Socket（TCP，面向连接，客户端连接了服务端才能通信）:</li>
+</ol>
+<pre><code class="language-java">服务端:
+<span class="hljs-type">ServerSocket</span> <span class="hljs-variable">serverSocket</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">ServerSocket</span>(监听的端口号);
+<span class="hljs-type">Socket</span> <span class="hljs-variable">clientSocket</span> <span class="hljs-operator">=</span> serverSocket.accept();
+类似clientScoket.getInputStream获取对应输入输出字节流
+- 客户端:
+<span class="hljs-type">Socket</span> <span class="hljs-variable">socket</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">Socket</span>(服务端地址和监听的端口);
+类似socket.getInputStream获取对应输入输出字节流
+这里客户端的socket被正确创建（连接的端口无误，连接的地址有效）服务端才会accept
+</code></pre>
+<ol start="2">
+<li>UDP（通信时再通过对方的端口地址进行通信）:</li>
+</ol>
+<pre><code class="language-java">服务端:
+<span class="hljs-type">DatagramSocket</span> <span class="hljs-variable">socket</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">DatagramSocket</span>(监听的端口);
+<span class="hljs-keyword">while</span>(<span class="hljs-literal">true</span>){
+    <span class="hljs-type">byte</span>[] buffer = <span class="hljs-keyword">new</span> <span class="hljs-title class_">byte</span>[<span class="hljs-number">1024</span>];
+    <span class="hljs-type">DatagramPacket</span> <span class="hljs-variable">recivePacket</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">DatagramPacket</span>(buffer, buffer.length);
+    socket.receive(recivePacket);
+    这里接收后可以用`recivePacket.getAddress()`和`recivePacket.getAddress()`获取客户端地址以及端口，发送后也可以只是只用于提示用户发送的地址和端口信息
+
+    <span class="hljs-type">DatagramPacket</span> <span class="hljs-variable">sendPacket</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">DatagramPacket</span>(发送的信息message，还是要转为字节数组, message.length, 客户端地址及监控的端口);
+    socket.send(sendPacket);
+    用getData()获取数据(获取的字节数组,且编码需要变成utf-<span class="hljs-number">8</span>)
+}
+客户端:
+<span class="hljs-type">DatagramSocket</span> <span class="hljs-variable">socket</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">DatagramSocket</span>();
+<span class="hljs-keyword">while</span>(<span class="hljs-literal">true</span>){
+    <span class="hljs-type">byte</span>[] buffer = <span class="hljs-keyword">new</span> <span class="hljs-title class_">byte</span>[<span class="hljs-number">1024</span>];
+    <span class="hljs-type">DatagramPacket</span> <span class="hljs-variable">recivePacket</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">DatagramPacket</span>(buffer, buffer.length);
+    socket.receive(recivePacket);
+    这里接收后可以用`recivePacket.getAddress()`和`recivePacket.getAddress()`获取服务端地址以及端口
+
+    <span class="hljs-type">DatagramPacket</span> <span class="hljs-variable">sendPacket</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">DatagramPacket</span>(发送的信息message，还是要转为字节数组, message.length, 服务端地址及连接的端口);
+    socket.send(sendPacket);	
+    用getData()获取数据（获取的字节数组，且编码需要变成utf-<span class="hljs-number">8</span>）
+}
+</code></pre>
+<h1 id="多线程">多线程</h1>
+<h2 id="一些总结">一些总结：</h2>
+<p>多线程就是让程序同时多件事，例如服务器实时监控客户端状态，而控制多线程即让线程安全有如同步互斥锁（synchronized()）、睡眠、让步（yeild）、线程加入（join（先要开启一个线程才能加入，加入后只等该线程完成才进行被加入线程并独占完成））
+参考博客：(Thread)[<a href="https://blog.csdn.net/Justw320/article/details/131848634">https://blog.csdn.net/Justw320/article/details/131848634</a>]</p>
+<h2 id="whiletrue">while（true）</h2>
+<p>while（true）为除非被停止的死循环，可以用作需要一直运行的方法。<strong>另外死循环会导致程序一直停在这出不来，所以对于所有死循环，如果该程序还有其他需要运行的，需要给死循环开启一个线程</strong>，<em><strong>另外在while（true）中可以用<code>Thread.sleep(100)</code>每运行一次休眠0.1即每0.1秒运行一次，在运行该程序的情况下定时休息而防止CPU占用过高，适用于一些不需频繁运行的功能，如记录输入字的字数、单个游戏角色的实时状态等等</strong></em></p>
+<h1 id="字符串">字符串：</h1>
+<h2 id="常用类">常用类：</h2>
+<ul>
+<li>StringBuffer：可变的字符序列，线程安全，效率低。需建立对象来使用</li>
+<li>StringBuilder：可变的字符序列，线程不安全，效率高。需建立对象来使用</li>
+<li>String：不可变的字符序列，线程安全，效率低。可直接赋值也可以创建对象</li>
+</ul>
+<h2 id="常用方法">常用方法：</h2>
+<ul>
+<li>StringBuffer：append()、delete()、insert()、replace()（替换特殊字符用replaceAll）、reverse()、substring()、length()、charAt()、indexOf()</li>
+<li>StringBuilder：append()、delete()、insert()、replace()（替换特殊字符用replaceAll）、reverse()、substring()、length()、charAt()、indexOf()</li>
+<li>String：length()、charAt()、indexOf()、substring()、equals()、concat()、toLowerCase()（小写变大写）、toUpperCase()（小变大）、trim()（去两端空格）、startsWith()（是否以某某开头）、endsWith()（是否以某某结尾）、contains()（是否包含某个字符串）、replace()（替换特殊字符用replaceAll）、split()、getBytes()、toCharArray()、valueOf()。</li>
+</ul>
+<h1 id="数据存储以及数据结构">数据存储以及数据结构：</h1>
+<h2 id="各种数值类型的存储">各种数值类型的存储：</h2>
+<p><em><strong>一个重要知识点</strong></em>：<strong>当一个对象未被初始化时，如果是基本类型，那么除了字符是空字符、字符串是null、布尔是false外其他都是是0，如果是引用类型（包括类、接口、数组等），那么它的值是null。</strong> <em><strong>初始化后，但没有任何数据时不一定等同于null，这取决该对象的具体情况，如果该对象对空有额外的定义（一般是没有的，但像以下各种数据结构及自定义对象等有）如ArraryList，这时是空数组列表，即[]而不是null，也就是以下数据的各种判空方法如isEmpty()不等同于判断是否为null，一般是两种结合一起使用</strong></em><br>
+前情提要，一个英文字符占1个字节，<em><strong>一个中文字符在主流的GBK编码占2个字节，而在UTF-8编码占一般认为3个字节（生僻字或特殊字符可能占4个）</strong></em></p>
+<ul>
+<li>整数：int[<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msup><mn>2</mn><mn>31</mn></msup></mrow><annotation encoding="application/x-tex">2^{31}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8141em;"></span><span class="mord"><span class="mord">2</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8141em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">31</span></span></span></span></span></span></span></span></span></span></span></span>-1，<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo>−</mo><msup><mn>2</mn><mn>31</mn></msup></mrow><annotation encoding="application/x-tex">-2^{31}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8974em;vertical-align:-0.0833em;"></span><span class="mord">−</span><span class="mord"><span class="mord">2</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8141em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">31</span></span></span></span></span></span></span></span></span></span></span></span>]、short[<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msup><mn>2</mn><mn>15</mn></msup></mrow><annotation encoding="application/x-tex">2^{15}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8141em;"></span><span class="mord"><span class="mord">2</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8141em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">15</span></span></span></span></span></span></span></span></span></span></span></span>-1，<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo>−</mo><msup><mn>2</mn><mn>15</mn></msup></mrow><annotation encoding="application/x-tex">-2^{15}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8974em;vertical-align:-0.0833em;"></span><span class="mord">−</span><span class="mord"><span class="mord">2</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8141em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">15</span></span></span></span></span></span></span></span></span></span></span></span>]、long[<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msup><mn>2</mn><mn>63</mn></msup></mrow><annotation encoding="application/x-tex">2^{63}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8141em;"></span><span class="mord"><span class="mord">2</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8141em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">63</span></span></span></span></span></span></span></span></span></span></span></span>-1，<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo>−</mo><msup><mn>2</mn><mn>63</mn></msup></mrow><annotation encoding="application/x-tex">-2^{63}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8974em;vertical-align:-0.0833em;"></span><span class="mord">−</span><span class="mord"><span class="mord">2</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8141em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">63</span></span></span></span></span></span></span></span></span></span></span></span>]、byte[<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msup><mn>2</mn><mn>7</mn></msup></mrow><annotation encoding="application/x-tex">2^7</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8141em;"></span><span class="mord"><span class="mord">2</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8141em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">7</span></span></span></span></span></span></span></span></span></span></span>-1，<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo>−</mo><msup><mn>2</mn><mn>7</mn></msup></mrow><annotation encoding="application/x-tex">-2^7</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8974em;vertical-align:-0.0833em;"></span><span class="mord">−</span><span class="mord"><span class="mord">2</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8141em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">7</span></span></span></span></span></span></span></span></span></span></span>]</li>
+<li>浮点数：float[3.4*<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>1</mn><msup><mn>0</mn><mn>38</mn></msup></mrow><annotation encoding="application/x-tex">10^{38}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8141em;"></span><span class="mord">1</span><span class="mord"><span class="mord">0</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8141em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">38</span></span></span></span></span></span></span></span></span></span></span></span>，<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo>−</mo><mn>3.4</mn><mo>∗</mo><mn>1</mn><msup><mn>0</mn><mn>38</mn></msup></mrow><annotation encoding="application/x-tex">-3.4*10^{38}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.7278em;vertical-align:-0.0833em;"></span><span class="mord">−</span><span class="mord">3.4</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">∗</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:0.8141em;"></span><span class="mord">1</span><span class="mord"><span class="mord">0</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8141em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">38</span></span></span></span></span></span></span></span></span></span></span></span>]、double[1.7*<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>1</mn><msup><mn>0</mn><mn>308</mn></msup></mrow><annotation encoding="application/x-tex">10^{308}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8141em;"></span><span class="mord">1</span><span class="mord"><span class="mord">0</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8141em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">308</span></span></span></span></span></span></span></span></span></span></span></span>，1.7*<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>1</mn><msup><mn>0</mn><mn>308</mn></msup></mrow><annotation encoding="application/x-tex">10^{308}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8141em;"></span><span class="mord">1</span><span class="mord"><span class="mord">0</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8141em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">308</span></span></span></span></span></span></span></span></span></span></span></span>]</li>
+<li>字符：char[0，<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msup><mn>2</mn><mn>16</mn></msup></mrow><annotation encoding="application/x-tex">2^{16}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8141em;"></span><span class="mord"><span class="mord">2</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8141em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">16</span></span></span></span></span></span></span></span></span></span></span></span>]</li>
+</ul>
+<h2 id="数组和集合存储需要结合数据结构理解">数组和集合存储，需要结合数据结构理解：</h2>
+<h3 id="使用场景"><em><strong>使用场景</strong></em>:</h3>
+<ul>
+<li>数组和列表适合固定大小、要频繁高性能访问的场景；</li>
+<li>集合适合动态大小、多样化、多对象操作的场景
+<ul>
+<li>集合中list接口和Queue接口的适用数据不唯一有序，</li>
+<li>hashSet唯一无序，TreeSet唯一有序</li>
+<li>Map接口的适用数据键值对，hashMap唯一无序，TreeMap唯一有序</li>
+</ul>
+</li>
+<li>字符串适合处理文本信息。</li>
+</ul>
+<h3 id="详细介绍及常用方法">详细介绍及常用方法</h3>
+<ul>
+<li>数组：存储固定长度的相同类型的数据，<strong>最大的长度为int的最大值</strong>。aslist变列表</li>
+<li>列表：存储固定长度的相同类型的数据，列表的长度在创建时就确定，无法改变。toArray转对象数组</li>
+<li>集合：存储可变长度的不同类型的数据，集合的长度可以动态改变。
+<ul>
+<li>集合的分类（一层层都是继承关系，子类继承父类所用方法）：
+<ul>
+<li>Collection：
+<ul>
+<li><strong>List</strong>：存储一组不唯一、有序（插入顺序）的对象。（<strong>这里子类特殊是可以直接用=转成list的</strong>，而同级转换到其他如ArrayList转到LinkedList直接在建立LinkedList加上ArrayList参数即可）
+<ul>
+<li>ArrayList：基于数组实现故插入和删除效率低，动态数组，支持随机访问，线程不安全。
+<em>常用方法</em>：add(),get(),remove(),set(),size(),contains(),isEmpty(),indexOf()(返回数据索引),clear(),equals()，addAll(加另一个集合)等等</li>
+<li>LinkedList：基于双向链表实现故插入和删除效率高，不支持随机访问，线程不安全。<br>
+<em>常用方法</em>：方法和ArrayList类似，就是多了addFirst()(在开头添加),addLast()(在结尾添加)等等关于首尾的方法。另外，<strong>还可以作为栈、队列使用，即链栈和链队列</strong>,相应方法如下：
+链栈：出栈push()或addFirst()(后面包括队就不写或了，自行找对应方法)，入栈pop()，查看栈顶元素peek()，判断栈是否为空empty()
+链队列: 出队poll()，入队offer()，查看队首元素peek()，判断队是否为空isEmpty()</li>
+<li>Vector：基于数组实现，线程安全。类似于ArrayList，常用方法也类似。
+<ul>
+<li>Stack：基于Vector实现，线程安全，后进先出（LIFO）的栈结构,<strong>即顺序栈</strong>，方法就多了pop()(出栈),push()(入栈),peek()(查看栈顶元素)，empty()(判断栈是否为空)，search()(查找元素在栈中的位置)等等</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>Queue：存储一组不唯一、有序（先进先出）的对象。
+<ul>
+<li>Deque：双端队列，支持在队列的两端进行插入和删除操作。线程不安全。
+<ul>
+<li>ArrayDeque：基于数组实现的双端队列。<strong>即顺序队列</strong>。</li>
+<li>LinkedList：基于链表实现的双端队列。<em>但其实用linkedList即可</em></li>
+</ul>
+</li>
+<li>ArrayBlockingQueue：基于数组实现的有界阻塞队，用于多线程环境，
+当队列已满时，如果有线程尝试向队列中添加元素，该线程会被阻塞，直到队列中有空间可用；当队列为空时，如果有线程尝试从队列中移除元素，该线程也会被阻塞，直到队列中有元素可用。</li>
+<li>LinkedBlockingQueue：基于链表实现的无界阻塞队列。线程安全。</li>
+<li>PriorityQueue：基于堆实现的优先队列，元素按照优先级排序，至于如何自定义优先级即排序规则，我们在TreeSet说明。</li>
+<li>PriorityBlockingQueue：基于优先级堆实现的无界阻塞队列。</li>
+</ul>
+</li>
+<li><strong>Set</strong>：
+<ul>
+<li>HashSet：基于哈希表实现，不保证元素的顺序。<strong>基于哈希码（hashCode()）和equals方法判断表中元素是否相等，即每个元素只能出现一次</strong>且无索引无序。<br>
+<em>常用方法</em>：也和List类似，就是有了哈希码来判断是否相等</li>
+<li>LinkedHashSet：基于哈希表和链表实现，保证元素的插入顺序。其他和HashSet类似。</li>
+<li>TreeSet：基于红黑树实现，元素按照自然顺序排序，也可以自定义排序规则。
+常用方法：和list类似。
+<h4 id="自定义排序规则"><em><strong>自定义排序规则</strong></em>：</h4>
+<ol>
+<li>实现Comparable接口，重写compareTo方法。</li>
+</ol>
+<pre><code class="language-java"><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">Person</span> <span class="hljs-keyword">implements</span> <span class="hljs-title class_">Comparable</span>&lt;Person&gt; {
+    <span class="hljs-keyword">private</span> String name;
+    <span class="hljs-keyword">private</span> <span class="hljs-type">int</span> age;
+    <span class="hljs-meta">@Override</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-type">int</span> <span class="hljs-title function_">compareTo</span><span class="hljs-params">(Person other)</span> {
+        <span class="hljs-comment">// 按照年龄升序排序</span>
+        <span class="hljs-keyword">return</span> Integer.compare(<span class="hljs-built_in">this</span>.age, other.age);;
+    }
+}主类中实例化该类自动按照自定义的年龄升序排序
+</code></pre>
+<ol start="2">
+<li>实现Comparator接口，重写compare方法。</li>
+</ol>
+<pre><code class="language-java"><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">Person</span> {
+    <span class="hljs-keyword">private</span> String name;
+    <span class="hljs-keyword">private</span> <span class="hljs-type">int</span> age;
+    <span class="hljs-comment">//略其他方法</span>
+}
+主类中实例化该类，使用匿名内部类实现Comparator接口，重写compare方法。
+TreeSet&lt;Person&gt; set = <span class="hljs-keyword">new</span> <span class="hljs-title class_">TreeSet</span>&lt;&gt;(<span class="hljs-keyword">new</span> <span class="hljs-title class_">Comparator</span>&lt;Person&gt;() {
+    <span class="hljs-meta">@Override</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-type">int</span> <span class="hljs-title function_">compare</span><span class="hljs-params">(Person o1, Person o2)</span> {
+        <span class="hljs-comment">// 按照年龄升序排序</span>
+        <span class="hljs-keyword">return</span> Integer.compare(o1.getAge(), o2.getAge());
+    }
+});也可以不用匿名内部类，直接实例化一个重写了compare方法Comparator对象，然后作为参数传入TreeSet中，这里是为了简化代码。
+</code></pre>
+<em><strong>这里补充一个重要知识点，对象的toString方法，返回的是对象名和哈希码，要想得到相应的数值，因该重写toString方法。</strong></em> 如以上两个例子都应该重写toString方法。</li>
+</ul>
+</li>
+<li><strong>Map</strong>：存储一组<strong>键值对</strong>，每个键对应一个值。</li>
+<li>HashMap：基于哈希表实现，不保证键的顺序。<br>
+<em>常用方法</em>：put(key,value),get(key),remove(key),containsKey(key),containsValue(value),size(),isEmpty(),clear(),keySet()（得到Set类型的键值集合）,values()（得到Collection的值集合）,entrySet()(获取Set类型的Map.Entry集合，有getkey和getvalue方法)等等</li>
+<li>LinkedHashMap：基于哈希表和链表实现，保证键的插入顺序。<br>
+<em>常用方法</em>：和HashMap类似，就是多了putFirst(key,value),putLast(key,value),removeFirst(),removeLast(),getFirst(),getLast()等等关于首尾的方法。</li>
+<li>TreeMap：基于红黑树实现，键按照自然顺序排序。常用方法和LinkedHashMap类似。</li>
+<li>Hashtable：基于哈希表实现，线程安全，不允许键或值为null。常用方法和HashMap类似。</li>
+<li>ConcurrentHashMap：基于哈希表实现，线程安全。常用方法和HashMap类似。</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>一些线程安全的集合或包装类：如synchronizedList，synchronizedSet，synchronizedMap，Collections.synchronizedList，Collections.synchronizedSet，Collections.synchronizedMap，CopyOnWriteArrayList，CopyOnWriteArraySet，ConcurrentHashMap等等,<strong>这些集合或包装类的效率较低，所以一般情况下不使用，但如果程序对线程安全的要求较高时也必须可以使用这些线程安全的集合或包装类</strong>。具体使用自行搜索。</li>
+<li>集合遍历方法：
+<ul>
+<li>迭代器（常用，但不能在迭代时修改数据）：Iterator
+<ul>
+<li>常用方法：hasNext(),next(),remove() （即删除用迭代器的remove方法）</li>
+</ul>
+</li>
+<li>增强for循环（更简单，但不能在迭代时修改和删除数据，但可以用Iterator.remove()删除当前数据）：for(E e : 要遍历的对象)  (E为集合中元素的类型)</li>
+<li>普通for循环（通用,对于要修改或删除数据时使用）：for</li>
+<li>对于Map集合的遍历：
+<ul>
+<li>通过keySet()遍历：</li>
+</ul>
+<pre><code class="language-java">Map&lt;String, Integer&gt; map = <span class="hljs-keyword">new</span> <span class="hljs-title class_">HashMap</span>&lt;&gt;();
+map.put(<span class="hljs-string">&quot;A&quot;</span>, <span class="hljs-number">1</span>);
+<span class="hljs-comment">//略多次put</span>
+<span class="hljs-keyword">for</span> (String key : map.keySet()) {
+    <span class="hljs-type">int</span> <span class="hljs-variable">value</span> <span class="hljs-operator">=</span> map.get(key);
+    System.out.println(key + <span class="hljs-string">&quot;: &quot;</span> + value);
+}
+</code></pre>
+<ul>
+<li>通过entrySet()遍历：</li>
+</ul>
+<pre><code class="language-java">Map&lt;String, Integer&gt; map = <span class="hljs-keyword">new</span> <span class="hljs-title class_">HashMap</span>&lt;&gt;();
+map.put(<span class="hljs-string">&quot;A&quot;</span>, <span class="hljs-number">1</span>);
+<span class="hljs-comment">//略多次put</span>
+<span class="hljs-keyword">for</span> (Map.Entry&lt;String, Integer&gt; entry : map.entrySet()) {
+    <span class="hljs-type">String</span> <span class="hljs-variable">key</span> <span class="hljs-operator">=</span> entry.getKey();
+    <span class="hljs-type">int</span> <span class="hljs-variable">value</span> <span class="hljs-operator">=</span> entry.getValue();
+    System.out.println(key + <span class="hljs-string">&quot;: &quot;</span> + value);
+}
+</code></pre>
+<ul>
+<li>通过values()遍历：类似于keySet()，略</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>参考博客：(集合)[<a href="https://blog.csdn.net/2301_79842503/article/details/140886252">https://blog.csdn.net/2301_79842503/article/details/140886252</a>]</li>
+</ul>
+<h1 id="泛型">泛型：</h1>
+<ul>
+<li>泛型的本质是参数化类型，即把类型作为参数传递给类或方法。</li>
+<li>泛型的优点是可以提高代码的复用性和安全性，避免了类型转换的错误。</li>
+<li>泛型的使用方法：
+<ul>
+<li>定义泛型类时，需要在类名后面加上尖括号，并在尖括号中指定泛型类型参数。
+比如ArrayList<E>，其中E就是泛型类型参数。</li>
+<li>泛型类可以有多个泛型类型参数，每个参数之间用逗号分隔。
+比如HashMap&lt;K,V&gt;，其中K和V就是泛型类型参数。</li>
+<li>泛型类可以在类的成员变量、方法参数和方法返回值中使用泛型类型参数。</li>
+<li>泛型类的实例化时需要指定泛型类型参数的具体类型。</li>
+<li>那对于加了泛型的类，该类的对象可以调用泛型类的方法，但是不能调用泛型类的属性，<strong>该类的泛型方法的参数和返回值也需要指定泛型类型参数的具体类型</strong>。就比如上面集合几乎都是泛型类，都有泛型方法，如：</li>
+</ul>
+<pre><code class="language-java"><span class="hljs-keyword">class</span> <span class="hljs-title class_">Person</span> <span class="hljs-keyword">implements</span> <span class="hljs-title class_">Comparable</span>&lt;Person&gt; {
+    <span class="hljs-keyword">private</span> String name;
+    <span class="hljs-keyword">private</span> <span class="hljs-type">int</span> age;
+
+    <span class="hljs-keyword">public</span> <span class="hljs-title function_">Person</span><span class="hljs-params">(String name, <span class="hljs-type">int</span> age)</span> {
+        <span class="hljs-built_in">this</span>.name = name;
+        <span class="hljs-built_in">this</span>.age = age;
+    }
+    <span class="hljs-keyword">public</span> <span class="hljs-type">int</span> <span class="hljs-title function_">gatAge</span><span class="hljs-params">()</span> {
+        <span class="hljs-keyword">return</span> age;
+}
+    <span class="hljs-meta">@Override</span> <span class="hljs-comment">//重写compareTo方法,这里用不到就随便写了</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-type">int</span> <span class="hljs-title function_">compareTo</span><span class="hljs-params">(Person o)</span> {
+        <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;
+    }
+    <span class="hljs-keyword">public</span> String <span class="hljs-title function_">toString</span><span class="hljs-params">()</span> {
+        <span class="hljs-keyword">return</span> <span class="hljs-string">&quot;Person{name=&#x27;&quot;</span> + name + <span class="hljs-string">&quot;&#x27;, age=&quot;</span> + age + <span class="hljs-string">&#x27;}&#x27;</span>;
+    }
+}
+
+<span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">test</span> {
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">main</span><span class="hljs-params">(String[] args)</span>  {
+        HashSet&lt;Person&gt; h = <span class="hljs-keyword">new</span> <span class="hljs-title class_">HashSet</span>&lt;Person&gt;();
+        h.add(<span class="hljs-keyword">new</span> <span class="hljs-title class_">Person</span>(<span class="hljs-string">&quot;a&quot;</span>,<span class="hljs-number">1</span>));
+        h.add(<span class="hljs-keyword">new</span> <span class="hljs-title class_">Person</span>(<span class="hljs-string">&quot;b&quot;</span>,<span class="hljs-number">2</span>));
+        h.add(<span class="hljs-keyword">new</span> <span class="hljs-title class_">Person</span>(<span class="hljs-string">&quot;c&quot;</span>,<span class="hljs-number">3</span>));
+        <span class="hljs-keyword">for</span>(Person e : h) {
+            System.out.println(e);
+        }
+    }
+}
+</code></pre>
+hashSet的泛型方法add()和遍历都得用Person对象。那么可以得出使用泛型类<strong>可以灵活的指定泛型类型参数的具体类型，而不用像普通类那样指定具体类型</strong>，当我们需要灵活的指定泛型类型参数的具体类型时，可以使用泛型类定义泛型类方法，<strong>参数类型和返回值类型都用泛型参数指定</strong>。
+<ul>
+<li><em><strong>泛型参数</strong></em>：所有大写字母都可以作为泛型参数，但为了代码的可读性，一般约定使用以下字母作为泛型参数：
+<ul>
+<li>K - Key（键）</li>
+<li>V - Value（值）</li>
+<li>N - Number（数值类型）</li>
+<li>E - Element (在集合中使用，因为集合中存放的是元素)</li>
+<li>T - Type（java类型，最常用最广泛的约定参数）</li>
+<li>K - Key（键）V - Value（值） N - Number（数值类型）等等</li>
+<li>K,V - 键值对</li>
+<li>两个或两个以上的泛型参数用逗号分隔 按A，B，C顺序命名</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h1 id="枚举类">枚举类：</h1>
+<ul>
+<li>定义：<pre><code class="language-java"><span class="hljs-keyword">enum</span> 枚举类名 {
+    枚举值<span class="hljs-number">1</span>,
+    枚举值<span class="hljs-number">2</span>,
+    ...
+}
+</code></pre>
+</li>
+<li>特性：
+<ul>
+<li>枚举类中的每个常量都是该枚举类的一个实例，并且是单例的，如：<pre><code class="language-java"><span class="hljs-keyword">enum</span> <span class="hljs-title class_">Day</span> {
+MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY, SATURDAY, SUNDAY;
+}
+
+<span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">EnumSingleton</span> {
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">main</span><span class="hljs-params">(String[] args)</span> {
+        <span class="hljs-type">Day</span> <span class="hljs-variable">day1</span> <span class="hljs-operator">=</span> Day.MONDAY;<span class="hljs-comment">//因为每个常量都是该枚举类的一个实例，故这里可以用枚举类名.枚举值来创建实例</span>
+        <span class="hljs-type">Day</span> <span class="hljs-variable">day2</span> <span class="hljs-operator">=</span> Day.MONDAY;
+        System.out.println(day1 == day2); <span class="hljs-comment">// 输出: true</span>
+    }
+}
+</code></pre>
+这里的day1和day2是同一个实例。</li>
+<li>枚举类可以使用 Enum 类提供的一些方法，如：name()、ordinal()(枚举常量在枚举类中声明的顺序，从 0 开始计数)、values()（得到所以枚举值）等等。</li>
+<li>枚举类可以用自己的属性和方法，如：<pre><code class="language-java"><span class="hljs-keyword">enum</span> <span class="hljs-title class_">Season</span> {
+    <span class="hljs-comment">//因为每个常量都是该枚举类的一个实例，故枚举值也可看做一个实例对象，故这里可以用构造函数来初始化属性</span>
+    SPRING(<span class="hljs-string">&quot;温暖&quot;</span>), SUMMER(<span class="hljs-string">&quot;炎热&quot;</span>), AUTUMN(<span class="hljs-string">&quot;凉爽&quot;</span>), WINTER(<span class="hljs-string">&quot;寒冷&quot;</span>);
+
+    <span class="hljs-keyword">private</span> <span class="hljs-keyword">final</span> String description;
+
+    <span class="hljs-comment">// 构造函数</span>
+    Season(String description) {
+        <span class="hljs-built_in">this</span>.description = description;
+    }
+
+    <span class="hljs-comment">// 获取描述信息的方法</span>
+    <span class="hljs-keyword">public</span> String <span class="hljs-title function_">getDescription</span><span class="hljs-params">()</span> {
+        <span class="hljs-keyword">return</span> description;
+    }
+}
+
+<span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">EnumWithAttributes</span> {
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">main</span><span class="hljs-params">(String[] args)</span> {
+        <span class="hljs-keyword">for</span> (Season season : Season.values()) {
+            System.out.println(season + <span class="hljs-string">&quot;: &quot;</span> + season.getDescription());
+        }
+    }
+}
+</code></pre>
+这里的枚举类Season有自己的属性description，且有自己的方法getDescription()。</li>
+<li>枚举类可以实现接口，如：<pre><code class="language-java"><span class="hljs-keyword">interface</span> <span class="hljs-title class_">SeasonAction</span> {
+    <span class="hljs-keyword">void</span> <span class="hljs-title function_">action</span><span class="hljs-params">()</span>;
+}
+
+<span class="hljs-keyword">enum</span> <span class="hljs-title class_">Season</span> <span class="hljs-keyword">implements</span> <span class="hljs-title class_">SeasonAction</span> {
+    SPRING {
+        <span class="hljs-meta">@Override</span>
+        <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">action</span><span class="hljs-params">()</span> {
+            System.out.println(<span class="hljs-string">&quot;外出踏青&quot;</span>);
+        }
+    },
+    SUMMER {
+        <span class="hljs-meta">@Override</span>
+        <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">action</span><span class="hljs-params">()</span> {
+            System.out.println(<span class="hljs-string">&quot;游泳解暑&quot;</span>);
+        }
+    <span class="hljs-comment">//略重复实现的代码</span>
+    };
+}
+
+<span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">EnumImplementingInterface</span> {
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">main</span><span class="hljs-params">(String[] args)</span> {
+        <span class="hljs-comment">//用Season.values()来遍历枚举类</span>
+        <span class="hljs-keyword">for</span> (Season season : Season.values()) {
+            System.out.print(season + <span class="hljs-string">&quot; 适合: &quot;</span>);
+            season.action();
+        }
+    }
+}
+</code></pre>
+</li>
+</ul>
+</li>
+<li>枚举类在switch语句中的使用：</li>
+</ul>
+<pre><code class="language-java"><span class="hljs-keyword">enum</span> <span class="hljs-title class_">Day</span> {
+      MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY, SATURDAY, SUNDAY;
+  }
+
+  <span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">EnumSwitchExample</span> {
+      <span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">main</span><span class="hljs-params">(String[] args)</span> {
+          <span class="hljs-type">Day</span> <span class="hljs-variable">today</span> <span class="hljs-operator">=</span> Day.MONDAY;
+          <span class="hljs-keyword">switch</span> (today) {
+              <span class="hljs-keyword">case</span> MONDAY:
+                  System.out.println(<span class="hljs-string">&quot;开始新的一周，加油工作！&quot;</span>);
+                  <span class="hljs-keyword">break</span>;
+              <span class="hljs-comment">//略重复的代码</span>
+              <span class="hljs-keyword">case</span> SUNDAY:
+                  System.out.println(<span class="hljs-string">&quot;周日，准备迎接新一周！&quot;</span>);
+                  <span class="hljs-keyword">break</span>;
+          }
+      }
+  }
+- 枚举类的使用场景：
+- **当需要定义一组固定的常量时，可以使用枚举类，如颜色选择、星期选择、策略选择等。**
+- 当需要在 <span class="hljs-keyword">switch</span> 语句中使用枚举类型时，可以使用枚举类。</code></pre>
+
+            <script async src="https://cdn.jsdelivr.net/npm/katex-copytex@latest/dist/katex-copytex.min.js"></script>
+            
+        </body>
+        </html>

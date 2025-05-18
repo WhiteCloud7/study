@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.WhiteCloud.UserDao.UserManage">
+    <select id="selectAll" resultType="userInfo">
+        SELECT * FROM userinfo
+    </select>
+    <select id="selectOnePara" resultType="userInfo">
+        SELECT * FROM userinfo WHERE CONCAT_WS(",",username,sex,phone,email) LIKE CONCAT('%',#{para},'%')
+    </select>
+    <select id="selectByManyPara" resultType="userInfo">
+        SELECT * FROM userinfo WHERE
+            <foreach collection="ParaList" item="Para" separator=" AND ">
+                CONCAT_WS(",",username,sex,phone,email) LIKE CONCAT('%',#{Para},'%')
+            </foreach>
+    </select>
+
+    <insert id="addUser" parameterType="userInfo">
+        INSERT INTO userinfo(username,sex,phone,email)
+        VALUES (#{username},#{sex},#{phone},#{email});
+    </insert>
+
+    <delete id="deleteOneUser" parameterType="int">
+        DELETE FROM userinfo WHERE userId = #{userId};
+    </delete>
+
+    <select id="resetMaxAutoKey">
+        CALL SetAutoIncrementToMaxID();
+    </select>
+    
+    <delete id="deleteManyUser" parameterType="int">
+        DELETE FROM userinfo WHERE
+        <foreach collection="userIdSet" item="userId" separator=" AND ">
+            userId = #{userId}
+        </foreach>
+    </delete>
+
+    <update id="updateUserInfo" parameterType="userInfo">
+        UPDATE userinfo SET username = #{username},sex = #{sex},phone=#{phone},email=#{email} WHERE userId = #{userId}
+    </update>
+</mapper>

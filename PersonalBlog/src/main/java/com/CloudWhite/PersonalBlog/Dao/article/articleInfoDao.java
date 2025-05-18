@@ -9,4 +9,6 @@ public interface articleInfoDao extends JpaRepository<articleInfo,Integer> {
 
     public List<articleInfo> findByUserId(int userId);
     public articleInfo findByArticleIdAndUserId(int articleId,int userId);
+
+    public boolean existsByArticleIdAndUserId(int articleId,int userId);
 }

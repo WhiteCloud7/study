@@ -2,6 +2,7 @@ package com.CloudWhite.PersonalBlog.Service;
 
 import com.CloudWhite.PersonalBlog.Entity.DTO.messageDto;
 import com.CloudWhite.PersonalBlog.Entity.message;
+import com.CloudWhite.PersonalBlog.Model.ResponseEntity;
 
 import java.util.List;
 
@@ -14,4 +15,5 @@ public interface messageService {
     public void RestMessageTable();
 
     public String getLastNewTime(String friendName);
+    public List<messageDto> getOlderMessages(String friendName, String beforeTime);
 }

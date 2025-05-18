@@ -12,4 +12,6 @@ public interface noticeService {
     public void addLike(int noticeId);
     public void addComment(int noticeId);
     public void saveNotice(int noticeId,String title,String newNotice);
+    public void newNotice(String title,String messageText);
+    public void deleteNotice(int noticeId);
 }

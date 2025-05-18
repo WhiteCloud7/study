@@ -12,4 +12,7 @@ public interface userDao extends JpaRepository<user,Integer> {
 
     @Query("select u.userId from user u where u.username = :username")
     public int findUserIdByUserName(String username);
+
+    @Query("select u.nikeName from user u where u.username = :username")
+    public String findNikeNameByUserName(String username);
 }

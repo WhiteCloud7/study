@@ -40,7 +40,7 @@ function initUser(){
 
 function handleLogin(){
   console.log(isLogin.value);
-  axios.get("http://59.110.48.56:8081/login",{
+  axios.get("http://localhost:8081/login",{
     params:{
       username:username.value,
       password:password.value

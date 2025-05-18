@@ -23,6 +23,11 @@ public class notice {
     public notice() {
     }
 
+    public notice(String noticeMessage, String title) {
+        this.noticeMessage = noticeMessage;
+        this.title = title;
+    }
+
     public notice(int noticeId, String noticeMessage, String title) {
         this.noticeId = noticeId;
         this.noticeMessage = noticeMessage;

@@ -1,6 +1,6 @@
 <template>
   <div class="contact-receive">
-    <el-avatar class="contact-receiveAvatar" :src="receiverProfile.avatar_src"></el-avatar>
+    <el-avatar class="contact-receiveAvatar" :src="receiverProfile.avatar_src" @click="friendProfile(receiverProfile.username)"></el-avatar>
     <p @contextmenu.prevent
        class="contact-receiveContent"
        @mousedown.right="showOptions"
@@ -29,6 +29,7 @@
 <script setup>
 import {defineProps, onMounted, ref, defineEmits, onUnmounted, inject} from "vue";
 import axios from '@/axios';
+import {useRouter} from "vue-router";
 
 const props = defineProps({
   messageId:Number,
@@ -41,13 +42,14 @@ const props = defineProps({
 const dialogVisible = ref(false);
 const emit = defineEmits(["deleteReceiveMessage", "updateActiveReceiveTime"]);
 const userId = inject("userId");
+const router = useRouter();
 
 function showOptions() {
   emit("updateActiveReceiveTime", props.receiveTime);
 }
 
 function deleteMessage(){
-  axios.get("http://59.110.48.56:8081/deleteMessage",{
+  axios.get("http://localhost:8081/deleteMessage",{
     params:{
       messageId:props.messageId,
       receiveName:props.receiveReceiverName,
@@ -61,6 +63,10 @@ function deleteMessage(){
     console.log(err);
     alert("删除失败，建议刷新重试");
   });
+}
+
+function friendProfile(username){
+  router.push(`/friendProfile/${username}`);
 }
 
 const handleGlobalClick = (e) => {
@@ -92,6 +98,7 @@ onUnmounted(() => {
 }
 
 .contact-receiveAvatar {
+  cursor: pointer;
   flex-shrink: 0;
 }
 

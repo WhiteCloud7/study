@@ -79,8 +79,33 @@ public class redisUtils {
         return result;
     }
 
-    public <T> List<T> queryWithCaches(
+    public <T> T queryWithHashCache(
+            String key,
+            String hashKey,
+            Class<T> clazz,
+            Supplier<T> dbQuery,
+            long time,
+            TimeUnit timeUnit
+    ) {
+        // 先查缓存
+        T cache = redisHashTemplate.getHashObject(key,hashKey, clazz);
+        if (cache != null) {
+            return cache;
+        }
+        T result = dbQuery.get();
+        if(result==null){
+            redisHashTemplate.setHashObject(key,hashKey,null);
+            redisCommonTemplate.setExpire(key, 60, TimeUnit.SECONDS);
+            return null;
+        }
+        redisStringTemplate.setObject(key,null);
+        redisCommonTemplate.setExpire(key,time,timeUnit);
+        return result;
+    }
+
+    public <T> List<T> queryWithHashCaches(
             Collection<String> keys,
+            Collection<String> hashKeys,
             Class<T> clazz,
             Supplier<Map<String, T>> dbQuery,
             long ttl,

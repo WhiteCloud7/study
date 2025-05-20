@@ -77,3 +77,175 @@ public void getNotice(int noticeId) {
 ```
 ## uuid和雪花算法
 由于redis无法自增，故无法使用数据库的自增id，此时可以使用uuid或者雪花算法。这里uuid和雪花算法**都是字符串**，所以我们对v用到了redis或其他缓存数据库的实体类设计Id用String，另外，即使 ***用不到id也应该设计成包装类而不是int因为如果用jpa会出现空值时默认映射为0为不是空值。***下面介绍uuid和雪花算法。
+### UUID
+Java 中的 UUID 是一个 128 位（16 字节）的值，由高位和低位组成，各64位。它的标准字符串格式是：
+***8-4-4-4-12*** 的 32 个十六进制数字，示例`f47ac10b-58cc-4372-a567-0e02b2c3d479`
+- UUID 的生成方式有多种，Java 中最常用的是 `UUID.randomUUID()` 方法，它会生成一个随机的 UUID。
+- 还可以用一个字符串来解析出一个 UUID，如`UUID uuid = UUID.fromString("f47ac10b-58cc-4372-a567-0e02b2c3d479");`，注意要符合格式
+但UUID位数过长，所以对于一些对性能有更高要求得我们一般用雪花算法。
+### 雪花算法
+雪花算法生成得ID为64位，结构为`| 1位符号位 | 41位时间戳 | 10位机器标识 | 12位序列号 |`
+- 符号位：固定为0，因为生成的ID都是正数。
+- 时间戳：41位时间戳，精确到毫秒，最多可以使用69年。
+- 机器标识：5 位数据中心 ID（最多 32 个数据中心），5 位机器 ID（每个数据中心最多 32 台机器）
+- 序列号：12位序列号，用于同一毫秒内生成多个ID，最多可以生成4096个ID，如果同一毫秒内生成的ID超过4096个，就会等待下一个毫秒。
+一下一个简单实现代码
+```java
+public class SnowflakeIdGenerator {
+    private final long epoch = 1609459200000L; // 自定义起始时间 2021-01-01
+    private final long datacenterId;
+    private final long workerId;
+    private final long sequenceBits = 12L;
+    private final long workerIdBits = 5L;
+    private final long datacenterIdBits = 5L;
+    private final long maxWorkerId = ~(-1L << workerIdBits); // 31
+    private final long maxDatacenterId = ~(-1L << datacenterIdBits); // 31
+
+    private final long workerIdShift = sequenceBits;
+    private final long datacenterIdShift = sequenceBits + workerIdBits;
+    private final long timestampShift = sequenceBits + workerIdBits + datacenterIdBits;
+
+    private final long sequenceMask = ~(-1L << sequenceBits);
+
+    private long sequence = 0L;
+    private long lastTimestamp = -1L;
+
+    public SnowflakeIdGenerator(long datacenterId, long workerId) {
+        if (workerId > maxWorkerId || workerId < 0)
+            throw new IllegalArgumentException("workerId out of range");
+        if (datacenterId > maxDatacenterId || datacenterId < 0)
+            throw new IllegalArgumentException("datacenterId out of range");
+        this.datacenterId = datacenterId;
+        this.workerId = workerId;
+    }
+
+    public synchronized long nextId() {
+        long timestamp = currentTime();
+        if (timestamp < lastTimestamp)
+            throw new RuntimeException("Clock moved backwards");
+
+        if (timestamp == lastTimestamp) {
+            sequence = (sequence + 1) & sequenceMask;
+            if (sequence == 0)
+                timestamp = waitNextMillis(lastTimestamp);
+        } else {
+            sequence = 0L;
+        }
+
+        lastTimestamp = timestamp;
+
+        return ((timestamp - epoch) << timestampShift)
+                | (datacenterId << datacenterIdShift)
+                | (workerId << workerIdShift)
+                | sequence;
+    }
+
+    private long waitNextMillis(long lastTimestamp) {
+        long timestamp = currentTime();
+        while (timestamp <= lastTimestamp) {
+            timestamp = currentTime();
+        }
+        return timestamp;
+    }
+
+    private long currentTime() {
+        return System.currentTimeMillis();
+    }
+}
+//SpringBoot这样封装
+@Component
+public class SnowflakeIdGenerator {
+
+    // ================= 配置 =================
+
+    // 起始时间戳（建议固定不变）
+    private final long epoch = 1609459200000L; // 2021-01-01
+
+    // 每一部分占用的位数
+    private final long datacenterIdBits = 5L;
+    private final long workerIdBits = 5L;
+    private final long sequenceBits = 12L;
+
+    // 最大值
+    private final long maxDatacenterId = ~(-1L << datacenterIdBits); // 31
+    private final long maxWorkerId = ~(-1L << workerIdBits); // 31
+
+    // 位移
+    private final long workerIdShift = sequenceBits;
+    private final long datacenterIdShift = sequenceBits + workerIdBits;
+    private final long timestampShift = sequenceBits + workerIdBits + datacenterIdBits;
+
+    private final long sequenceMask = ~(-1L << sequenceBits);
+
+    // ================= 实例变量 =================
+    private long datacenterId;
+    private long workerId;
+    private long sequence = 0L;
+    private long lastTimestamp = -1L;
+
+    // ================= 构造 =================
+
+    public SnowflakeIdGenerator(
+            @Value("${snowflake.datacenter-id:1}") long datacenterId,
+            @Value("${snowflake.worker-id:1}") long workerId) {
+
+        if (datacenterId > maxDatacenterId || datacenterId < 0)
+            throw new IllegalArgumentException("Datacenter ID out of range");
+        if (workerId > maxWorkerId || workerId < 0)
+            throw new IllegalArgumentException("Worker ID out of range");
+
+        this.datacenterId = datacenterId;
+        this.workerId = workerId;
+    }
+
+    // ================= 主方法 =================
+
+    public synchronized long nextId() {
+        long timestamp = timeGen();
+
+        if (timestamp < lastTimestamp) {
+            throw new RuntimeException("Clock moved backwards. Refusing to generate ID.");
+        }
+
+        if (timestamp == lastTimestamp) {
+            sequence = (sequence + 1) & sequenceMask;
+            if (sequence == 0) {
+                timestamp = waitNextMillis(lastTimestamp);
+            }
+        } else {
+            sequence = 0L;
+        }
+
+        lastTimestamp = timestamp;
+
+        return ((timestamp - epoch) << timestampShift)
+                | (datacenterId << datacenterIdShift)
+                | (workerId << workerIdShift)
+                | sequence;
+    }
+
+    private long waitNextMillis(long lastTimestamp) {
+        long timestamp = timeGen();
+        while (timestamp <= lastTimestamp) {
+            timestamp = timeGen();
+        }
+        return timestamp;
+    }
+
+    private long timeGen() {
+        return System.currentTimeMillis();
+    }
+}
+//然后application.yml配置
+snowflake:
+  datacenter-id: 1
+  worker-id: 2
+```
+也有很多工具类库可以使用，如hutool的IdUtil、百度的UidGenerator、美团的Leaf等。
+1. Hutool: 引入依赖即可`cn.hutool.hutool-core`,使用如
+```java
+Snowflake snowflake = IdUtil.getSnowflake(1, 1); // datacenterId=1, workerId=1
+long id = snowflake.nextId();
+```
+2. 美团Leaf: [GitHub地址](https://github.com/Meituan-Dianping/Leaf)
+3. 百度UidGenerator：[GitHub地址](https://github.com/baidu/uid-generator)

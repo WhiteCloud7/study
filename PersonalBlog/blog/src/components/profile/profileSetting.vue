@@ -7,7 +7,7 @@
         <el-avatar :src="avatar" size="100" style="margin-left: 48px"></el-avatar>
         <el-upload
             class="avatar-uploader"
-            action="http://localhost:8081/api/uploadAvatar"
+            action="http://localhost:8081/uploadAvatar"
             :show-file-list="false"
             :on-success="handleAvatarSuccess"
             :headers="uploadHeaders"

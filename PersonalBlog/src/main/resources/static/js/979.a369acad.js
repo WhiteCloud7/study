@@ -1,0 +1,2 @@
+"use strict";(self["webpackChunkblog"]=self["webpackChunkblog"]||[]).push([[979],{3979:function(n,u,r){r.r(u),r.d(u,{default:function(){return f}});var e=r(6436);function t(n,u){return(0,e.uX)(),(0,e.CE)("p",null,"收藏")}var c=r(5932);const l={},a=(0,c.A)(l,[["render",t]]);var f=a}}]);
+//# sourceMappingURL=979.a369acad.js.map

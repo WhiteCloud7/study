@@ -23,8 +23,8 @@ public class FileController {
 
     @GetMapping("/**")
     public ResponseEntity<Resource> getFile(HttpServletRequest request) {
-        String requestURI = request.getRequestURI(); // 例如 /uploads/fengjiewei/avatar-武器1.png
-        String filePath = requestURI.substring("/uploads/".length()); // 去掉前缀，得到 fengjiewei/avatar-武器1.png
+        String requestURI = request.getRequestURI(); // 例如 /uploads/fengjiewei/avatar-1.png
+        String filePath = requestURI.substring("/uploads/".length()); // 去掉前缀，得到 fengjiewei/avatar-1.png
 
         try {
             Path file = uploadBasePath.resolve(filePath).normalize();

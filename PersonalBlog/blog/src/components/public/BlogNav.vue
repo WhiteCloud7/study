@@ -96,7 +96,6 @@ function initLogin(){
       const data = res.data.data;
       username.value = data.username;
       avatar.value = data.avatar_src;
-      console.log(data)
     }).catch(err => {
       console.log(err);
     });

@@ -21,16 +21,22 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.annotation.Order;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.security.core.parameters.P;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Arrays;
 import java.util.List;
+import java.util.UUID;
 import java.util.concurrent.TimeUnit;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @Service
 @Transactional
@@ -137,6 +143,27 @@ public class userServiceImpl implements userService {
     }
 
     public String register(String username, String password) {
+        String regex1 = "^[A-za-z0-9]{6,16}$";
+
+        List<String> illegalityChars = Arrays.asList("&", ";", "#", " ", "=", "?", "<", ">", "'", "\"", "$", "-");
+        StringBuilder regexPattern = new StringBuilder("[");
+        for (String charStr : illegalityChars) {
+            String escapedChar = charStr.replaceAll("[.*+?^${}()|\\[\\\\\\]]", "\\" + charStr);
+            regexPattern.append(escapedChar);
+        }
+        regexPattern.append("]");
+
+        Pattern pattern1 = Pattern.compile(regex1);
+        Pattern pattern2 = Pattern.compile(regexPattern.toString());
+        Matcher matcher1 = pattern1.matcher(username);
+        Matcher matcher2 = pattern2.matcher(password);
+
+        if(username.length()<6||username.length()>16||password.length()<6||password.length()>20){
+            return "账号或密码校验错误，请重新输入";
+        }
+        if(!matcher1.matches()||matcher2.find()){
+            return "账号或密码校验错误，请重新输入";
+        }
         if (userDao.findByUsername(username) != null) {
             return "用户已存在";
         }
@@ -184,12 +211,19 @@ public class userServiceImpl implements userService {
             if (multipartFile.isEmpty())
                 return "上传文件为空";
 
-            String newFilename = "avatar-"+multipartFile.getOriginalFilename();
+            String newFilename = "avatar-"+ UUID.randomUUID()+multipartFile.getContentType();
             String uploadDir = System.getProperty("user.dir") + "/uploads/"+username;
             Path path = Paths.get(uploadDir);
 
             if (!Files.exists(path))
                 Files.createDirectories(path);
+            Files.list(path).forEach(file->{
+                try{
+                    Files.delete(file);
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+            });
 
             multipartFile.transferTo(path.resolve(newFilename).toFile());
 

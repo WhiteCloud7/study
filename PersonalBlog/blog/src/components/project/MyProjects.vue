@@ -471,7 +471,7 @@ function download() {
       filePath: encodeURIComponent(filePath.value),
       fileId: fileId
     },
-    responseType: 'blob' // 👈 必须加
+    responseType: 'blob'
   }).then(res => {
     const blob = new Blob([res.data]);
     const downloadUrl = window.URL.createObjectURL(blob);

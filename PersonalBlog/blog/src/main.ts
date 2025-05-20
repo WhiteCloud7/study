@@ -12,12 +12,14 @@ const head = createHead();
 const isLogin = ref(sessionStorage.getItem('token') !== null);
 const currentChatObject = ref("");
 const currentUserName = ref("");
+const illegalityStr = ['&',';','#',' ','=','?','<','>',"'",'"','$','-'];
 
 app.component("PictureFilled",PictureFilled)
 app.component("GlobalMask",GlobalMask);
 
 app.config.globalProperties.$isLogin = isLogin;
 app.config.globalProperties.$currentChatObject = currentChatObject;
+app.config.globalProperties.$illegalityStr = illegalityStr;
 
 app.use(head);
 app.use(ElementPlus);

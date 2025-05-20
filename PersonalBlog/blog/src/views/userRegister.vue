@@ -6,14 +6,19 @@
         <div class="register-formGroup">
           <label for="username">用户名</label>
           <input type="text" id="username" v-model="username" placeholder="请输入用户名" required>
+          <label class="register-check" v-if="usernameLengthIllegality">账号为6-16位的字母数字组合</label>
+          <label class="register-check" v-if="usernamePattenIllegality">账号不能包含特殊字符</label>
         </div>
         <div class="register-formGroup">
           <label for="password">密码</label>
           <input type="password" id="password" v-model="password" placeholder="请输入密码" required>
+          <label class="register-check" v-if="passwordLengthIllegality">密码为6-20位的字母、数字、合法字符组合</label>
+          <label class="register-check" v-if="passwordPattenIllegality">密码不能包含非法字符</label>
         </div>
         <div class="register-formGroup">
           <label for="email">再此输入密码</label>
           <input type="password" id="passwordCheck" v-model="passwordCheck" placeholder="再次输入密码" required>
+          <label class="register-check" v-if="passwordCheckError">两次密码不一致</label>
         </div>
         <button type="submit">注册</button>
       </form>
@@ -22,7 +27,7 @@
 </template>
 
 <script setup>
-import {ref} from 'vue';
+import {ref,getCurrentInstance} from 'vue';
 import { useHead } from "@vueuse/head";
 import axios from "axios";
 
@@ -34,8 +39,45 @@ const username = ref('');
 const passwordCheck = ref('');
 const password = ref('');
 
+const usernameLengthIllegality = ref(false);
+const usernamePattenIllegality = ref(false);
+const passwordLengthIllegality = ref(false);
+const passwordPattenIllegality = ref(false);
+const  passwordCheckError = ref(false);
+const instance = getCurrentInstance();
+const illegalityStr = instance.appContext.config.globalProperties.$illegalityStr;
+
 const handleRegister = () => {
-  console.log(password.value);
+  //passwordCheckError.value = false;
+  // usernameLengthIllegality.value = false;
+  // usernamePattenIllegality.value = false;
+  // passwordLengthIllegality.value = false;
+  // passwordLengthIllegality.value = false;
+  //
+  // const regex1 = /^[a-zA-Z0-9]{6,12}$/
+  // const escapedChars = illegalityStr.map(char => /[.*+?^${}()|[\]\\]/.test(char) ? `\\${char}` : char);
+  // const regex2 = new RegExp(`[${escapedChars.join('')}]`);
+  //
+  // if(username.value.length<6||username.value.length>16){
+  //   usernameLengthIllegality.value = true;
+  //   if(password.value.length<6||password.value.length>20){
+  //     passwordLengthIllegality.value = true;
+  //   }else if(regex2.test(password.value)){
+  //     passwordPattenIllegality.value = true;
+  //   }
+  //   return;
+  // }
+  //
+  // if(!regex1.test(username.value)){
+  //   usernamePattenIllegality.value = true;
+  //   if(password.value.length<6||password.value.length>20){
+  //     passwordLengthIllegality.value = true;
+  //   }else if(regex2.test(password.value)){
+  //     passwordPattenIllegality.value = true;
+  //   }
+  //   return;
+  // }
+
   if(passwordCheck.value===password.value) {
     axios.get("http://localhost:8081/register", {
       params: {
@@ -46,6 +88,8 @@ const handleRegister = () => {
       const data = res.data;
       if (data === "用户已存在")
         alert("用户已存在!")
+      else if(data === "账号或密码校验错误，请重新输入")
+        alert("账号或密码校验错误，请重新输入!")
       else {
         const isConfirm = confirm("注册成功，确认前往登录！");
         if(isConfirm)
@@ -56,7 +100,7 @@ const handleRegister = () => {
     })
   }
   else
-    alert("两次密码不一致！");
+    passwordCheckError.value = true;
 }
 </script>
 
@@ -86,7 +130,12 @@ const handleRegister = () => {
 }
 
 .register-formGroup {
-  margin-bottom: 15px;
+  margin-bottom: 7px;
+}
+
+.register-check{
+  color: red;
+  font-size: 8px;
 }
 
 .register-formGroup label {

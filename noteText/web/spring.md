@@ -978,78 +978,93 @@ public class redisConfig {
     }
 }
 ```
-
-## 集成jms
-### 作用：
-JMS 即 Java 消息服务（Java Message Service）应用程序接口，是一个Java平台中关于面向消息中间件（MOM）的 API，用于在两个应用程序之间，或分布式系统中发送消息，进行异步通信（即无需等接收端确认即可进行新的请求）。Java 消息服务是一个与具体平台无关的 API，绝大多数 MOM 提供商都对 JMS 提供支持。  
-举个例子，我们可以用JMS来实现消息队列，即当我们在电商网站下单时，我们可以把订单信息存入消息队列，之后库存系统就可以从消息队列中获取订单信息，然后进行相应操作。即它作为两个应用程序的一个中间层，并实现了异步通信。  
-而作为中间件坑定也有除了实现异步的更多优势如JMS的消息队列可以作为一个缓冲区，将大量的请求消息暂存起来，然后按照系统的处理能力逐步处理这些消息，从而提高系统的吞吐量和响应速度。另外还有着可靠传输、兼容性高等等优点。
-### 集成MQ：
-1. 下载配置ActiveMQ，加相应依赖：
-2. 配置：
-```yml
-spring:
-  activemq:
-    # activemq url
-    broker-url: tcp://localhost:61616
-    in-memory: true
-    pool:
-      # 如果此处设置为true，需要添加activemq-pool的依赖包，否则会自动配置失败，无法注入JmsMessagingTemplate
-      enabled: false
-```
-1. 使用：  
-先写个配置类：
+## 基础WebSocket
+### 介绍：
+WebSocket协议是基于TCP的一种新的网络协议。它实现了浏览器与服务器全双工(full-duplex)通信——允许服务器主动发送信息给客户端。  
+初次接触 WebSocket 的人，都会问同样的问题：我们已经有了 HTTP 协议，为什么还需要另一个协议？它能带来什么好处？答案很简单，因为 HTTP 协议有一个缺陷：**通信只能由客户端发起**，HTTP 协议做不到服务器主动向客户端推送信息。  
+很简单的例子就是实时通信，要想知道有没有消息发来只能是客户端不断地向服务器发送请求，资源消耗和性能消耗都很大。当客户端发送一个 WebSocket 请求时，服务器将发送一个协议响应以确认请求。在握手期间，客户端和服务器将协商使用的协议版本、支持的子协议、支持的扩展选项等。一旦握手完成，连接将保持打开状态，客户端和服务器就可以在连接上实时地传递数据。  
+- WebSocket有如下生命周期：  
+  1. 连接建立阶段（Connection Establishment）： 在这个阶段，客户端和服务器之间的 WebSocket 连接被建立。客户端发送一个  WebSocket 握手请求，服务器响应一个握手响应，然后连接就被建立了。  
+  2. 连接开放阶段（Connection Open）： 在这个阶段，WebSocket 连接已经建立并开放，客户端和服务器可以在连接上互相发送数据。
+  3. 连接关闭阶段（Connection Closing）： 在这个阶段，一个 WebSocket 连接即将被关闭。它可以被客户端或服务器发起，通过发送一个关闭帧来关闭连接。
+  4. 连接关闭完成阶段（Connection Closed）： 在这个阶段，WebSocket 连接已经完全关闭。客户端和服务器之间的任何交互都将无效。
+- WebSocket的消息格式
+WebSocket的消息格式与 HTTP 请求和响应的消息格式有所不同。WebSocket 的消息格式可以是文本或二进制数据，并且 WebSocket 消息的传输是在一个已经建立的连接上进行的，因此不需要再进行 HTTP 请求和响应的握手操作。  
+WebSocket 消息格式由两个部分组成：消息头和消息体。
+1. 消息头包含以下信息：
+   - FIN： 表示这是一条完整的消息，一般情况下都是1。
+   - RSV1、RSV2、RSV3： 暂时没有使用，一般都是0。
+   - Opcode： 表示消息的类型，包括文本消息、二进制消息等。
+   - Mask： 表示消息是否加密。
+   - Payload length： 表示消息体的长度。
+   - Masking key： 仅在消息需要加密时出现，用于对消息进行解密。
+2. 消息体就是实际传输的数据，可以是文本或二进制数据。
+### 集成
+依赖`org.springframework.boot.spring-boot-starter-websocket`  
+几种还有自带的jakata实现的websocket，我们先说这个：
 ```java
+//先写一个WebSocket服务器
+@ServerEndpoint("/websocket")
+public class WebSocketServer {
+    private static final Set<Session> sessions = Collections.synchronizedSet(new HashSet<Session>());
+    @OnOpen
+    public void onOpen(Session session) {
+        System.out.println("Connection opened: " + session.getId());
+        sessions.add(session);
+    }
+
+    @OnMessage
+    public void onMessage(Session session, String message) throws IOException {
+        System.out.println("Received message: " + message);
+        session.getBasicRemote().sendText("Server received: " + message);
+    }
+
+    @OnClose
+    public void onClose(Session session) {
+        System.out.println("Connection closed: " + session.getId());
+        sessions.remove(session);
+    }
+}
+//然后启用它
 @Configuration
-public class JMSConfig {
-    //发布/订阅队列
-    public static final String topicName = "MyTopic";
-    //点对点队列
-    public static final String queueName = "MyQueue";
-
+public class WebSocketEndpointExporterConfig {
     @Bean
-    public Destination topic(){
-        return new ActiveMQTopic(topicName);
+    public ServerEndpointExporter serverEndpointExporter() {
+        return new ServerEndpointExporter();
+    }
+}
+```
+而SpringBoot的webscoket更常用，更适合大规模业务扩展，配置如下：
+```java
+// 同样先写一个WebSocket服务器
+public class WebSocketHandler extends TextWebSocketHandler {
+    @Override
+    public void afterConnectionEstablished(WebSocketSession session) {
+        System.out.println("Connected: " + session.getId());
     }
 
-    @Bean
-    public Destination queue(){
-        return new ActiveMQQueue(queueName);
-    }
-}
-```
-在定义一个发送和接收消息的接口，下面是实现类：
-```java
-@Service
-public class JMSServiceImpl implements JMSService {
-    @Autowired //发送
-    private JmsMessagingTemplate jmsMessagingTemplate;
     @Override
-    public void sendMessage(Destination destination, String messageContent){
-        jmsMessagingTemplate.convertAndSend(destination,messageContent);
+    protected void handleTextMessage(WebSocketSession session, TextMessage message) throws Exception {
+        System.out.println("Received: " + message.getPayload());
+        session.sendMessage(new TextMessage("Server received: " + message.getPayload()));
     }
-    //接受
+
     @Override
-    @JmsListener(destination = JMSConfig.queueName)
-    public void receiveMessage(String msg){
-        System.out.println("收到的消息"+msg);
+    public void afterConnectionClosed(WebSocketSession session, CloseStatus status) {
+        System.out.println("Disconnected: " + session.getId());
+    }
+}
+//然后配置启用
+@Configuration
+@EnableWebSocket
+public class WebSocketConfig implements WebSocketConfigurer {
+    @Override
+    public void registerWebSocketHandlers(WebSocketHandlerRegistry registry) {
+        registry.addHandler(new WebSocketHandler(), "/websocket").setAllowedOrigins("*");
     }
 }
 ```
-这里的convertAndSend第一个参数是目的地第二个是消息内容，有多种数据类型，这里选一种。  
-这时点对点队列的使用，接下来介绍发布/订阅队列。  
-要用发布/订阅队列，需要在yml将`spring.jms.pub-sub-domain`设置为true，然后配置类加上：
-```java
-@Bean
-public JmsListenerContainerFactory topicListenerContainer(ConnectionFactory connectionFactory) {
-    DefaultJmsListenerContainerFactory factory = new DefaultJmsListenerContainerFactory();
-    factory.setConnectionFactory(connectionFactory);
-    // 相当于在application.yml中配置：spring.jms.pub-sub-domain=true
-    factory.setPubSubDomain(true);
-    return factory;
-}
-```
-然后接受消息的JMSListener多一个containerFactory参数，值为上面定义的topicListenerContainer。然后其他的和点对点队列一样。
+然后直接在浏览器里访问`ws://localhost:8080/websocket`即可连接，然后就可以进行通信了。
 ## 集成Shiro
 ### 介绍：
 1. Shiro 三大核心组件：

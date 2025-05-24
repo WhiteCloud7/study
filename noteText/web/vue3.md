@@ -525,6 +525,28 @@ axios.get(url,{
 2. post请求: 和get一样只不过传参不一样，post三个参数，就是把get的参数单独设置到了的第二个参数。
 
    另外这里补充一些，***对于所有异步，可能需要严格注意顺序否则由于异步可能你新加的功能如果依赖得异步方法没有完成导致该功能失效，这是你要注意顺序，以及可能要用到nextTick()函数来等异步方法完成在进行新的方法***
+# websocket
+相关介绍在Springboot部分已经介绍，这里直接写怎么用
+```js
+import { onMounted, onBeforeUnmount, ref } from 'vue';
+const socket = ref(null);
+const messages = ref([]);
+onMounted(() => {
+  socket.value = new WebSocket("ws://localhost:8080/websocket"); //建立连接
+  socket.value.onopen = () => {    //发送消息
+    console.log("Connected to server");
+    socket.value.send("Hello from Vue client!");
+  };
+  socket.value.onmessage = (event) => {  //接收消息
+    messages.value.push(event.data);
+  };
+});
+onBeforeUnmount(() => {  //关闭连接
+  if (socket.value) {
+    socket.value.close();
+  }
+});
+```
 ## 表单提交
 例子：
 ```js
@@ -695,6 +717,3 @@ axiosInstance.interceptors.response.use(
     }
 )
 ```
-
-
-

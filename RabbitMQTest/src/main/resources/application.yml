@@ -1,0 +1,18 @@
+server:
+  port: 8081
+spring:
+  application:
+    name: test
+  # RabbitMQ配置
+  rabbitmq:
+    host: 127.0.0.1
+    port: 5672
+    username: guest
+    password: guest
+    publisher-returns: true  # 确认消息已发送到队列(Queue)
+    template:
+      mandatory: true  # 需要配合publisher-returns使用，确保返回消息
+    publisher-confirm-type: correlated  # 确认消息已发送到交换机(simple（同步)，correlated（异步），none（禁止发布，默认值）)
+#    listener:
+#      direct:
+#        acknowledge-mode: manual # 设置交换机ack策略，manual是手动，auto自动为默认值，none是不确定

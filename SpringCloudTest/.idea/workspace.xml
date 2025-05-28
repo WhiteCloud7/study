@@ -1,0 +1,433 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="e10a682d-2bb0-4d17-8dba-3e2c4d0e2af1" name="更改" comment="">
+      <change afterPath="$PROJECT_DIR$/../PersonalBlog/logs/application.2025-05-20.log.gz" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../PersonalBlog/logs/application.2025-05-24.log.gz" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../PersonalBlog/logs/application.2025-05-25.log.gz" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../PersonalBlog/logs/application_size.2025-05-20.0.log.gz" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../PersonalBlog/logs/application_size.2025-05-24.0.log.gz" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../PersonalBlog/logs/application_size.2025-05-25.0.log.gz" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../PersonalBlog/src/main/java/com/CloudWhite/PersonalBlog/Dao/starDao.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../PersonalBlog/src/main/java/com/CloudWhite/PersonalBlog/Entity/DTO/starDto.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../PersonalBlog/src/main/java/com/CloudWhite/PersonalBlog/Entity/star.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../PersonalBlog/src/main/java/com/CloudWhite/PersonalBlog/Model/Config/WebSocketConfig.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../PersonalBlog/src/main/java/com/CloudWhite/PersonalBlog/Model/WebSocketHandler.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../PersonalBlog/src/main/java/com/CloudWhite/PersonalBlog/Utils/Annotation/RateLimitForAll.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../PersonalBlog/src/main/java/com/CloudWhite/PersonalBlog/Utils/Annotation/RateLimitForCurrent.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../PersonalBlog/src/main/java/com/CloudWhite/PersonalBlog/Utils/Annotation/RateLimitForUnlogin.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../PersonalBlog/src/main/java/com/CloudWhite/PersonalBlog/Utils/WebSocketAuthInterceptor.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../PersonalBlog/uploads/project/RabbitMQTest 结合MQ笔记/pom.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../PersonalBlog/uploads/project/RabbitMQTest 结合MQ笔记/src/main/java/com/whitecloud/test/Controller/testController.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../PersonalBlog/uploads/project/RabbitMQTest 结合MQ笔记/src/main/java/com/whitecloud/test/Model/AckReceiver.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../PersonalBlog/uploads/project/RabbitMQTest 结合MQ笔记/src/main/java/com/whitecloud/test/Model/Config/DirectRabbitConfig.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../PersonalBlog/uploads/project/RabbitMQTest 结合MQ笔记/src/main/java/com/whitecloud/test/Model/Config/FanoutRabbitConfig.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../PersonalBlog/uploads/project/RabbitMQTest 结合MQ笔记/src/main/java/com/whitecloud/test/Model/Config/MessageListenerConfig.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../PersonalBlog/uploads/project/RabbitMQTest 结合MQ笔记/src/main/java/com/whitecloud/test/Model/Config/RabbitConfig.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../PersonalBlog/uploads/project/RabbitMQTest 结合MQ笔记/src/main/java/com/whitecloud/test/Model/Config/TopicRabbitConfig.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../PersonalBlog/uploads/project/RabbitMQTest 结合MQ笔记/src/main/java/com/whitecloud/test/Model/DirectReceiver.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../PersonalBlog/uploads/project/RabbitMQTest 结合MQ笔记/src/main/java/com/whitecloud/test/Model/FanoutReceiverA.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../PersonalBlog/uploads/project/RabbitMQTest 结合MQ笔记/src/main/java/com/whitecloud/test/Model/FanoutReceiverB.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../PersonalBlog/uploads/project/RabbitMQTest 结合MQ笔记/src/main/java/com/whitecloud/test/Model/FanoutReceiverC.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../PersonalBlog/uploads/project/RabbitMQTest 结合MQ笔记/src/main/java/com/whitecloud/test/Model/MyAckReceiver.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../PersonalBlog/uploads/project/RabbitMQTest 结合MQ笔记/src/main/java/com/whitecloud/test/Model/TopicManReceiver.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../PersonalBlog/uploads/project/RabbitMQTest 结合MQ笔记/src/main/java/com/whitecloud/test/Model/TopicTotalReceiver.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../PersonalBlog/uploads/project/RabbitMQTest 结合MQ笔记/src/main/java/com/whitecloud/test/ServletInitializer.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../PersonalBlog/uploads/project/RabbitMQTest 结合MQ笔记/src/main/java/com/whitecloud/test/TestApplication.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../PersonalBlog/uploads/project/RabbitMQTest 结合MQ笔记/src/main/resources/application.yml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../PersonalBlog/uploads/project/SpringBootTest 结合SpringBoot笔记/.gitattributes" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../PersonalBlog/uploads/project/SpringBootTest 结合SpringBoot笔记/.gitignore" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../PersonalBlog/uploads/project/SpringBootTest 结合SpringBoot笔记/.mvn/wrapper/maven-wrapper.properties" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../PersonalBlog/uploads/project/SpringBootTest 结合SpringBoot笔记/index/segments_1" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../PersonalBlog/uploads/project/SpringBootTest 结合SpringBoot笔记/index/write.lock" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../PersonalBlog/uploads/project/SpringBootTest 结合SpringBoot笔记/index1/segments_1" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../PersonalBlog/uploads/project/SpringBootTest 结合SpringBoot笔记/index1/write.lock" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../PersonalBlog/uploads/project/SpringBootTest 结合SpringBoot笔记/logs/application.log" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../PersonalBlog/uploads/project/SpringBootTest 结合SpringBoot笔记/logs/application_size.log" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../PersonalBlog/uploads/project/SpringBootTest 结合SpringBoot笔记/mvnw" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../PersonalBlog/uploads/project/SpringBootTest 结合SpringBoot笔记/mvnw.cmd" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../PersonalBlog/uploads/project/SpringBootTest 结合SpringBoot笔记/pom.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../PersonalBlog/uploads/project/SpringBootTest 结合SpringBoot笔记/src/main/java/com/WhiteCloud/SpringBootTest/Controller/test.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../PersonalBlog/uploads/project/SpringBootTest 结合SpringBoot笔记/src/main/java/com/WhiteCloud/SpringBootTest/Dao/jpaUserDao.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../PersonalBlog/uploads/project/SpringBootTest 结合SpringBoot笔记/src/main/java/com/WhiteCloud/SpringBootTest/Dao/userDao.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../PersonalBlog/uploads/project/SpringBootTest 结合SpringBoot笔记/src/main/java/com/WhiteCloud/SpringBootTest/Entity/premission.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../PersonalBlog/uploads/project/SpringBootTest 结合SpringBoot笔记/src/main/java/com/WhiteCloud/SpringBootTest/Entity/role.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../PersonalBlog/uploads/project/SpringBootTest 结合SpringBoot笔记/src/main/java/com/WhiteCloud/SpringBootTest/Entity/userInfo.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../PersonalBlog/uploads/project/SpringBootTest 结合SpringBoot笔记/src/main/java/com/WhiteCloud/SpringBootTest/Model/JsonResult.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../PersonalBlog/uploads/project/SpringBootTest 结合SpringBoot笔记/src/main/java/com/WhiteCloud/SpringBootTest/Model/MyException.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../PersonalBlog/uploads/project/SpringBootTest 结合SpringBoot笔记/src/main/java/com/WhiteCloud/SpringBootTest/Model/MyListenerEvent.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../PersonalBlog/uploads/project/SpringBootTest 结合SpringBoot笔记/src/main/java/com/WhiteCloud/SpringBootTest/Model/ShiroRealm/loginRealm.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../PersonalBlog/uploads/project/SpringBootTest 结合SpringBoot笔记/src/main/java/com/WhiteCloud/SpringBootTest/Model/redisService/redisServiceHash.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../PersonalBlog/uploads/project/SpringBootTest 结合SpringBoot笔记/src/main/java/com/WhiteCloud/SpringBootTest/Model/redisService/redisServiceList.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../PersonalBlog/uploads/project/SpringBootTest 结合SpringBoot笔记/src/main/java/com/WhiteCloud/SpringBootTest/Model/redisService/redisServiceString.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../PersonalBlog/uploads/project/SpringBootTest 结合SpringBoot笔记/src/main/java/com/WhiteCloud/SpringBootTest/Service/JMSService.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../PersonalBlog/uploads/project/SpringBootTest 结合SpringBoot笔记/src/main/java/com/WhiteCloud/SpringBootTest/Service/ServiceImpl/JMSServiceImpl.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../PersonalBlog/uploads/project/SpringBootTest 结合SpringBoot笔记/src/main/java/com/WhiteCloud/SpringBootTest/Service/ServiceImpl/UserDetailsServiceImpl.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../PersonalBlog/uploads/project/SpringBootTest 结合SpringBoot笔记/src/main/java/com/WhiteCloud/SpringBootTest/Service/ServiceImpl/jpaUserServiceImpl.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../PersonalBlog/uploads/project/SpringBootTest 结合SpringBoot笔记/src/main/java/com/WhiteCloud/SpringBootTest/Service/ServiceImpl/userServiceImpl.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../PersonalBlog/uploads/project/SpringBootTest 结合SpringBoot笔记/src/main/java/com/WhiteCloud/SpringBootTest/Service/jpaUserService.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../PersonalBlog/uploads/project/SpringBootTest 结合SpringBoot笔记/src/main/java/com/WhiteCloud/SpringBootTest/Service/userService.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../PersonalBlog/uploads/project/SpringBootTest 结合SpringBoot笔记/src/main/java/com/WhiteCloud/SpringBootTest/ServletInitializer.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../PersonalBlog/uploads/project/SpringBootTest 结合SpringBoot笔记/src/main/java/com/WhiteCloud/SpringBootTest/SpringBootTestApplication.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../PersonalBlog/uploads/project/SpringBootTest 结合SpringBoot笔记/src/main/java/com/WhiteCloud/SpringBootTest/Utils/Aop/ControllerAop.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../PersonalBlog/uploads/project/SpringBootTest 结合SpringBoot笔记/src/main/java/com/WhiteCloud/SpringBootTest/Utils/Config/JMSConfig.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../PersonalBlog/uploads/project/SpringBootTest 结合SpringBoot笔记/src/main/java/com/WhiteCloud/SpringBootTest/Utils/Config/ShiroConfig/loginShiroConfig.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../PersonalBlog/uploads/project/SpringBootTest 结合SpringBoot笔记/src/main/java/com/WhiteCloud/SpringBootTest/Utils/Config/SpringSecurityConfig.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../PersonalBlog/uploads/project/SpringBootTest 结合SpringBoot笔记/src/main/java/com/WhiteCloud/SpringBootTest/Utils/Config/interceptionConfig.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../PersonalBlog/uploads/project/SpringBootTest 结合SpringBoot笔记/src/main/java/com/WhiteCloud/SpringBootTest/Utils/GlobalException/GlobalException.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../PersonalBlog/uploads/project/SpringBootTest 结合SpringBoot笔记/src/main/java/com/WhiteCloud/SpringBootTest/Utils/Interceptor/MyInterceptor.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../PersonalBlog/uploads/project/SpringBootTest 结合SpringBoot笔记/src/main/java/com/WhiteCloud/SpringBootTest/Utils/Listener/ContextRefreshedEventListener.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../PersonalBlog/uploads/project/SpringBootTest 结合SpringBoot笔记/src/main/java/com/WhiteCloud/SpringBootTest/Utils/Listener/MyListener.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../PersonalBlog/uploads/project/SpringBootTest 结合SpringBoot笔记/src/main/java/com/WhiteCloud/SpringBootTest/Utils/Listener/SessionListener.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../PersonalBlog/uploads/project/SpringBootTest 结合SpringBoot笔记/src/main/java/com/WhiteCloud/SpringBootTest/Utils/Listener/servletRequestListener.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../PersonalBlog/uploads/project/SpringBootTest 结合SpringBoot笔记/src/main/java/com/WhiteCloud/SpringBootTest/Utils/LucenceTest/ChineseArticle/1.txt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../PersonalBlog/uploads/project/SpringBootTest 结合SpringBoot笔记/src/main/java/com/WhiteCloud/SpringBootTest/Utils/LucenceTest/ChineseIndex/_0.cfe" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../PersonalBlog/uploads/project/SpringBootTest 结合SpringBoot笔记/src/main/java/com/WhiteCloud/SpringBootTest/Utils/LucenceTest/ChineseIndex/_0.cfs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../PersonalBlog/uploads/project/SpringBootTest 结合SpringBoot笔记/src/main/java/com/WhiteCloud/SpringBootTest/Utils/LucenceTest/ChineseIndex/_0.si" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../PersonalBlog/uploads/project/SpringBootTest 结合SpringBoot笔记/src/main/java/com/WhiteCloud/SpringBootTest/Utils/LucenceTest/ChineseIndex/segments_1" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../PersonalBlog/uploads/project/SpringBootTest 结合SpringBoot笔记/src/main/java/com/WhiteCloud/SpringBootTest/Utils/LucenceTest/ChineseIndex/write.lock" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../PersonalBlog/uploads/project/SpringBootTest 结合SpringBoot笔记/src/main/java/com/WhiteCloud/SpringBootTest/Utils/LucenceTest/ChineseIndexer.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../PersonalBlog/uploads/project/SpringBootTest 结合SpringBoot笔记/src/main/java/com/WhiteCloud/SpringBootTest/Utils/LucenceTest/ChineseSearcher.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../PersonalBlog/uploads/project/SpringBootTest 结合SpringBoot笔记/src/main/java/com/WhiteCloud/SpringBootTest/Utils/LucenceTest/EnglishArticle/2.txt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../PersonalBlog/uploads/project/SpringBootTest 结合SpringBoot笔记/src/main/java/com/WhiteCloud/SpringBootTest/Utils/LucenceTest/EnglishIndex/_0.cfe" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../PersonalBlog/uploads/project/SpringBootTest 结合SpringBoot笔记/src/main/java/com/WhiteCloud/SpringBootTest/Utils/LucenceTest/EnglishIndex/_0.cfs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../PersonalBlog/uploads/project/SpringBootTest 结合SpringBoot笔记/src/main/java/com/WhiteCloud/SpringBootTest/Utils/LucenceTest/EnglishIndex/_0.si" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../PersonalBlog/uploads/project/SpringBootTest 结合SpringBoot笔记/src/main/java/com/WhiteCloud/SpringBootTest/Utils/LucenceTest/EnglishIndex/_1.cfe" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../PersonalBlog/uploads/project/SpringBootTest 结合SpringBoot笔记/src/main/java/com/WhiteCloud/SpringBootTest/Utils/LucenceTest/EnglishIndex/_1.cfs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../PersonalBlog/uploads/project/SpringBootTest 结合SpringBoot笔记/src/main/java/com/WhiteCloud/SpringBootTest/Utils/LucenceTest/EnglishIndex/_1.si" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../PersonalBlog/uploads/project/SpringBootTest 结合SpringBoot笔记/src/main/java/com/WhiteCloud/SpringBootTest/Utils/LucenceTest/EnglishIndex/segments_2" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../PersonalBlog/uploads/project/SpringBootTest 结合SpringBoot笔记/src/main/java/com/WhiteCloud/SpringBootTest/Utils/LucenceTest/EnglishIndex/write.lock" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../PersonalBlog/uploads/project/SpringBootTest 结合SpringBoot笔记/src/main/java/com/WhiteCloud/SpringBootTest/Utils/LucenceTest/Indexer.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../PersonalBlog/uploads/project/SpringBootTest 结合SpringBoot笔记/src/main/java/com/WhiteCloud/SpringBootTest/Utils/LucenceTest/Searcher.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../PersonalBlog/uploads/project/SpringBootTest 结合SpringBoot笔记/src/main/java/com/WhiteCloud/SpringBootTest/Utils/LucenceTest/index/segments_1" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../PersonalBlog/uploads/project/SpringBootTest 结合SpringBoot笔记/src/main/java/com/WhiteCloud/SpringBootTest/Utils/LucenceTest/index/write.lock" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../PersonalBlog/uploads/project/SpringBootTest 结合SpringBoot笔记/src/main/resources/application.yml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../PersonalBlog/uploads/project/SpringBootTest 结合SpringBoot笔记/src/main/resources/logback.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../PersonalBlog/uploads/project/SpringBootTest 结合SpringBoot笔记/src/main/resources/mapper/userMapper.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../PersonalBlog/uploads/project/SpringBootTest 结合SpringBoot笔记/src/main/resources/static/index.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../PersonalBlog/uploads/project/SpringBootTest 结合SpringBoot笔记/src/main/resources/static/login.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../PersonalBlog/uploads/project/SpringBootTest 结合SpringBoot笔记/src/main/resources/static/unauthorized.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../PersonalBlog/uploads/project/SpringBootTest 结合SpringBoot笔记/src/main/resources/templates/error/404.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../PersonalBlog/uploads/project/SpringBootTest 结合SpringBoot笔记/src/main/resources/templates/error/500.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../PersonalBlog/uploads/project/SpringBootTest 结合SpringBoot笔记/src/main/resources/templates/error/denied.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../PersonalBlog/uploads/project/SpringBootTest 结合SpringBoot笔记/src/main/resources/templates/index.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../PersonalBlog/uploads/project/SpringBootTest 结合SpringBoot笔记/src/main/resources/templates/login.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../PersonalBlog/uploads/project/SpringBootTest 结合SpringBoot笔记/src/main/resources/templates/luceneTest.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../PersonalBlog/uploads/project/SpringBootTest 结合SpringBoot笔记/src/test/java/com/WhiteCloud/SpringBootTest/SpringBootTestApplicationTests.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/compiler.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/encodings.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/uiDesigner.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Eureka-Server/.mvn/wrapper/maven-wrapper.properties" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Eureka-Server/pom.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Eureka-Server/src/main/java/com/whitecloud/eurekaserver/EurekaServerApplication.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Eureka-Server/src/main/resources/application.yml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Eureka-Server/src/test/java/com/whitecloud/eurekaserver/EurekaServerApplicationTests.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/consumer/.mvn/wrapper/maven-wrapper.properties" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/consumer/pom.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/consumer/src/main/java/com/whitecloud/consumer/Config/CloudConfig.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/consumer/src/main/java/com/whitecloud/consumer/Config/LoadBalancerConfig.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/consumer/src/main/java/com/whitecloud/consumer/ConsumerApplication.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/consumer/src/main/java/com/whitecloud/consumer/Controller/test.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/consumer/src/main/java/com/whitecloud/consumer/Dao/testDao.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/consumer/src/main/java/com/whitecloud/consumer/Entity/Order.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/consumer/src/main/java/com/whitecloud/consumer/Entity/User.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/consumer/src/main/java/com/whitecloud/consumer/ServletInitializer.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/consumer/src/main/java/com/whitecloud/consumer/servce/testService.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/consumer/src/main/resources/application.yml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/consumer/src/test/java/com/whitecloud/consumer/ConsumerApplicationTests.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/provider/.mvn/wrapper/maven-wrapper.properties" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/provider/pom.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/provider/src/main/java/com/whitecloud/provider/Controller/test.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/provider/src/main/java/com/whitecloud/provider/Dao/testDao.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/provider/src/main/java/com/whitecloud/provider/Entity/Order.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/provider/src/main/java/com/whitecloud/provider/Entity/User.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/provider/src/main/java/com/whitecloud/provider/ProviderApplication.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/provider/src/main/java/com/whitecloud/provider/ServletInitializer.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/provider/src/main/java/com/whitecloud/provider/servce/testService.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/provider/src/main/resources/application.yml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/provider/src/test/java/com/whitecloud/provider/ProviderApplicationTests.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../PersonalBlog/blog/src/axios.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../PersonalBlog/blog/src/axios.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../PersonalBlog/blog/src/components/ContactMe/ContactMain.vue" beforeDir="false" afterPath="$PROJECT_DIR$/../PersonalBlog/blog/src/components/ContactMe/ContactMain.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../PersonalBlog/blog/src/components/article/MyArticles.vue" beforeDir="false" afterPath="$PROJECT_DIR$/../PersonalBlog/blog/src/components/article/MyArticles.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../PersonalBlog/blog/src/components/article/articleDetail.vue" beforeDir="false" afterPath="$PROJECT_DIR$/../PersonalBlog/blog/src/components/article/articleDetail.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../PersonalBlog/blog/src/components/index/Main/MyNotice.vue" beforeDir="false" afterPath="$PROJECT_DIR$/../PersonalBlog/blog/src/components/index/Main/MyNotice.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../PersonalBlog/blog/src/components/index/Main/noticeDetail.vue" beforeDir="false" afterPath="$PROJECT_DIR$/../PersonalBlog/blog/src/components/index/Main/noticeDetail.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../PersonalBlog/blog/src/components/profile/personalStar.vue" beforeDir="false" afterPath="$PROJECT_DIR$/../PersonalBlog/blog/src/components/profile/personalStar.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../PersonalBlog/blog/src/components/profile/profileSetting.vue" beforeDir="false" afterPath="$PROJECT_DIR$/../PersonalBlog/blog/src/components/profile/profileSetting.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../PersonalBlog/logs/application.log" beforeDir="false" afterPath="$PROJECT_DIR$/../PersonalBlog/logs/application.log" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../PersonalBlog/logs/application_size.log" beforeDir="false" afterPath="$PROJECT_DIR$/../PersonalBlog/logs/application_size.log" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../PersonalBlog/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../PersonalBlog/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../PersonalBlog/src/main/java/com/CloudWhite/PersonalBlog/Controller/adminController.java" beforeDir="false" afterPath="$PROJECT_DIR$/../PersonalBlog/src/main/java/com/CloudWhite/PersonalBlog/Controller/adminController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../PersonalBlog/src/main/java/com/CloudWhite/PersonalBlog/Controller/articleController.java" beforeDir="false" afterPath="$PROJECT_DIR$/../PersonalBlog/src/main/java/com/CloudWhite/PersonalBlog/Controller/articleController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../PersonalBlog/src/main/java/com/CloudWhite/PersonalBlog/Controller/friendListController.java" beforeDir="false" afterPath="$PROJECT_DIR$/../PersonalBlog/src/main/java/com/CloudWhite/PersonalBlog/Controller/friendListController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../PersonalBlog/src/main/java/com/CloudWhite/PersonalBlog/Controller/messageController.java" beforeDir="false" afterPath="$PROJECT_DIR$/../PersonalBlog/src/main/java/com/CloudWhite/PersonalBlog/Controller/messageController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../PersonalBlog/src/main/java/com/CloudWhite/PersonalBlog/Controller/noticeController.java" beforeDir="false" afterPath="$PROJECT_DIR$/../PersonalBlog/src/main/java/com/CloudWhite/PersonalBlog/Controller/noticeController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../PersonalBlog/src/main/java/com/CloudWhite/PersonalBlog/Controller/projectController.java" beforeDir="false" afterPath="$PROJECT_DIR$/../PersonalBlog/src/main/java/com/CloudWhite/PersonalBlog/Controller/projectController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../PersonalBlog/src/main/java/com/CloudWhite/PersonalBlog/Controller/userController.java" beforeDir="false" afterPath="$PROJECT_DIR$/../PersonalBlog/src/main/java/com/CloudWhite/PersonalBlog/Controller/userController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../PersonalBlog/src/main/java/com/CloudWhite/PersonalBlog/Dao/article/articleDao.java" beforeDir="false" afterPath="$PROJECT_DIR$/../PersonalBlog/src/main/java/com/CloudWhite/PersonalBlog/Dao/article/articleDao.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../PersonalBlog/src/main/java/com/CloudWhite/PersonalBlog/Dao/mybatisDao.java" beforeDir="false" afterPath="$PROJECT_DIR$/../PersonalBlog/src/main/java/com/CloudWhite/PersonalBlog/Dao/mybatisDao.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../PersonalBlog/src/main/java/com/CloudWhite/PersonalBlog/Entity/article/article.java" beforeDir="false" afterPath="$PROJECT_DIR$/../PersonalBlog/src/main/java/com/CloudWhite/PersonalBlog/Entity/article/article.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../PersonalBlog/src/main/java/com/CloudWhite/PersonalBlog/Entity/article/articleInfo.java" beforeDir="false" afterPath="$PROJECT_DIR$/../PersonalBlog/src/main/java/com/CloudWhite/PersonalBlog/Entity/article/articleInfo.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../PersonalBlog/src/main/java/com/CloudWhite/PersonalBlog/Entity/notice/noticeInfo.java" beforeDir="false" afterPath="$PROJECT_DIR$/../PersonalBlog/src/main/java/com/CloudWhite/PersonalBlog/Entity/notice/noticeInfo.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../PersonalBlog/src/main/java/com/CloudWhite/PersonalBlog/Model/Config/InterceptorConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/../PersonalBlog/src/main/java/com/CloudWhite/PersonalBlog/Model/Config/InterceptorConfig.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../PersonalBlog/src/main/java/com/CloudWhite/PersonalBlog/Model/Config/JwtProperties.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../PersonalBlog/src/main/java/com/CloudWhite/PersonalBlog/Model/Config/SecurityConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/../PersonalBlog/src/main/java/com/CloudWhite/PersonalBlog/Model/Config/SecurityConfig.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../PersonalBlog/src/main/java/com/CloudWhite/PersonalBlog/Service/ServiceImpl/articleServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/../PersonalBlog/src/main/java/com/CloudWhite/PersonalBlog/Service/ServiceImpl/articleServiceImpl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../PersonalBlog/src/main/java/com/CloudWhite/PersonalBlog/Service/ServiceImpl/messageServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/../PersonalBlog/src/main/java/com/CloudWhite/PersonalBlog/Service/ServiceImpl/messageServiceImpl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../PersonalBlog/src/main/java/com/CloudWhite/PersonalBlog/Service/ServiceImpl/noticeServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/../PersonalBlog/src/main/java/com/CloudWhite/PersonalBlog/Service/ServiceImpl/noticeServiceImpl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../PersonalBlog/src/main/java/com/CloudWhite/PersonalBlog/Service/ServiceImpl/userServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/../PersonalBlog/src/main/java/com/CloudWhite/PersonalBlog/Service/ServiceImpl/userServiceImpl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../PersonalBlog/src/main/java/com/CloudWhite/PersonalBlog/Service/messageService.java" beforeDir="false" afterPath="$PROJECT_DIR$/../PersonalBlog/src/main/java/com/CloudWhite/PersonalBlog/Service/messageService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../PersonalBlog/src/main/java/com/CloudWhite/PersonalBlog/Service/userService.java" beforeDir="false" afterPath="$PROJECT_DIR$/../PersonalBlog/src/main/java/com/CloudWhite/PersonalBlog/Service/userService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../PersonalBlog/src/main/java/com/CloudWhite/PersonalBlog/Utils/Interceptor.java" beforeDir="false" afterPath="$PROJECT_DIR$/../PersonalBlog/src/main/java/com/CloudWhite/PersonalBlog/Utils/Interceptor.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../PersonalBlog/src/main/java/com/CloudWhite/PersonalBlog/Utils/JWTUtils.java" beforeDir="false" afterPath="$PROJECT_DIR$/../PersonalBlog/src/main/java/com/CloudWhite/PersonalBlog/Utils/JWTUtils.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../PersonalBlog/uploads/fengjiewei/avatar-cd291b67-609b-4fc5-9ff2-aba85795f4c2" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../PersonalBlog/uploads/project/SpringBootTest 结合Spring笔记/.gitattributes" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../PersonalBlog/uploads/project/SpringBootTest 结合Spring笔记/.gitignore" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../PersonalBlog/uploads/project/SpringBootTest 结合Spring笔记/.mvn/wrapper/maven-wrapper.properties" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../PersonalBlog/uploads/project/SpringBootTest 结合Spring笔记/index/segments_1" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../PersonalBlog/uploads/project/SpringBootTest 结合Spring笔记/index/write.lock" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../PersonalBlog/uploads/project/SpringBootTest 结合Spring笔记/index1/segments_1" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../PersonalBlog/uploads/project/SpringBootTest 结合Spring笔记/index1/write.lock" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../PersonalBlog/uploads/project/SpringBootTest 结合Spring笔记/logs/application.log" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../PersonalBlog/uploads/project/SpringBootTest 结合Spring笔记/logs/application_size.log" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../PersonalBlog/uploads/project/SpringBootTest 结合Spring笔记/mvnw" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../PersonalBlog/uploads/project/SpringBootTest 结合Spring笔记/mvnw.cmd" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../PersonalBlog/uploads/project/SpringBootTest 结合Spring笔记/pom.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../PersonalBlog/uploads/project/SpringBootTest 结合Spring笔记/src/main/java/com/WhiteCloud/SpringBootTest/Controller/test.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../PersonalBlog/uploads/project/SpringBootTest 结合Spring笔记/src/main/java/com/WhiteCloud/SpringBootTest/Dao/jpaUserDao.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../PersonalBlog/uploads/project/SpringBootTest 结合Spring笔记/src/main/java/com/WhiteCloud/SpringBootTest/Dao/userDao.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../PersonalBlog/uploads/project/SpringBootTest 结合Spring笔记/src/main/java/com/WhiteCloud/SpringBootTest/Entity/premission.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../PersonalBlog/uploads/project/SpringBootTest 结合Spring笔记/src/main/java/com/WhiteCloud/SpringBootTest/Entity/role.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../PersonalBlog/uploads/project/SpringBootTest 结合Spring笔记/src/main/java/com/WhiteCloud/SpringBootTest/Entity/userInfo.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../PersonalBlog/uploads/project/SpringBootTest 结合Spring笔记/src/main/java/com/WhiteCloud/SpringBootTest/Model/JsonResult.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../PersonalBlog/uploads/project/SpringBootTest 结合Spring笔记/src/main/java/com/WhiteCloud/SpringBootTest/Model/MyException.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../PersonalBlog/uploads/project/SpringBootTest 结合Spring笔记/src/main/java/com/WhiteCloud/SpringBootTest/Model/MyListenerEvent.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../PersonalBlog/uploads/project/SpringBootTest 结合Spring笔记/src/main/java/com/WhiteCloud/SpringBootTest/Model/ShiroRealm/loginRealm.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../PersonalBlog/uploads/project/SpringBootTest 结合Spring笔记/src/main/java/com/WhiteCloud/SpringBootTest/Model/redisService/redisServiceHash.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../PersonalBlog/uploads/project/SpringBootTest 结合Spring笔记/src/main/java/com/WhiteCloud/SpringBootTest/Model/redisService/redisServiceList.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../PersonalBlog/uploads/project/SpringBootTest 结合Spring笔记/src/main/java/com/WhiteCloud/SpringBootTest/Model/redisService/redisServiceString.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../PersonalBlog/uploads/project/SpringBootTest 结合Spring笔记/src/main/java/com/WhiteCloud/SpringBootTest/Service/JMSService.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../PersonalBlog/uploads/project/SpringBootTest 结合Spring笔记/src/main/java/com/WhiteCloud/SpringBootTest/Service/ServiceImpl/JMSServiceImpl.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../PersonalBlog/uploads/project/SpringBootTest 结合Spring笔记/src/main/java/com/WhiteCloud/SpringBootTest/Service/ServiceImpl/UserDetailsServiceImpl.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../PersonalBlog/uploads/project/SpringBootTest 结合Spring笔记/src/main/java/com/WhiteCloud/SpringBootTest/Service/ServiceImpl/jpaUserServiceImpl.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../PersonalBlog/uploads/project/SpringBootTest 结合Spring笔记/src/main/java/com/WhiteCloud/SpringBootTest/Service/ServiceImpl/userServiceImpl.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../PersonalBlog/uploads/project/SpringBootTest 结合Spring笔记/src/main/java/com/WhiteCloud/SpringBootTest/Service/jpaUserService.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../PersonalBlog/uploads/project/SpringBootTest 结合Spring笔记/src/main/java/com/WhiteCloud/SpringBootTest/Service/userService.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../PersonalBlog/uploads/project/SpringBootTest 结合Spring笔记/src/main/java/com/WhiteCloud/SpringBootTest/ServletInitializer.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../PersonalBlog/uploads/project/SpringBootTest 结合Spring笔记/src/main/java/com/WhiteCloud/SpringBootTest/SpringBootTestApplication.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../PersonalBlog/uploads/project/SpringBootTest 结合Spring笔记/src/main/java/com/WhiteCloud/SpringBootTest/Utils/Aop/ControllerAop.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../PersonalBlog/uploads/project/SpringBootTest 结合Spring笔记/src/main/java/com/WhiteCloud/SpringBootTest/Utils/Config/JMSConfig.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../PersonalBlog/uploads/project/SpringBootTest 结合Spring笔记/src/main/java/com/WhiteCloud/SpringBootTest/Utils/Config/ShiroConfig/loginShiroConfig.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../PersonalBlog/uploads/project/SpringBootTest 结合Spring笔记/src/main/java/com/WhiteCloud/SpringBootTest/Utils/Config/SpringSecurityConfig.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../PersonalBlog/uploads/project/SpringBootTest 结合Spring笔记/src/main/java/com/WhiteCloud/SpringBootTest/Utils/Config/interceptionConfig.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../PersonalBlog/uploads/project/SpringBootTest 结合Spring笔记/src/main/java/com/WhiteCloud/SpringBootTest/Utils/GlobalException/GlobalException.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../PersonalBlog/uploads/project/SpringBootTest 结合Spring笔记/src/main/java/com/WhiteCloud/SpringBootTest/Utils/Interceptor/MyInterceptor.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../PersonalBlog/uploads/project/SpringBootTest 结合Spring笔记/src/main/java/com/WhiteCloud/SpringBootTest/Utils/Listener/ContextRefreshedEventListener.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../PersonalBlog/uploads/project/SpringBootTest 结合Spring笔记/src/main/java/com/WhiteCloud/SpringBootTest/Utils/Listener/MyListener.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../PersonalBlog/uploads/project/SpringBootTest 结合Spring笔记/src/main/java/com/WhiteCloud/SpringBootTest/Utils/Listener/SessionListener.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../PersonalBlog/uploads/project/SpringBootTest 结合Spring笔记/src/main/java/com/WhiteCloud/SpringBootTest/Utils/Listener/servletRequestListener.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../PersonalBlog/uploads/project/SpringBootTest 结合Spring笔记/src/main/java/com/WhiteCloud/SpringBootTest/Utils/LucenceTest/ChineseArticle/1.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../PersonalBlog/uploads/project/SpringBootTest 结合Spring笔记/src/main/java/com/WhiteCloud/SpringBootTest/Utils/LucenceTest/ChineseIndex/_0.cfe" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../PersonalBlog/uploads/project/SpringBootTest 结合Spring笔记/src/main/java/com/WhiteCloud/SpringBootTest/Utils/LucenceTest/ChineseIndex/_0.cfs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../PersonalBlog/uploads/project/SpringBootTest 结合Spring笔记/src/main/java/com/WhiteCloud/SpringBootTest/Utils/LucenceTest/ChineseIndex/_0.si" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../PersonalBlog/uploads/project/SpringBootTest 结合Spring笔记/src/main/java/com/WhiteCloud/SpringBootTest/Utils/LucenceTest/ChineseIndex/segments_1" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../PersonalBlog/uploads/project/SpringBootTest 结合Spring笔记/src/main/java/com/WhiteCloud/SpringBootTest/Utils/LucenceTest/ChineseIndex/write.lock" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../PersonalBlog/uploads/project/SpringBootTest 结合Spring笔记/src/main/java/com/WhiteCloud/SpringBootTest/Utils/LucenceTest/ChineseIndexer.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../PersonalBlog/uploads/project/SpringBootTest 结合Spring笔记/src/main/java/com/WhiteCloud/SpringBootTest/Utils/LucenceTest/ChineseSearcher.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../PersonalBlog/uploads/project/SpringBootTest 结合Spring笔记/src/main/java/com/WhiteCloud/SpringBootTest/Utils/LucenceTest/EnglishArticle/2.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../PersonalBlog/uploads/project/SpringBootTest 结合Spring笔记/src/main/java/com/WhiteCloud/SpringBootTest/Utils/LucenceTest/EnglishIndex/_0.cfe" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../PersonalBlog/uploads/project/SpringBootTest 结合Spring笔记/src/main/java/com/WhiteCloud/SpringBootTest/Utils/LucenceTest/EnglishIndex/_0.cfs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../PersonalBlog/uploads/project/SpringBootTest 结合Spring笔记/src/main/java/com/WhiteCloud/SpringBootTest/Utils/LucenceTest/EnglishIndex/_0.si" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../PersonalBlog/uploads/project/SpringBootTest 结合Spring笔记/src/main/java/com/WhiteCloud/SpringBootTest/Utils/LucenceTest/EnglishIndex/_1.cfe" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../PersonalBlog/uploads/project/SpringBootTest 结合Spring笔记/src/main/java/com/WhiteCloud/SpringBootTest/Utils/LucenceTest/EnglishIndex/_1.cfs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../PersonalBlog/uploads/project/SpringBootTest 结合Spring笔记/src/main/java/com/WhiteCloud/SpringBootTest/Utils/LucenceTest/EnglishIndex/_1.si" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../PersonalBlog/uploads/project/SpringBootTest 结合Spring笔记/src/main/java/com/WhiteCloud/SpringBootTest/Utils/LucenceTest/EnglishIndex/segments_2" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../PersonalBlog/uploads/project/SpringBootTest 结合Spring笔记/src/main/java/com/WhiteCloud/SpringBootTest/Utils/LucenceTest/EnglishIndex/write.lock" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../PersonalBlog/uploads/project/SpringBootTest 结合Spring笔记/src/main/java/com/WhiteCloud/SpringBootTest/Utils/LucenceTest/Indexer.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../PersonalBlog/uploads/project/SpringBootTest 结合Spring笔记/src/main/java/com/WhiteCloud/SpringBootTest/Utils/LucenceTest/Searcher.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../PersonalBlog/uploads/project/SpringBootTest 结合Spring笔记/src/main/java/com/WhiteCloud/SpringBootTest/Utils/LucenceTest/index/segments_1" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../PersonalBlog/uploads/project/SpringBootTest 结合Spring笔记/src/main/java/com/WhiteCloud/SpringBootTest/Utils/LucenceTest/index/write.lock" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../PersonalBlog/uploads/project/SpringBootTest 结合Spring笔记/src/main/resources/application.yml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../PersonalBlog/uploads/project/SpringBootTest 结合Spring笔记/src/main/resources/logback.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../PersonalBlog/uploads/project/SpringBootTest 结合Spring笔记/src/main/resources/mapper/userMapper.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../PersonalBlog/uploads/project/SpringBootTest 结合Spring笔记/src/main/resources/static/index.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../PersonalBlog/uploads/project/SpringBootTest 结合Spring笔记/src/main/resources/static/login.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../PersonalBlog/uploads/project/SpringBootTest 结合Spring笔记/src/main/resources/static/unauthorized.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../PersonalBlog/uploads/project/SpringBootTest 结合Spring笔记/src/main/resources/templates/error/404.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../PersonalBlog/uploads/project/SpringBootTest 结合Spring笔记/src/main/resources/templates/error/500.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../PersonalBlog/uploads/project/SpringBootTest 结合Spring笔记/src/main/resources/templates/error/denied.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../PersonalBlog/uploads/project/SpringBootTest 结合Spring笔记/src/main/resources/templates/index.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../PersonalBlog/uploads/project/SpringBootTest 结合Spring笔记/src/main/resources/templates/login.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../PersonalBlog/uploads/project/SpringBootTest 结合Spring笔记/src/main/resources/templates/luceneTest.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../PersonalBlog/uploads/project/SpringBootTest 结合Spring笔记/src/test/java/com/WhiteCloud/SpringBootTest/SpringBootTestApplicationTests.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gitattributes" beforeDir="false" afterPath="$PROJECT_DIR$/../PersonalBlog/uploads/project/RabbitMQTest 结合MQ笔记/.gitattributes" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/../PersonalBlog/uploads/project/RabbitMQTest 结合MQ笔记/.gitignore" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.mvn/wrapper/maven-wrapper.properties" beforeDir="false" afterPath="$PROJECT_DIR$/../PersonalBlog/uploads/project/RabbitMQTest 结合MQ笔记/.mvn/wrapper/maven-wrapper.properties" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/mvnw" beforeDir="false" afterPath="$PROJECT_DIR$/../PersonalBlog/uploads/project/RabbitMQTest 结合MQ笔记/mvnw" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/mvnw.cmd" beforeDir="false" afterPath="$PROJECT_DIR$/../PersonalBlog/uploads/project/RabbitMQTest 结合MQ笔记/mvnw.cmd" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/SpringCloudTest/SpringCloudTestApplication.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/SpringCloudTest/test.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/application.properties" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/java/com/example/SpringCloudTest/SpringCloudTestApplicationTests.java" beforeDir="false" afterPath="$PROJECT_DIR$/../PersonalBlog/uploads/project/RabbitMQTest 结合MQ笔记/src/test/java/com/whitecloud/test/TestApplicationTests.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../noteText/web/spring.md" beforeDir="false" afterPath="$PROJECT_DIR$/../noteText/web/spring.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../noteText/web/vue3.md" beforeDir="false" afterPath="$PROJECT_DIR$/../noteText/web/vue3.md" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Class" />
+      </list>
+    </option>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
+  </component>
+  <component name="MarkdownSettingsMigration">
+    <option name="stateVersion" value="1" />
+  </component>
+  <component name="MavenImportPreferences">
+    <option name="generalSettings">
+      <MavenGeneralSettings>
+        <option name="mavenHome" value="Use Maven wrapper" />
+        <option name="useMavenConfig" value="true" />
+      </MavenGeneralSettings>
+    </option>
+  </component>
+  <component name="ProjectId" id="2xfr0EZH2YinmEnKhaMCloQtLze" />
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true">
+    <ConfirmationsSetting value="2" id="Add" />
+  </component>
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "ASKED_ADD_EXTERNAL_FILES": "true",
+    "ASKED_SHARE_PROJECT_CONFIGURATION_FILES": "true",
+    "RequestMappingsPanelOrder0": "0",
+    "RequestMappingsPanelOrder1": "1",
+    "RequestMappingsPanelWidth0": "75",
+    "RequestMappingsPanelWidth1": "75",
+    "RunOnceActivity.OpenProjectViewOnStart": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "WebServerToolWindowFactoryState": "false",
+    "jdk.selected.JAVA_MODULE": "17",
+    "last_opened_file_path": "D:/GitHub/study/SpringCloudTest/consumer/src/main/java/com/whitecloud/consumer",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "project.structure.last.edited": "模块",
+    "project.structure.proportion": "0.17",
+    "project.structure.side.proportion": "0.2",
+    "show.run.dashboard.notification": "false",
+    "spring.configuration.checksum": "7e5c3457e5887e2883a8728668a02546",
+    "vue.rearranger.settings.migration": "true"
+  }
+}]]></component>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="D:\GitHub\study\SpringCloudTest\consumer\src\main\java\com\whitecloud\consumer" />
+    </key>
+    <key name="CopyClassDialog.RECENTS_KEY">
+      <recent name="com.whitecloud.consumer.Entity" />
+      <recent name="com.whitecloud.consumer.Controller" />
+    </key>
+  </component>
+  <component name="RunManager" selected="应用程序.KeyGenerator">
+    <configuration name="KeyGenerator" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="com.whitecloud.consumer.Config.KeyGenerator" />
+      <module name="consumer" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="com.whitecloud.consumer.Config.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="ConsumerApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot">
+      <module name="consumer" />
+      <option name="SPRING_BOOT_MAIN_CLASS" value="com.whitecloud.consumer.ConsumerApplication" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="EurekaServerApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot">
+      <module name="Eureka-Server" />
+      <option name="SPRING_BOOT_MAIN_CLASS" value="com.whitecloud.eurekaserver.EurekaServerApplication" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="ProviderApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot">
+      <module name="provider" />
+      <option name="SPRING_BOOT_MAIN_CLASS" value="com.whitecloud.provider.ProviderApplication" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="SpringCloudTestApplication (1)" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot">
+      <module name="SpringCloudTest" />
+      <option name="SPRING_BOOT_MAIN_CLASS" value="com.whitecloud.springcloudtest.SpringCloudTestApplication" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="SpringCloudTestApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot">
+      <module name="SpringCloudTest" />
+      <option name="SPRING_BOOT_MAIN_CLASS" value="com.white.springcloudtest.SpringCloudTestApplication" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <recent_temporary>
+      <list>
+        <item itemvalue="应用程序.KeyGenerator" />
+      </list>
+    </recent_temporary>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="应用程序级" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="默认任务">
+      <changelist id="e10a682d-2bb0-4d17-8dba-3e2c4d0e2af1" name="更改" comment="" />
+      <created>1748339747640</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1748339747640</updated>
+      <workItem from="1748339749069" duration="12887000" />
+      <workItem from="1748398143812" duration="3927000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
+  <component name="VcsManagerConfiguration">
+    <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
+  </component>
+</project>

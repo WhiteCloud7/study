@@ -3,11 +3,13 @@ package com.CloudWhite.PersonalBlog.Service.ServiceImpl;
 import com.CloudWhite.PersonalBlog.Dao.article.articleDao;
 import com.CloudWhite.PersonalBlog.Dao.article.articleInfoDao;
 import com.CloudWhite.PersonalBlog.Dao.mybatisDao;
+import com.CloudWhite.PersonalBlog.Dao.starDao;
 import com.CloudWhite.PersonalBlog.Entity.DTO.articleDto;
 import com.CloudWhite.PersonalBlog.Entity.DTO.articleInfoDto;
 import com.CloudWhite.PersonalBlog.Entity.article.article;
 import com.CloudWhite.PersonalBlog.Entity.article.articleDraft;
 import com.CloudWhite.PersonalBlog.Entity.article.articleInfo;
+import com.CloudWhite.PersonalBlog.Entity.star;
 import com.CloudWhite.PersonalBlog.Entity.user;
 import com.CloudWhite.PersonalBlog.Model.Redis.redisHashTemplateConfig;
 import com.CloudWhite.PersonalBlog.Model.ResponseEntity;
@@ -48,8 +50,9 @@ public class articleServiceImpl implements articleService {
     private redisHashTemplateConfig redisHashTemplateConfig;
     private redisUtils redisUtils;
     private StringRedisTemplate stringRedisTemplate;
+    private starDao starDao;
     @Autowired
-    public articleServiceImpl(RedissonClient redissonClient, com.CloudWhite.PersonalBlog.Dao.article.articleDao articleDao, com.CloudWhite.PersonalBlog.Dao.article.articleInfoDao articleInfoDao, com.CloudWhite.PersonalBlog.Dao.mybatisDao mybatisDao, com.CloudWhite.PersonalBlog.Model.Redis.redisHashTemplateConfig redisHashTemplateConfig, com.CloudWhite.PersonalBlog.Utils.redisUtils redisUtils, StringRedisTemplate stringRedisTemplate) {
+    public articleServiceImpl(RedissonClient redissonClient, com.CloudWhite.PersonalBlog.Dao.article.articleDao articleDao, com.CloudWhite.PersonalBlog.Dao.article.articleInfoDao articleInfoDao, com.CloudWhite.PersonalBlog.Dao.mybatisDao mybatisDao, com.CloudWhite.PersonalBlog.Model.Redis.redisHashTemplateConfig redisHashTemplateConfig, com.CloudWhite.PersonalBlog.Utils.redisUtils redisUtils, StringRedisTemplate stringRedisTemplate, com.CloudWhite.PersonalBlog.Dao.starDao starDao) {
         this.redissonClient = redissonClient;
         this.articleDao = articleDao;
         this.articleInfoDao = articleInfoDao;
@@ -57,6 +60,7 @@ public class articleServiceImpl implements articleService {
         this.redisHashTemplateConfig = redisHashTemplateConfig;
         this.redisUtils = redisUtils;
         this.stringRedisTemplate = stringRedisTemplate;
+        this.starDao = starDao;
     }
 
     @EventListener(ApplicationReadyEvent.class)
@@ -174,11 +178,18 @@ public class articleServiceImpl implements articleService {
             if(lock.tryLock(10, 5, TimeUnit.SECONDS)){
                 articleDto articleDto = redisHashTemplateConfig.getHashObject("article","article:"+articleId,articleDto.class);
                 articleInfoDto articleInfoDto = redisHashTemplateConfig.getHashObject("articleInfo","articleInfo:"+userId+":"+articleId,articleInfoDto.class);
-                if(articleInfoDto==null){
-                    articleInfoDto = new articleInfoDto(articleId,userId,false,false);
+                if(articleInfoDto!=null){
+                    articleDto.setLikeCount(articleDto.getLikeCount()+(articleInfoDto.isLike()?-1:1));
+                    articleInfoDto.setLike(!articleInfoDto.isLike());
+                    redisHashTemplateConfig.setHashObject("article","article:"+articleId,articleDto);
+                    redisHashTemplateConfig.setHashObject("articleInfo","articleInfo:"+userId+":"+articleId,articleInfoDto);
+                    return;
                 }
-                articleDto.setLikeCount(articleDto.getLikeCount()+(articleInfoDto.isLike()?-1:1));
-                articleInfoDto.setLike(!articleInfoDto.isLike());
+                articleDto.setLikeCount(articleDto.getLikeCount()+1);
+                articleInfo articleInfo = new articleInfo(articleId,userId,true,false);
+                articleInfoDto = new articleInfoDto();
+                BeanUtils.copyProperties(articleInfo,articleInfoDto);
+                mybatisDao.saveArticleInfo(articleInfoDto);
                 redisHashTemplateConfig.setHashObject("article","article:"+articleId,articleDto);
                 redisHashTemplateConfig.setHashObject("articleInfo","articleInfo:"+userId+":"+articleId,articleInfoDto);
             }
@@ -189,20 +200,39 @@ public class articleServiceImpl implements articleService {
         }
     }
 
-    public void updateArticleStarCount(int articleId){
+    public void updateArticleStarCount(int articleId) {
         int userId = UserContext.getCurrentToken().getUserId();
-        RLock lock = redissonClient.getLock("lock:articleStar:"+articleId);
-        try{
-            if(lock.tryLock(10, 5, TimeUnit.SECONDS)) {
+        RLock lock = redissonClient.getLock("lock:articleStar:" + articleId);
+        try {
+            if (lock.tryLock(10, 5, TimeUnit.SECONDS)) {
                 articleDto articleDto = redisHashTemplateConfig.getHashObject("article", "article:" + articleId, articleDto.class);
-                articleInfoDto articleInfoDto = redisHashTemplateConfig.getHashObject("articleInfo", "articleInfo:"+userId+":"+articleId, articleInfoDto.class);
-                if(articleInfoDto==null){
-                    articleInfoDto = new articleInfoDto(articleId,userId,false,false);
+                articleInfoDto articleInfoDto = redisHashTemplateConfig.getHashObject("articleInfo", "articleInfo:" + userId + ":" + articleId, articleInfoDto.class);
+                if (articleInfoDto != null) {
+                    articleDto.setStarCount(articleDto.getStarCount() + (articleInfoDto.isStar() ? -1 : 1));
+                    articleInfoDto.setStar(!articleInfoDto.isStar());
+                    redisHashTemplateConfig.setHashObject("article", "article:" + articleId, articleDto);
+                    redisHashTemplateConfig.setHashObject("articleInfo", "articleInfo:" + userId + ":" + articleId, articleInfoDto);
+                    if (articleInfoDto.isStar()) {
+                        star star = new star(userId, articleId);
+                        starDao.save(star);
+                    } else {
+                        star star = starDao.findByUserIdAndArticleId(userId, articleId);
+                        if (star != null) {
+                            starDao.delete(star);
+                        }
+                    }
+                } else {
+                    articleInfoDto = new articleInfoDto();
+                    articleInfoDto.setArticleId(articleId);
+                    articleInfoDto.setUserId(userId);
+                    articleInfoDto.setStar(true);  // 默认标记为已收藏
+                    articleInfoDto.setLike(false); // 默认不标记为已点赞
+                    articleDto.setStarCount(articleDto.getStarCount() + 1);  // 收藏数增加
+                    redisHashTemplateConfig.setHashObject("article", "article:" + articleId, articleDto);
+                    redisHashTemplateConfig.setHashObject("articleInfo", "articleInfo:" + userId + ":" + articleId, articleInfoDto);
+                    star star = new star(userId, articleId);
+                    starDao.save(star);
                 }
-                articleDto.setStarCount(articleDto.getStarCount() + (articleInfoDto.isStar() ? -1 : 1));
-                articleInfoDto.setStar(!articleInfoDto.isStar());
-                redisHashTemplateConfig.setHashObject("article", "article:" + articleId, articleDto);
-                redisHashTemplateConfig.setHashObject("articleInfo", "articleInfo:"+userId+":"+articleId, articleInfoDto);
             }
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
@@ -277,7 +307,8 @@ public class articleServiceImpl implements articleService {
         initArticles();
         initArticleInfo();
     }
-    @Scheduled(fixedRate = 1000*60)
+    @Scheduled(fixedRate = 1000*180)
+    @NoAop
     public void updateArticleToDb(){
         List<articleDto> articleDtos = initArticle();
         List<articleInfoDto> articleInfoDtos = getAllArticleInfo();

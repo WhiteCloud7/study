@@ -2,11 +2,8 @@ package com.CloudWhite.PersonalBlog.Utils;
 
 import com.CloudWhite.PersonalBlog.Entity.DTO.token;
 import com.CloudWhite.PersonalBlog.Entity.role;
-import com.CloudWhite.PersonalBlog.Model.Config.JwtProperties;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
-import io.lettuce.core.dynamic.annotation.Value;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.crypto.SecretKey;

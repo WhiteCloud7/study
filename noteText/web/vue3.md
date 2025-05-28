@@ -532,12 +532,11 @@ import { onMounted, onBeforeUnmount, ref } from 'vue';
 const socket = ref(null);
 const messages = ref([]);
 onMounted(() => {
-  socket.value = new WebSocket("ws://localhost:8080/websocket"); //建立连接
-  socket.value.onopen = () => {    //发送消息
+  socket.value = new WebSocket("ws://localhost:8080/websocket"); //创造对象
+  socket.value.onopen = () => {    //连接成功时触发
     console.log("Connected to server");
-    socket.value.send("Hello from Vue client!");
   };
-  socket.value.onmessage = (event) => {  //接收消息
+  socket.value.onmessage = (event) => {  //接收消息时触发
     messages.value.push(event.data);
   };
 });
@@ -546,6 +545,15 @@ onBeforeUnmount(() => {  //关闭连接
     socket.value.close();
   }
 });
+// 由于onopen之触发一次，所以我们发消息通过判断连接状态来发送，注意只接受字符串、Blob 或 ArrayBuffer类型的数据
+// 另外。如果设计了token，因该在创建连接时就带上token，即：`socket.value = new WebSocket("ws://localhost:8080/websocket?token=your_token");`,然后后端拦截解析
+function sendMessage(msg) {
+  if (socket.value && socket.value.readyState === WebSocket.OPEN) {
+    socket.value.send(msg);
+  } else {
+    console.warn("WebSocket 尚未连接或已断开");
+  }
+}
 ```
 ## 表单提交
 例子：

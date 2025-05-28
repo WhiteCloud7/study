@@ -1,5 +1,6 @@
 package com.CloudWhite.PersonalBlog.Service;
 
+import com.CloudWhite.PersonalBlog.Entity.DTO.starDto;
 import com.CloudWhite.PersonalBlog.Entity.DTO.userInfo;
 import com.CloudWhite.PersonalBlog.Entity.user;
 import com.CloudWhite.PersonalBlog.Model.ResponseEntity;
@@ -20,4 +21,5 @@ public interface userService {
     public String updateAvatar(MultipartFile multipartFile);
     public void logout(String username);
     public void addFriend(String username);
+    public List<starDto> getStar();
 }

@@ -6,8 +6,8 @@ import com.CloudWhite.PersonalBlog.Entity.article.articleDraft;
 import com.CloudWhite.PersonalBlog.Entity.article.articleInfo;
 import com.CloudWhite.PersonalBlog.Model.ResponseEntity;
 import com.CloudWhite.PersonalBlog.Service.articleService;
-import com.CloudWhite.PersonalBlog.Utils.Annotation.LoginRequired;
-import com.CloudWhite.PersonalBlog.Utils.Annotation.PermissionRequired;
+import com.CloudWhite.PersonalBlog.Utils.Annotation.*;
+import io.swagger.v3.oas.annotations.Operation;
 import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -24,22 +24,34 @@ public class articleController {
 
     @GetMapping("/getArticleInfo")
     @LoginRequired
+    @RateLimitForAll(maxRequests = 1000)
+    @RateLimitForCurrent(maxRequests = 3 , seconds = 5)
+    @Operation(description = "初始化所有文章是否被当前用户点赞、收藏")
     public ResponseEntity getArticleInfo(){
         return new ResponseEntity("200","请求成功",articleService.getArticleInfo());
     }
 
     @GetMapping("/initArticle")
+    @RateLimitForUnlogin(maxRequests = 10,seconds = 10)
+    @RateLimitForAll(maxRequests = 1000)
+    @Operation(description = "初始化文章")
     public List<articleDto>  initArticle(){
         return articleService.initArticle();
     }
 
     @GetMapping("/updateArticleVisitCount")
+    @RateLimitForUnlogin(maxRequests = 10,seconds = 10)
+    @RateLimitForAll(maxRequests = 1000)
+    @Operation(description = "更新访问数")
     public void updateArticleVisitCount(int articleId){
         articleService.updateArticleVisitCount(articleId);
     }
 
     @GetMapping("/updateArticleLikeCount")
     @LoginRequired
+    @RateLimitForAll(maxRequests = 1000)
+    @RateLimitForCurrent(maxRequests = 2 , seconds = 1)
+    @Operation(description = "更新点赞数")
     public ResponseEntity updateArticleLikeCount(int articleId){
         articleService.updateArticleLikeCount(articleId);
         return new ResponseEntity();
@@ -47,6 +59,9 @@ public class articleController {
 
     @GetMapping("/updateArticleStarCount")
     @LoginRequired
+    @RateLimitForAll(maxRequests = 1000)
+    @RateLimitForCurrent(maxRequests = 2 , seconds = 1)
+    @Operation(description = "更新收藏数")
     public ResponseEntity updateArticleStarCount(int articleId){
         articleService.updateArticleStarCount(articleId);
         return new ResponseEntity();
@@ -54,46 +69,60 @@ public class articleController {
 
     @GetMapping("/initCurrentArticleInfo")
     @LoginRequired
+    @RateLimitForUnlogin(maxRequests = 10,seconds = 10)
+    @RateLimitForAll(maxRequests = 1000)
+    @RateLimitForCurrent(maxRequests = 3 , seconds = 5)
+    @Operation(description = "初始化文章是否被当前用户点赞、收藏")
     public ResponseEntity initCurrentArticleInfo(int articleId){
         return new ResponseEntity(articleService.initCurrentArticleInfo(articleId));
     }
     @GetMapping("/initCurrentArticle")
     @LoginRequired
+    @RateLimitForUnlogin(maxRequests = 10,seconds = 10)
+    @RateLimitForAll(maxRequests = 1000)
+    @RateLimitForCurrent(maxRequests = 3 , seconds = 5)
+    @Operation(description = "初始化当前文章")
     public ResponseEntity initCurrentArticle(int articleId){
         return new ResponseEntity(articleService.initCurrentArticle(articleId));
     }
 
     @GetMapping("/checkPremession")
     @PermissionRequired(type = "admin")
+    @Operation(description = "检查权限")
     public ResponseEntity checkPremession(){
         return new ResponseEntity();
     }
 
     @PostMapping("/saveArticle")
     @PermissionRequired(type = "admin")
+    @Operation(description = "保存文章")
     public ResponseEntity saveArticle(@RequestParam int articleId,@RequestParam String title,@RequestParam String content){
         articleService.saveArticle(articleId,title,content);
         return new ResponseEntity();
     }
     @PostMapping("/saveArticleToDraft")
     @PermissionRequired(type = "admin")
+    @Operation(description = "保存文章草稿")
     public ResponseEntity saveArticleToDraft(String title, String content){
         articleService.saveArticleToDraft(title,content);
         return new ResponseEntity();
     }
     @GetMapping("/articleDraft")
     @PermissionRequired(type = "admin")
+    @Operation(description = "得到文章草稿")
     public ResponseEntity getDraft(){
         return new ResponseEntity(articleService.getDraft());
     }
     @PostMapping ("/newArticle")
     @PermissionRequired(type = "admin")
+    @Operation(description = "发布文章")
     public ResponseEntity newArticle(String title, String content){
         articleService.newArticle(title,content);
         return new ResponseEntity();
     }
     @GetMapping("/deleteArticle")
     @PermissionRequired(type = "admin")
+    @Operation(description = "删除文章")
     public ResponseEntity deleteArticle(int articleId){
         articleService.deleteArticle(articleId);
         return new ResponseEntity();

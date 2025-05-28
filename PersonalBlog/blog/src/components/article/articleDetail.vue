@@ -51,7 +51,6 @@ const editorInit = {
   content_style: 'body { font-size:16px; padding:10px; }',
 };
 
-
 const router = useRouter();
 const props = defineProps({
   articleId: Number
@@ -62,14 +61,29 @@ const likeIcon = computed(() => {
   return require(`@/assets/photo/${isLike.value? 'likefill.png' : 'like.png'}`);
 });
 
+let lastDate = new Date().getTime();
+function RateLimited(){
+  const currentClickDateTime = new Date().getTime();
+  if( Math.abs(currentClickDateTime - lastDate) < 300){
+    alert("请勿频繁点击！");
+    return false;
+  }
+  lastDate = currentClickDateTime;
+  return true;
+}
+
 // 点赞按钮点击处理函数
 const toggleLike = () => {
+  if(!RateLimited())
+    return;
   axiosToken.get("http://localhost:8081/updateArticleLikeCount",{
     params:{
       articleId:props.articleId,
     },
     responseType:"json"
   }).then(res=>{
+    if(isLike.value === null)
+      isLike.value = true;
     if (isLike.value) {
       likeCount.value--;
     } else {
@@ -79,22 +93,6 @@ const toggleLike = () => {
   }).catch(console.log)
 };
 
-// 收藏按钮点击处理函数
-const toggleStar = () => {
-  axiosToken.get("http://localhost:8081/updateArticleStarCount",{
-    params:{
-      articleId:props.articleId,
-    },
-    responseType:"json"
-  }).then(res=>{
-    if (isStar.value) {
-      starCount.value--;
-    } else {
-      starCount.value++;
-    }
-    isStar.value =!isStar.value;
-  }).catch(console.log)
-};
 // 返回按钮点击处理函数
 const back = () => {
   router.push("/article");

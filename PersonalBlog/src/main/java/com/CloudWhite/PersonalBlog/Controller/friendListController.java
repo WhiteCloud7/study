@@ -4,6 +4,10 @@ import com.CloudWhite.PersonalBlog.Entity.friendList;
 import com.CloudWhite.PersonalBlog.Model.ResponseEntity;
 import com.CloudWhite.PersonalBlog.Service.friendListService;
 import com.CloudWhite.PersonalBlog.Utils.Annotation.LoginRequired;
+import com.CloudWhite.PersonalBlog.Utils.Annotation.RateLimitForAll;
+import com.CloudWhite.PersonalBlog.Utils.Annotation.RateLimitForCurrent;
+import com.CloudWhite.PersonalBlog.Utils.Annotation.RateLimitForUnlogin;
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Description;
@@ -23,6 +27,8 @@ public class friendListController {
 
     @GetMapping("/getFriendBasicInfo")
     @LoginRequired
+    @RateLimitForAll(maxRequests = 1000)
+    @RateLimitForCurrent(maxRequests = 3 , seconds = 5)
     @Description("得到好友基础信息，即头像和昵称")
     public ResponseEntity getFriendBasicInfo(){
         return new ResponseEntity(friendListService.getFriendBasicInfo());
@@ -30,6 +36,9 @@ public class friendListController {
 
     @GetMapping("/getFriendBasicInfoByUsername")
     @LoginRequired
+    @RateLimitForAll(maxRequests = 1000)
+    @RateLimitForCurrent(maxRequests = 3 , seconds = 5)
+    @Operation(description = "得到好友基础信息通过用户名")
     public ResponseEntity getFriendBasicInfoByUsername(String friendName){
         return new ResponseEntity(friendListService.getFriendBasicInfoByUsername(friendName));
     }

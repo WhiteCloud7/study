@@ -154,11 +154,22 @@
 			<version>0.10.5</version>
 			<scope>runtime</scope>
 		</dependency>
-		<!--		redisson-->
+		<!-- redisson -->
 		<dependency>
 			<groupId>org.redisson</groupId>
 			<artifactId>redisson</artifactId>
 			<version>3.23.3</version>
+		</dependency>
+		<!-- WebSocket -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-websocket</artifactId>
+		</dependency>
+		<!-- 雪花算法 -->
+		<dependency>
+			<groupId>cn.hutool</groupId>
+			<artifactId>hutool-core</artifactId>
+			<version>5.8.23</version>
 		</dependency>
 	</dependencies>
 	<build>

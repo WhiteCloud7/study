@@ -66,7 +66,8 @@ public class noticeServiceImpl implements noticeService {
         }
         List<noticeInfo> noticeInfos = noticeInfoDao.findAll();
         for(noticeInfo noticeInfo : noticeInfos){
-            redisStringTemplate.setObject("noticeInfo:"+noticeInfo.getNoticeId()+"-"+noticeInfo.getUserId(),noticeInfo);
+            if(noticeInfo.getNoticeId()!=null)
+                redisStringTemplate.setObject("noticeInfo:"+noticeInfo.getNoticeId()+"-"+noticeInfo.getUserId(),noticeInfo);
         }
         List<notice> notices = noticeDao.findAll();
         for(notice notice : notices){

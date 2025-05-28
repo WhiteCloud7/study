@@ -105,6 +105,7 @@ axiosInstance.interceptors.response.use(
         if (status === 403) ElMessage.error('没有权限访问')
         else if (status === 401) ElMessage.error('登录过期，请重新登录')
         else if (status === 500) ElMessage.error('服务器错误')
+        else if (status === 429) ElMessage.error('请求过于频繁')
 
         return Promise.reject(error)
     }

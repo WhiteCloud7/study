@@ -183,6 +183,7 @@ const handleAvatarSuccess = (res) => {
   else{
     avatar.value = res.data.avatar_url;
     alert('头像上传成功!');
+    location.reload();
   }
 };
 

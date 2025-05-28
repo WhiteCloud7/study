@@ -35,7 +35,18 @@ public class articleInfo {
         this.isStar = isStar;
     }
 
+    public articleInfo(int articleId, int userId, boolean isLike, boolean isStar) {
+        this.articleId = articleId;
+        this.userId = userId;
+        this.isLike = isLike;
+        this.isStar = isStar;
+    }
 
+    public articleInfo(int articleId, int userId, boolean isLike) {
+        this.articleId = articleId;
+        this.userId = userId;
+        this.isLike = isLike;
+    }
 
     public articleInfo(int articleinfoId, com.CloudWhite.PersonalBlog.Entity.article.article article, int userId, boolean isLike, boolean isStar) {
         this.articleinfoId = articleinfoId;

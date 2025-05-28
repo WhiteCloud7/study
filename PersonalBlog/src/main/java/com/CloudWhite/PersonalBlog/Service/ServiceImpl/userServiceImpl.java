@@ -1,9 +1,13 @@
 package com.CloudWhite.PersonalBlog.Service.ServiceImpl;
 
+import cn.hutool.core.lang.Snowflake;
 import com.CloudWhite.PersonalBlog.Dao.DTO.tokenDao;
+import com.CloudWhite.PersonalBlog.Dao.article.articleDao;
 import com.CloudWhite.PersonalBlog.Dao.mybatisDao;
+import com.CloudWhite.PersonalBlog.Dao.starDao;
 import com.CloudWhite.PersonalBlog.Dao.userDao;
 import com.CloudWhite.PersonalBlog.Dao.userDaoMybatis;
+import com.CloudWhite.PersonalBlog.Entity.DTO.starDto;
 import com.CloudWhite.PersonalBlog.Entity.DTO.token;
 import com.CloudWhite.PersonalBlog.Entity.DTO.userInfo;
 import com.CloudWhite.PersonalBlog.Entity.role;
@@ -17,6 +21,7 @@ import com.CloudWhite.PersonalBlog.Service.userService;
 import com.CloudWhite.PersonalBlog.Utils.JWTUtils;
 import jakarta.annotation.PostConstruct;
 import jakarta.transaction.Transactional;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.annotation.Order;
 import org.springframework.data.redis.core.StringRedisTemplate;
@@ -31,6 +36,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
@@ -41,6 +47,7 @@ import java.util.regex.Pattern;
 @Service
 @Transactional
 public class userServiceImpl implements userService {
+    private Snowflake snowflake = new Snowflake();
     private userDao userDao;
     private tokenDao tokenDao;
     private redisStringTemplateConfig redisStringTemplate;
@@ -50,8 +57,10 @@ public class userServiceImpl implements userService {
     private BCryptPasswordEncoder bCryptPasswordEncoder;
     private StringRedisTemplate stringRedisTemplate;
     private mybatisDao mybatisDao;
+    private starDao starDao;
+    private articleDao articleDao;
     @Autowired
-    public userServiceImpl(com.CloudWhite.PersonalBlog.Dao.userDao userDao, com.CloudWhite.PersonalBlog.Dao.DTO.tokenDao tokenDao, redisStringTemplateConfig redisStringTemplate, redisHashTemplateConfig redisHashTemplate, com.CloudWhite.PersonalBlog.Model.Redis.redisCommonTemplate redisCommonTemplate, com.CloudWhite.PersonalBlog.Dao.userDaoMybatis userDaoMybatis, StringRedisTemplate stringRedisTemplate, mybatisDao mybatisDao) {
+    public userServiceImpl(com.CloudWhite.PersonalBlog.Dao.userDao userDao, com.CloudWhite.PersonalBlog.Dao.DTO.tokenDao tokenDao, redisStringTemplateConfig redisStringTemplate, redisHashTemplateConfig redisHashTemplate, com.CloudWhite.PersonalBlog.Model.Redis.redisCommonTemplate redisCommonTemplate, com.CloudWhite.PersonalBlog.Dao.userDaoMybatis userDaoMybatis, StringRedisTemplate stringRedisTemplate, com.CloudWhite.PersonalBlog.Dao.mybatisDao mybatisDao, com.CloudWhite.PersonalBlog.Dao.starDao starDao, com.CloudWhite.PersonalBlog.Dao.article.articleDao articleDao) {
         this.userDao = userDao;
         this.tokenDao = tokenDao;
         this.redisStringTemplate = redisStringTemplate;
@@ -60,6 +69,8 @@ public class userServiceImpl implements userService {
         this.userDaoMybatis = userDaoMybatis;
         this.stringRedisTemplate = stringRedisTemplate;
         this.mybatisDao = mybatisDao;
+        this.starDao = starDao;
+        this.articleDao = articleDao;
     }
 
     @PostConstruct
@@ -187,7 +198,19 @@ public class userServiceImpl implements userService {
         redisHashTemplate.setHashObject("user",username,userInfo);
         return "注册成功";
     }
-
+    public List<starDto> getStar(){
+        int userId = UserContext.getCurrentToken().getUserId();
+        List<Integer> articleIds = starDao.getArticleIdByUserId(userId);
+        List<starDto> starDtos = new ArrayList<>();
+        for (Integer articleId : articleIds) {
+            int userId2 = articleDao.getUserIdByArticleId(articleId);
+            user user = userDao.findByUserId(userId);
+            String title = articleDao.getArticleTitleByArticleId(articleId);
+            starDto starDto = new starDto(userId2,articleId,user.getNikeName(),user.getAvatar_src(),title);
+            starDtos.add(starDto);
+        }
+        return starDtos;
+    }
     public String saveProfile(user user){
         int userId = UserContext.getCurrentToken().getUserId();
         String username = UserContext.getCurrentToken().getUsername();
@@ -205,32 +228,43 @@ public class userServiceImpl implements userService {
         return JWTUtils.refreshAccessToken(refreshToken,1000*60*30);
     }
 
+    private String getExtension(String contentType) {
+        switch (contentType) {
+            case "image/jpeg": return ".jpg";
+            case "image/png": return ".png";
+            case "image/gif": return ".gif";
+            default: return ""; // 或者抛出异常
+        }
+    }
     public String updateAvatar(MultipartFile multipartFile) {
         String username = UserContext.getCurrentToken().getUsername();
         try {
             if (multipartFile.isEmpty())
                 return "上传文件为空";
-
-            String newFilename = "avatar-"+ UUID.randomUUID()+multipartFile.getContentType();
-            String uploadDir = System.getProperty("user.dir") + "/uploads/"+username;
+            String extension = getExtension(multipartFile.getContentType());
+            if (extension.isEmpty())
+                return "不支持的文件类型";
+            String newFilename = "avatar-" + snowflake.nextIdStr() + extension;
+            String uploadDir = System.getProperty("user.dir") + "/uploads/" + username;
             Path path = Paths.get(uploadDir);
-
             if (!Files.exists(path))
                 Files.createDirectories(path);
-            Files.list(path).forEach(file->{
-                try{
+            // 清空原头像
+            Files.list(path).forEach(file -> {
+                try {
                     Files.delete(file);
                 } catch (IOException e) {
                     throw new RuntimeException(e);
                 }
             });
-
             multipartFile.transferTo(path.resolve(newFilename).toFile());
-
             int userId = UserContext.getCurrentToken().getUserId();
             userDaoMybatis.setUserAvatar("http://localhost:8081/uploads/" + username + "/" + newFilename, userId);
-
-            return "/uploads/" + newFilename;
+            user user = userDao.findByUserId(userId);
+            userInfo userInfo = new userInfo();
+            BeanUtils.copyProperties(user,userInfo);
+            redisHashTemplate.setHashObject("user",userInfo.getUsername(),userInfo);
+            return "/uploads/" + username + "/" + newFilename;
         } catch (IOException e) {
             e.printStackTrace();
             return "上传失败";

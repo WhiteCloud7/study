@@ -41,7 +41,7 @@
 </template>
 
 <script setup>
-import {onMounted, ref, getCurrentInstance, watch, nextTick} from "vue";
+import {onMounted, ref, getCurrentInstance, watch, nextTick, onBeforeUnmount} from "vue";
 import test from  "axios";
 import axios from "@/axios";
 import SendMessageContent from "@/components/ContactMe/SendMessageContent";
@@ -51,14 +51,15 @@ const instance = getCurrentInstance();
 const currentChatObject = instance.appContext.config.globalProperties.$currentChatObject;
 const currentUserName = ref("");
 const sendMessage = ref("");
-// 定义响应式变量 messages，用于存储聊天记录
+
 const receiveMessages = ref([]);
 const allMessages = ref([]);
 const activeSendTime = ref("");
 const activeReceiveTime = ref("");
+const socket = ref(null);
 const currentUserAvatar = ref();
 const receiverProfile = ref([]);
-const lastNewTime = ref();
+// const lastNewTime = ref();
 const chatContainer = ref(null);
 const loadingOlder = ref(false);          // 防抖 + 避免并发
 const finishedAll = ref(false);           // 是否已加载完全部历史
@@ -132,67 +133,73 @@ const handleKeyDown = (event) => {
 
 const sendMessageHandler = async () => {
   if (sendMessage.value.trim() !== "") {
-    const params = {receiverName: currentChatObject.value, message: sendMessage.value}
-    axios.post("http://localhost:8081/sendMessage", JSON.stringify(params), {
-      headers: {
-        "Content-Type": "application/json"
-      },
-      responseType: "json"
-    }).then(res => {
-      if (res.data.message === "发送失败") {
-        alert("发送失败");
-      } else {
-        const {messageId, receiverName, sendTime, message} = res.data.data;
-        console.log("发送的消息: ",res.data.data)
-        allMessages.value.push({
-          messageId: messageId,
-          receiverName: receiverName,
-          message: message,
-          sendTime: sendTime
-        });
-        allMessages.value.sort((a, b) => new Date(a.sendTime) - new Date(b.sendTime));
-        sendMessage.value = "";
-        scrollToBottom();
-      }
-    });
+    const messageBody = {receiverName: currentChatObject.value, message: sendMessage.value}
+    if (socket.value && socket.value.readyState === WebSocket.OPEN) {
+      socket.value.send(JSON.stringify(messageBody));
+    } else {
+      alert("聊天连接断开，请刷新重试！");
+    }
+    // const params = {receiverName: currentChatObject.value, message: sendMessage.value}
+    // axios.post("http://localhost:8081/sendMessage", JSON.stringify(params), {
+    //   headers: {
+    //     "Content-Type": "application/json"
+    //   },
+    //   responseType: "json"
+    // }).then(res => {
+    //   if (res.data.message === "发送失败") {
+    //     alert("发送失败");
+    //   } else {
+    //     const {messageId, receiverName, sendTime, message} = res.data.data;
+    //     console.log("发送的消息: ",res.data.data)
+    //     allMessages.value.push({
+    //       messageId: messageId,
+    //       receiverName: receiverName,
+    //       message: message,
+    //       sendTime: sendTime
+    //     });
+    //     allMessages.value.sort((a, b) => new Date(a.sendTime) - new Date(b.sendTime));
+    //     sendMessage.value = "";
+    //     scrollToBottom();
+    //   }
+    // });
   }else
     confirm("消息不能为空！");
 };
 
-function getLastNewTime() {
-  axios.get("/getLastNewTime", { params: { friendName: currentChatObject.value } })
-      .then(res => {
-        lastNewTime.value = res.data.data;
-      });
-}
+// function getLastNewTime() {
+//   axios.get("/getLastNewTime", { params: { friendName: currentChatObject.value } })
+//       .then(res => {
+//         lastNewTime.value = res.data.data;
+//       });
+// }
 
-function receiveMessage(){
-  allMessages.value.sort((a, b) => new Date(a.sendTime) - new Date(b.sendTime));
-  if(allMessages.value.length === 0||lastNewTime.value===null){return}
-  axios.get("http://localhost:8081/getReceiveMessage",{
-    params:{
-      friendName: currentChatObject.value,
-      currentNewMessageTime: lastNewTime.value
-    },
-    responseType: "json"
-  }).then(res => {
-    const gotMessages = res.data.data;
-    for (const message of gotMessages) {
-      if (!allMessages.value.some(m => m.messageId === message.messageId)) {
-        allMessages.value.push({
-          messageId: message[0],
-          receiverName: currentUserName.value,
-          message: message[2],
-          sendTime: message[3]
-        });
-      }
-    }
-    allMessages.value.sort((a, b) => new Date(a.sendTime) - new Date(b.sendTime));
-    getLastNewTime();
-  }).catch(err => {
-    console.log("接收消息出错", err);
-  });
-}
+// function receiveMessage(){
+//   allMessages.value.sort((a, b) => new Date(a.sendTime) - new Date(b.sendTime));
+//   if(allMessages.value.length === 0||lastNewTime.value===null){return}
+//   axios.get("http://localhost:8081/getReceiveMessage",{
+//     params:{
+//       friendName: currentChatObject.value,
+//       currentNewMessageTime: lastNewTime.value
+//     },
+//     responseType: "json"
+//   }).then(res => {
+//     const gotMessages = res.data.data;
+//     for (const message of gotMessages) {
+//       if (!allMessages.value.some(m => m.messageId === message.messageId)) {
+//         allMessages.value.push({
+//           messageId: message[0],
+//           receiverName: currentUserName.value,
+//           message: message[2],
+//           sendTime: message[3]
+//         });
+//       }
+//     }
+//     allMessages.value.sort((a, b) => new Date(a.sendTime) - new Date(b.sendTime));
+//     getLastNewTime();
+//   }).catch(err => {
+//     console.log("接收消息出错", err);
+//   });
+// }
 
 const updateActiveReceiveTime = (newTime) => {
   activeReceiveTime.value = newTime;
@@ -258,13 +265,37 @@ function initCurrentChatObject(){
   });
 }
 
-onMounted(()=>{
+function webSocket(){
+  socket.value = new WebSocket(`ws://localhost:8081/websocket?token=${token}`);
+  socket.value.onopen = () => {
+    console.log("连接成功");
+  };
+  socket.value.onmessage = (event) => {
+    const message = JSON.parse(event.data);
+    console.log("收到消息：", message);
+    console.log(message.receiverName===currentUserName.value);
+    allMessages.value.push(message);
+    allMessages.value.sort((a, b) => new Date(a.sendTime) - new Date(b.sendTime));
+    sendMessage.value = "";
+    scrollToBottom();
+  };
+  socket.value.onerror = (error) => {
+    console.error("WebSocket 错误：", error);
+  };
+}
+
+const token = sessionStorage.getItem('token');
+onMounted(() => {
   initCurrentUser();
   initCurrentChatObject();
   initMessage();
-  getLastNewTime();
-  setInterval(receiveMessage,1000)
+  // getLastNewTime();
+  webSocket()
 });
+
+onBeforeUnmount(()=>{
+  socket.value.close();
+})
 </script>
 
 <style>

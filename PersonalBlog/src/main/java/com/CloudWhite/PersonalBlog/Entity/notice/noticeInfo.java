@@ -14,7 +14,7 @@ public class noticeInfo {
     private int noticeinfoId;
     @Schema(name="通知ID")
     @Column(name="notice_id",insertable = false,updatable = false)
-    private int noticeId;
+    private Integer noticeId;
     @Schema(name="当前用户ID")
     private int userId;
     @Schema(name="当前用户是否点赞")
@@ -23,16 +23,10 @@ public class noticeInfo {
     public noticeInfo() {
     }
 
-    public noticeInfo(int noticeinfoId, int noticeId, int userId, boolean isLike) {
+    public noticeInfo(int noticeinfoId, Integer noticeId, int userId, boolean isLike) {
         this.noticeinfoId = noticeinfoId;
         this.noticeId = noticeId;
         this.userId = userId;
-        this.isLike = isLike;
-    }
-
-    public noticeInfo(int noticeinfoId, int noticeId, com.CloudWhite.PersonalBlog.Entity.notice.notice notice, boolean isLike) {
-        this.noticeinfoId = noticeinfoId;
-        this.noticeId = noticeId;
         this.isLike = isLike;
     }
 
@@ -60,11 +54,11 @@ public class noticeInfo {
         this.noticeinfoId = noticeinfoId;
     }
 
-    public int getNoticeId() {
+    public Integer getNoticeId() {
         return noticeId;
     }
 
-    public void setNoticeId(int noticeId) {
+    public void setNoticeId(Integer noticeId) {
         this.noticeId = noticeId;
     }
 }

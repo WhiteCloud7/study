@@ -61,12 +61,6 @@ public class article {
         this.user = user;
     }
 
-    public article(String title, String articleContent, int userId) {
-        this.title = title;
-        this.articleContent = articleContent;
-        this.userId = userId;
-    }
-
     public int getArticleId() {
         return articleId;
     }

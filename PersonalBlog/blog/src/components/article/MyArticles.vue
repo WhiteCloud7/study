@@ -79,8 +79,21 @@ const isStarredValue = computed(() => {
   };
 });
 
+let lastDate = new Date().getTime();
+function RateLimited(){
+  const currentClickDateTime = new Date().getTime();
+  if( Math.abs(currentClickDateTime - lastDate) < 300){
+    alert("请勿频繁点击！");
+    return false;
+  }
+  lastDate = currentClickDateTime;
+  return true;
+}
+
 // 点赞按钮的点击事件处理函数
 function toggleLike(articleId){
+  if(!RateLimited())
+    return;
   if(isLogin.value===true){
     axiosToken.get("http://localhost:8081/updateArticleLikeCount",{
       params:{
@@ -88,8 +101,13 @@ function toggleLike(articleId){
       },
       responseType:"json"
     }).then(res=>{
-      if(!isLike.value.some(i => i.articleId === articleId))
+      if (!isLike.value.some(i => i.articleId === articleId)) {
+        isLike.value.push({
+          articleId: articleId,
+          like: false
+        });
         initCurrentArticleInfo(articleId);
+      }
       operationStatus.value = isLike.value.find(i => i.articleId === articleId).like;
       operationValue.value = likeCount.value.find(l => l.articleId === articleId).likeCount;
 
@@ -104,6 +122,8 @@ function toggleLike(articleId){
 
 // 收藏按钮的点击事件处理函数
 function toggleStar(articleId){
+  if(!RateLimited())
+    return;
   if(isLogin.value===true){
     axiosToken.get("http://localhost:8081/updateArticleStarCount",{
       params:{
@@ -111,9 +131,12 @@ function toggleStar(articleId){
       },
       responseType:"json"
     }).then(res=>{
-      if(!isStarred.value.some(i => i.articleId === articleId))
-        initCurrentArticleInfo(articleId);
-      nextTick();
+      if (!isStarred.value.some(i => i.articleId === articleId)) {
+        isStarred.value.push({
+          articleId: articleId,
+          star: false
+        });
+      }
       operationStatus.value = isStarred.value.find(i => i.articleId === articleId).star;
       operationValue.value = starCount.value.find(l => l.articleId === articleId).starCount;
 

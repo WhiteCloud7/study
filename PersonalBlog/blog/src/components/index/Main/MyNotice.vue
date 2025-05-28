@@ -110,13 +110,28 @@ function getCurrentNotice(noticeId) {
 function formatCount(count){
   return count > 9999 ? '9999+' : count;
 }
+
+let lastDate = new Date().getTime();
+function RateLimited(){
+  const currentClickDateTime = new Date().getTime();
+  if( Math.abs(currentClickDateTime - lastDate) < 300){
+    alert("请勿频繁点击！");
+    return false;
+  }
+  lastDate = currentClickDateTime;
+  return true;
+}
+
 function toggleLike(noticeId) {
+  if(!RateLimited())
+    return;
   if(isLogin.value===true){
     const notice = getCurrentNotice(noticeId);
     if (!notice) return;
+    if(isLike.value[noticeId]===null)
+      isLike.value[noticeId] = false;
     notice.likeCount += isLike.value[noticeId] ? -1 : 1;
     isLike.value[noticeId] = !isLike.value[noticeId];
-
     axiosToken.get("http://localhost:8081/updateLikeCount", {
       params: { noticeId }
     }).catch(console.log);
@@ -321,8 +336,7 @@ onMounted(async () => {
   position: relative;
   bottom: 3px;
   left: 10px;
-  width: 68px;
-  border: 1px solid black;
+  width: 60px;
 }
 
 /* 动画淡入淡出 */

@@ -47,7 +47,20 @@ const likeIcon = computed(() =>
     require(`@/assets/photo/${isLike.value ? "likefill.png" : "like.png"}`)
 );
 
+let lastDate = new Date().getTime();
+function RateLimited(){
+  const currentClickDateTime = new Date().getTime();
+  if( Math.abs(currentClickDateTime - lastDate) < 300){
+    alert("请勿频繁点击！");
+    return false;
+  }
+  lastDate = currentClickDateTime;
+  return true;
+}
+
 function toggleLike() {
+  if(!RateLimited())
+    return;
   if(isLogin.value===true){
     isLike.value = !isLike.value;
     likeCount.value += isLike.value ? 1 : -1;

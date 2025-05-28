@@ -31,7 +31,6 @@ import java.util.stream.Collectors;
 @Service
 @Transactional
 public class messageServiceImpl implements messageService {
-    private static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS");
     private messageDao messageDao;
     private userDao userDao;
     private mybatisDao mybatisDao;
@@ -118,36 +117,36 @@ public class messageServiceImpl implements messageService {
         return messageDtos;
     }
 
-    public messageDto sendMessage(messageDto messageDto) {
-        String username = UserContext.getCurrentToken().getUsername();
-        String formattedTime = LocalDateTime.now().format(DATE_TIME_FORMATTER);
-        messageDto.setSendTime(formattedTime);
-        // 写入 Redis
-        int senderId = UserContext.getCurrentToken().getUserId();
-        int receiverId = redisHashTemplate.getHashObject("user",messageDto.getReceiverName(), userInfo.class).getUserId();
-        String redisKey = buildRedisKey(senderId, receiverId);
-        String messageId = UUID.randomUUID().toString();
-        CachedMessage cached = new CachedMessage(senderId, receiverId, messageId,username,
-                messageDto.getReceiverName(), messageDto.getMessage(), messageDto.getSendTime());
-        redisListTemplate.setObjectRight(redisKey, cached);
-        messageDto.setMessageId(messageId);
-        return messageDto;
-    }
-    public List<String[]> getSentMessage(String friendName) {
-        String username = UserContext.getCurrentToken().getUsername();
-        int userId = UserContext.getCurrentToken().getUserId();
-        int friendId = redisHashTemplate.getHashObject("user",friendName, userInfo.class).getUserId();
-        String redisKey = buildRedisKey(userId, friendId);
-
-        List<CachedMessage> cached = redisListTemplate.range(redisKey, 0, -1, CachedMessage.class);
-        if (cached != null && !cached.isEmpty()) {
-            return cached.stream()
-                    .filter(msg -> msg.getSender_name().equals(username))
-                    .map(msg -> new String[]{msg.getMessage_id(),msg.getReceiver_name(),msg.getMessage(), msg.getSend_time()})
-                    .collect(Collectors.toList());
-        }
-        return messageDao.getSentMessages(username, friendName);
-    }
+//    public messageDto sendMessage(messageDto messageDto) {
+//        String username = UserContext.getCurrentToken().getUsername();
+//        String formattedTime = LocalDateTime.now().format(DATE_TIME_FORMATTER);
+//        messageDto.setSendTime(formattedTime);
+//        // 写入 Redis
+//        int senderId = UserContext.getCurrentToken().getUserId();
+//        int receiverId = redisHashTemplate.getHashObject("user",messageDto.getReceiverName(), userInfo.class).getUserId();
+//        String redisKey = buildRedisKey(senderId, receiverId);
+//        String messageId = UUID.randomUUID().toString();
+//        CachedMessage cached = new CachedMessage(senderId, receiverId, messageId,username,
+//                messageDto.getReceiverName(), messageDto.getMessage(), messageDto.getSendTime());
+//        redisListTemplate.setObjectRight(redisKey, cached);
+//        messageDto.setMessageId(messageId);
+//        return messageDto;
+//    }
+//    public List<String[]> getSentMessage(String friendName) {
+//        String username = UserContext.getCurrentToken().getUsername();
+//        int userId = UserContext.getCurrentToken().getUserId();
+//        int friendId = redisHashTemplate.getHashObject("user",friendName, userInfo.class).getUserId();
+//        String redisKey = buildRedisKey(userId, friendId);
+//
+//        List<CachedMessage> cached = redisListTemplate.range(redisKey, 0, -1, CachedMessage.class);
+//        if (cached != null && !cached.isEmpty()) {
+//            return cached.stream()
+//                    .filter(msg -> msg.getSender_name().equals(username))
+//                    .map(msg -> new String[]{msg.getMessage_id(),msg.getReceiver_name(),msg.getMessage(), msg.getSend_time()})
+//                    .collect(Collectors.toList());
+//        }
+//        return messageDao.getSentMessages(username, friendName);
+//    }
 
     public void deleteMessage(String messageId,String receiveName,String sendTime) {
         String username = UserContext.getCurrentToken().getUsername();
@@ -172,51 +171,50 @@ public class messageServiceImpl implements messageService {
     }
 
 
-    @NoAop
-    public List<String[]> getReceiveMessages(String friendName, String sendTime) {
-        if(sendTime==null){return null;}
-        String username = UserContext.getCurrentToken().getUsername();
-        int userId = UserContext.getCurrentToken().getUserId();
-        int friendId = redisHashTemplate.getHashObject("user", friendName, userInfo.class).getUserId();
-        String redisKey = buildRedisKey(userId, friendId);
+//    @NoAop
+//    public List<String[]> getReceiveMessages(String friendName, String sendTime) {
+//        if(sendTime==null){return null;}
+//        String username = UserContext.getCurrentToken().getUsername();
+//        int userId = UserContext.getCurrentToken().getUserId();
+//        int friendId = redisHashTemplate.getHashObject("user", friendName, userInfo.class).getUserId();
+//        String redisKey = buildRedisKey(userId, friendId);
+//
+//        List<CachedMessage> cached = redisListTemplate.range(redisKey, 0, -1, CachedMessage.class);
+//        if (cached != null && !cached.isEmpty()) {
+//            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS");
+//            LocalDateTime targetTime = LocalDateTime.parse(sendTime, formatter);
+//            List<String[]> collect = cached.stream()
+//                    .filter(msg -> msg.getSender_name().equals(friendName))
+//                    .filter(msg -> {
+//                        LocalDateTime msgTime = LocalDateTime.parse(msg.getSend_time(), formatter);
+//                        return msgTime.isAfter(targetTime);
+//                    })
+//                    .map(msg -> new String[]{String.valueOf(msg.getMessage_id()), msg.getReceiver_name(), msg.getMessage(), msg.getSend_time()})
+//                    .collect(Collectors.toList());
+//            return collect;
+//        }
+//        return messageDao.getReceiveMessages(friendName, username, sendTime);
+//    }
 
-        List<CachedMessage> cached = redisListTemplate.range(redisKey, 0, -1, CachedMessage.class);
-        if (cached != null && !cached.isEmpty()) {
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS");
-            LocalDateTime targetTime = LocalDateTime.parse(sendTime, formatter);
-            List<String[]> collect = cached.stream()
-                    .filter(msg -> msg.getSender_name().equals(friendName))
-                    .filter(msg -> {
-                        LocalDateTime msgTime = LocalDateTime.parse(msg.getSend_time(), formatter);
-                        return msgTime.isAfter(targetTime);
-                    })
-                    .map(msg -> new String[]{String.valueOf(msg.getMessage_id()), msg.getReceiver_name(), msg.getMessage(), msg.getSend_time()})
-                    .collect(Collectors.toList());
-            return collect;
-        }
-        return messageDao.getReceiveMessages(friendName, username, sendTime);
-    }
+//    @NoAop
+//    public String getLastNewTime(String friendName) {
+//        int userId = UserContext.getCurrentToken().getUserId();
+//        int friendId = redisHashTemplate.getHashObject("user", friendName, userInfo.class).getUserId();
+//        String redisKey = buildRedisKey(userId, friendId);
+//
+//        List<CachedMessage> cached = redisListTemplate.range(redisKey, -1, -1, CachedMessage.class);
+//        if (cached == null || cached.isEmpty()) {
+//            return null;
+//        }
+//        return cached.get(0).getSend_time();
+//    }
 
-    @NoAop
-    public String getLastNewTime(String friendName) {
-        int userId = UserContext.getCurrentToken().getUserId();
-        int friendId = redisHashTemplate.getHashObject("user", friendName, userInfo.class).getUserId();
-        String redisKey = buildRedisKey(userId, friendId);
-
-        List<CachedMessage> cached = redisListTemplate.range(redisKey, -1, -1, CachedMessage.class);
-        if (cached == null || cached.isEmpty()) {
-            return null;
-        }
-        return cached.get(0).getSend_time();
-    }
-
-
-    @Scheduled(fixedDelay = (1000*60*60*24))
-    public void RestMessageTable(){
+//    @Scheduled(fixedDelay = (1000*60*60*24))
+//    public void RestMessageTable(){
 //        mybatisDao.lockMessageTable();
 //        mybatisDao.ResetMessageAutoIncrement();
 //        mybatisDao.unlockMessageTable();
-    }
+//    }
 
     @Scheduled(fixedDelay = (1000 * 60))
     public void flushRedisToDatabase() {

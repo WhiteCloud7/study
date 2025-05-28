@@ -1,0 +1,66 @@
+server:
+  port: 8890
+  servlet:
+    context-path: /gateway  # ???????????
+spring:
+  application:
+    name: gateway
+  #redis
+  data:
+    redis:
+      database: 0
+      host: localhost
+      port: 6379
+      password: 123456
+      jedis:
+        pool:
+          max-idle: 1000
+          min-idle: 0
+          max-active: -1
+          max-wait: 5000
+  cloud:
+    nacos:
+      discovery:
+        server-addr: 127.0.0.1:8848
+        namespace: public
+        group: DEFAULT_GROUP
+        username: nacos
+        password: lscloud7
+
+    gateway:
+      # ??????????
+      default-filters:
+        - name: StripPrefix
+          args:
+            parts: 1
+        - name: Retry
+          args:
+            retries: 3
+            statuses: BAD_GATEWAY, GATEWAY_TIMEOUT
+            methods: GET, POST
+            backoff:
+              firstBackoff: 100ms # ??????
+              maxBackoff: 1s # ??????
+              factor: 2  # ??????????
+      routes:
+        - id: provider-route
+          uri: lb://provider-service
+          predicates:
+            - Path=/provider/**
+          filters:
+            - StripPrefix=1
+            - name: Retry
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,prometheus
+  endpoint:
+    health:
+      show-details: always
+
+logging:
+  level:
+    root: INFO
+    org.springframework.cloud.gateway: DEBUG
+    com.alibaba.cloud.nacos: INFO

@@ -763,7 +763,7 @@ public class CloudConfig {
 2. eureka会更新记录服务列表信息，心跳不正常会被剔除
 3. 消费者就可以拉取到最新的信息  
 现然Eureka主要功能是实现负载均衡
-## Eureka使用
+### Eureka使用
 1. 依赖：父依赖指定org.springframework.cloud.spring-cloud-dependencies，子依赖直接org.springframework.cloud.spring-cloud-starter-netflix-eureka-client或eureka-server
 2. yml配置，这里先说明，Eureka是注册中心，要单独建立一个模块，即Eureka-server，业务模块是Eureka-client，配置不一样，先说Eureka-server
 ```yml
@@ -791,6 +791,20 @@ logging:
 ```
 然后注意在**该模块启动类加上@EnableEurekaServer注解**开启注册中心，注意**一般只负责注册**，然后是各个业务模块的yml配置,启动后可以访问对应地址前往Eureta控制台查看注册情况
 ```yml
+# 对于多个服务提供者，我们可以如下设置多个端口，用多个配置文件，或者也可以运行时指定端口即java -jar 对应jar文件.jar --server.port=多次运行指定不同端口
+# 下面说用多个配置文件
+# application.yml
+spring:
+  profiles:
+    active: dev
+# application-dev.yml
+server:
+  port: 8001
+# application-dev2.yml
+server:
+  port: 8002
+# 这是运行命令是java -jar 对应jar文件.jar --spring.profiles.active=dev
+# 然后是关于Eureka
 eureka:
   client:
     service-url:
@@ -841,6 +855,118 @@ public class LoadBalancerConfig {
 直接写不管是全局配置，要具体到哪个服务可以在该服务的启动类的加上`@LoadBalancerClient(name = "服务名", configuration = LoadBalancerConfig.class)`。这里一般是消费者选择多个服务提供者，所以负载均衡配置应该一般写在消费者模块里。
 ## Nacos注册中心
 Nacos注册中心是阿里巴巴开源的注册中心，是更先进的注册中心，比Eureka更先进，功能更强大，性能更优秀，支持更多功能，如服务发现、配置管理、服务健康检查、动态配置等。
-下载配置：[前往博客](https://blog.csdn.net/Mr_7777777/article/details/123133036?ops_request_misc=%257B%2522request%255Fid%2522%253A%2522168535604516782425117446%2522%252C%2522scm%2522%253A%252220140713.130102334..%2522%257D&request_id=168535604516782425117446&biz_id=0&utm_medium=distribute.pc_search_result.none-task-blog-2~all~sobaiduend~default-2-123133036-null-null.142%5Ev88%5Econtrol_2,239%5Ev2%5Einsert_chatgpt&utm_term=Nacos%20Linux&spm=1018.2226.3001.4187)  
+下载配置，略
+### Nacos使用
+1. 依赖：com.alibaba.cloud.spring-cloud-starter-alibaba-nacos-discovery和config，前者是注册中心，后者是配置中心，前者是必须的，后者是可选的。
+2. yml配置：这里只需要写业务模块的yml配置，因为nacos的是你下载配置的是一个独立的服务，其配置在官方控制台配置
+```yml
+spring:
+    # 从nacos控制台加载其他配置，这里重点说明，一般本地yml只保留端口号、服务名等基本配置以及如下的nacos配置，其他配置如数据源等都从nacos控制台加载
+    config:
+        import: "nacos:provider-service.yaml"  #指定加载的配置文件名
+    cloud:
+        nacos:
+        discovery:
+            server-addr: 127.0.0.1:8848  # Nacos 地址（默认端口）
+            namespace: public            # 可以自定义命名空间 ID
+            group: DEFAULT_GROUP         # 默认分组，可选
+            username: nacos              # 如启用鉴权，需填写用户名
+            password: lscloud7              # 如启用鉴权，需填写密码
+        config:
+            server-addr: 127.0.0.1:8848
+            file-extension: yaml         # 指定配置文件格式：yaml/properties
+            namespace: public
+            group: DEFAULT_GROUP
+            enabled: true
+            refresh-enabled: true
 
+# 开启配置自动刷新（可选）
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  health:
+    refresh:
+      enabled: true
+# 这里开启自动刷新要引入org.springframework.boot:spring-boot-starter-actuator依赖
+```
+### 环境隔离
+nacos还可以做到环境隔离，即不同环境的配置可以分开管理，如开发环境、测试环境、生产环境等，这样就可以做到环境隔离，避免不同环境的配置相互影响。用namespace，控制台可以设置，从而控制一个服务不同实例在不同环境隔离，如某个服务在生产环境，这边做更新开发的开发、测试环境的更改不会影响生产环境。  
+控制台新建namespace后，会生成一个命名空间ID，在对应yml的nacos配置的discovery和config的namespace属性中填写即可。
+### 临时与非临时实例
+临时实例的情况下，如果你终止程序，过30s，到nacos中查看就会发现爆红然后直接消失(被nacos踢出)  
+非临时实例终止程序，nacos中查看该服务爆红，但不会踢出。重新启动非临时实例即可  
+设置是否临时在yml的discovery的ephemeral属性中填写即可，默认为true，即临时实例。
+### Feign
+Feign是一个声明式的Web服务客户端，它使得编写Web服务客户端变得更加简单。Feign通过处理HTTP请求和响应，为我们提供了一种更简单的方式来调用远程服务。之前用的是restTemplate，现在用的是feign，下面是feign的使用方法：
+1. 依赖：父依赖是SpringCloud，和rest模板一样上面有略，子依赖为org.springframework.cloud.openfeign:spring-cloud-starter-openfeign
+2. 在启动类加上@EnableFeignClients注解
+3. 然后再服务类接口上加上@FeignClient注解，参数为服务名，如`@FeignClient("服务名")`就可以直接调用指定服务的所有方法了
+这样显然更简单，不需要手动构造url了  
+但fegin底层没有连接池，需要调优，用的httpclient，先引入`io.github.openfeign:feign-httpclient`依赖(也属于springcloud)，然后在yml配置中加入如下配置：
+```yml
+# fegin
+openfeign:
+    client:
+    config:
+        default: # 默认的全局配置
+        logger-level: BASIC # 日志级别，BASIC是最基础的请求和响应信息
+    httpclient:
+    enabled: true # 开启httpclient连接池支持
+    max-connections: 200 # 最大连接数
+    max-connections-per-route: 50 # 每个路径最大连接数
+```
+## 网关
+网关一般是单独写一个模块，用于接收所有请求，然后根据请求的路径转发到对应的服务，这样就可以实现统一的访问入口，也可以实现权限控制，如登录、权限等。
+具体作用如图![如图](../photo/26.png)  
+使用方法：
+1. 依赖：父依赖也是SpringCloud，子依赖为org.springframework.cloud:spring-cloud-starter-gateway
+2. yml配置：
+```yml
+spring:
+  cloud:
+    gateway:
+      # 默认超时时间（毫秒）
+      default-filters:
+        - name: StripPrefix
+          args:
+            parts: 1
+        - name: Retry
+          args:
+            retries: 3
+            statuses: BAD_GATEWAY, GATEWAY_TIMEOUT
+            methods: GET, POST
+            backoff:
+              firstBackoff: 100ms
+              maxBackoff: 1s
+              factor: 2
+      routes:
+        - id: provider-route
+          uri: lb://provider-service      # Nacos 注册的服务名，lb:// 是负载均衡调用
+          predicates:
+            - Path=/provider/**
+          filters:
+            - StripPrefix=1               # 去掉 /provider 前缀转发
+            - name: Retry
+            - "Retry=retries=2,statuses=BAD_GATEWAY,methods=GET,backoffFirstBackoff=200ms,backoffMaxBackoff=1s,backoffFactor=1.5"
+            # 配置请求限流（如使用Redis限流），下面是redis限流配置，配了这个记得要配置redis
+            - "RequestRateLimiter=replenish-rate=10,burst-capacity=20"
+        - id: consumer-route
+          uri: lb://consumer-service
+          predicates:
+            - Path=/consumer/**
+# 还有很多配置，建议直接看测试项目
+```
+这个虽然能实现实现权限控制，如登录、权限等功能，更配置很复杂，判断也很粗劣，但也有好处，就是统一了入口，方便管理，也不用写过多的代码，只需要写yml配置即可，另外还实现了网关。但不是说写了网关就行，网关的判断不够精细，所以微服务内部还是要拦截器配合注解来实现更精细的控制。
+## Docker
+Docker是一个开源的容器化平台，它可以让开发者打包他们的应用以及依赖包到一个可移植的镜像中，然后发布到任何流行的Linux或Windows机器上，也可以实现虚拟化。它是一个轻量级的虚拟技术，是一个进程，相比虚拟机是操作系统中的操作系统，而且占空间很大。
+Docker的核心概念包括：
+- 镜像（Image）：Docker将应用程序及其所需的依赖、函数库、环境、配置等文件打包在一起，称为镜像。
+- 容器（Container）：镜像中的应用程序运行后形成的进程就是容器，只是Docker会给容器做隔离，对外不可见。
+- 仓库（Repository）：一个集中存放镜像的地方。 
+Docker是一个CS架构的程序，由两部分组成:  
+服务端(server)： Docker守护进程，负责处理Docker指令，管理镜像、容器等  
+客户端(client)： 通过命令或RestAPI向Docker服务端发送指令。可以在本地或远程向服务端发送指令  
+### 使用
 # Spring webflux

@@ -1,0 +1,41 @@
+server:
+  port: 8082
+spring:
+  application:
+    name: consume-service
+  config:
+    import: "nacos:consume-service.yaml"
+  cloud:
+    nacos:
+      discovery:
+        server-addr: 127.0.0.1:8848  # Nacos 地址（默认端口）
+        namespace: public            # 可以自定义命名空间 ID
+        group: DEFAULT_GROUP         # 默认分组，可选
+        username: nacos              # 如启用鉴权，需填写用户名
+        password: lscloud7              # 如启用鉴权，需填写密码
+      config:
+        server-addr: 127.0.0.1:8848
+        file-extension: yaml         # 指定配置文件格式：yaml/properties
+        namespace: public
+        group: DEFAULT_GROUP
+        enabled: true
+        refresh-enabled: true
+    # fegin
+    openfeign:
+      client:
+        config:
+          default: # 默认的全局配置
+            logger-level: BASIC # 日志级别，BASIC是最基础的请求和响应信息
+      httpclient:
+        enabled: true # 开启httpclient连接池支持
+        max-connections: 200 # 最大连接数
+        max-connections-per-route: 50 # 每个路径最大连接数
+# 开启配置自动刷新（可选）
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  health:
+    refresh:
+      enabled: true

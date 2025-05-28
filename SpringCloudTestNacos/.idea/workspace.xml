@@ -5,15 +5,16 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="e10a682d-2bb0-4d17-8dba-3e2c4d0e2af1" name="更改" comment="">
-      <change afterPath="$PROJECT_DIR$/../SpringCloudTestNacos/consumer/src/main/java/com/whitecloud/consumer/servce/testService2.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../SpringCloudTestNacos/geteWay/.mvn/wrapper/maven-wrapper.properties" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../SpringCloudTestNacos/geteWay/pom.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../SpringCloudTestNacos/geteWay/src/main/java/com/whitecloud/gateway/ServletInitializer.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../SpringCloudTestNacos/geteWay/src/main/java/com/whitecloud/gateway/gateWayApplication.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../SpringCloudTestNacos/geteWay/src/main/resources/application.yml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../SpringCloudTestNacos/geteWay/src/test/java/com/whitecloud/gateway/GeteWayApplicationTests.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/consumer/src/main/java/com/whitecloud/consumer/servce/testService2.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/geteWay/.mvn/wrapper/maven-wrapper.properties" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/geteWay/pom.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/geteWay/src/main/java/com/whitecloud/gateway/ServletInitializer.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/geteWay/src/main/java/com/whitecloud/gateway/gateWayApplication.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/geteWay/src/main/resources/application.yml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/geteWay/src/test/java/com/whitecloud/gateway/GeteWayApplicationTests.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../PersonalBlog/src/main/resources/application.yml" beforeDir="false" afterPath="$PROJECT_DIR$/../PersonalBlog/src/main/resources/application.yml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../SpringCloudTest/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../SpringCloudTest/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../SpringCloudTest/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../SpringCloudTest/pom.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../noteText/web/spring.md" beforeDir="false" afterPath="$PROJECT_DIR$/../noteText/web/spring.md" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -24,6 +25,7 @@
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
       <list>
+        <option value="Interface" />
         <option value="Class" />
       </list>
     </option>
@@ -50,32 +52,32 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;ASKED_ADD_EXTERNAL_FILES&quot;: &quot;true&quot;,
-    &quot;ASKED_SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
-    &quot;RequestMappingsPanelOrder0&quot;: &quot;0&quot;,
-    &quot;RequestMappingsPanelOrder1&quot;: &quot;1&quot;,
-    &quot;RequestMappingsPanelWidth0&quot;: &quot;75&quot;,
-    &quot;RequestMappingsPanelWidth1&quot;: &quot;75&quot;,
-    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
-    &quot;jdk.selected.JAVA_MODULE&quot;: &quot;17&quot;,
-    &quot;last_opened_file_path&quot;: &quot;D:/GitHub/study/SpringCloudTestNacos&quot;,
-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
-    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;project.structure.last.edited&quot;: &quot;模块&quot;,
-    &quot;project.structure.proportion&quot;: &quot;0.17&quot;,
-    &quot;project.structure.side.proportion&quot;: &quot;0.2&quot;,
-    &quot;show.run.dashboard.notification&quot;: &quot;false&quot;,
-    &quot;spring.configuration.checksum&quot;: &quot;7e5c3457e5887e2883a8728668a02546&quot;,
-    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "ASKED_ADD_EXTERNAL_FILES": "true",
+    "ASKED_SHARE_PROJECT_CONFIGURATION_FILES": "true",
+    "RequestMappingsPanelOrder0": "0",
+    "RequestMappingsPanelOrder1": "1",
+    "RequestMappingsPanelWidth0": "75",
+    "RequestMappingsPanelWidth1": "75",
+    "RunOnceActivity.OpenProjectViewOnStart": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "WebServerToolWindowFactoryState": "false",
+    "jdk.selected.JAVA_MODULE": "17",
+    "last_opened_file_path": "D:/GitHub/study/SpringCloudTestNacos",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "project.structure.last.edited": "模块",
+    "project.structure.proportion": "0.17",
+    "project.structure.side.proportion": "0.2",
+    "show.run.dashboard.notification": "false",
+    "spring.configuration.checksum": "7e5c3457e5887e2883a8728668a02546",
+    "vue.rearranger.settings.migration": "true"
   }
-}</component>
+}]]></component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="D:\GitHub\study\SpringCloudTest\consumer\src\main\java\com\whitecloud\consumer" />
@@ -85,7 +87,7 @@
       <recent name="com.whitecloud.consumer.Controller" />
     </key>
   </component>
-  <component name="RunManager" selected="应用程序.KeyGenerator">
+  <component name="RunManager" selected="Spring Boot.gateWayApplication">
     <configuration name="KeyGenerator" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
       <option name="MAIN_CLASS_NAME" value="com.whitecloud.consumer.Config.KeyGenerator" />
       <module name="consumer" />
@@ -113,6 +115,13 @@
         <option name="Make" enabled="true" />
       </method>
     </configuration>
+    <configuration name="GeteWayApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot">
+      <module name="gateWay" />
+      <option name="SPRING_BOOT_MAIN_CLASS" value="com.whitecloud.geteway.GeteWayApplication" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
     <configuration name="ProviderApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot">
       <module name="provider" />
       <option name="SPRING_BOOT_MAIN_CLASS" value="com.whitecloud.provider.ProviderApplication" />
@@ -134,6 +143,13 @@
         <option name="Make" enabled="true" />
       </method>
     </configuration>
+    <configuration name="gateWayApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot">
+      <module name="gateWay" />
+      <option name="SPRING_BOOT_MAIN_CLASS" value="com.whitecloud.gateway.gateWayApplication" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
     <recent_temporary>
       <list>
         <item itemvalue="应用程序.KeyGenerator" />
@@ -150,9 +166,7 @@
       <updated>1748339747640</updated>
       <workItem from="1748339749069" duration="12887000" />
       <workItem from="1748398143812" duration="3927000" />
-      <workItem from="1748415082182" duration="12000" />
-      <workItem from="1748416271996" duration="63000" />
-      <workItem from="1748428174163" duration="3000" />
+      <workItem from="1748415096582" duration="14419000" />
     </task>
     <servers />
   </component>

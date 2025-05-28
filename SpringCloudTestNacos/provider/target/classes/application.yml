@@ -1,0 +1,28 @@
+server:
+  port: 8081
+spring:
+  application:
+    name: provider-service
+  config:
+    import: "nacos:provider-service.yaml"
+  cloud:
+    nacos:
+      discovery:
+        server-addr: 127.0.0.1:8848  # Nacos 地址（默认端口）
+        namespace: public            # 可以自定义命名空间 ID
+        group: DEFAULT_GROUP         # 默认分组，可选
+        username: nacos              # 如启用鉴权，需填写用户名
+        password: lscloud7              # 如启用鉴权，需填写密码
+      config:
+        server-addr: 127.0.0.1:8848
+        file-extension: yaml         # 指定配置文件格式：yaml/properties
+        namespace: public
+        group: DEFAULT_GROUP
+        enabled: true
+        refresh-enabled: true
+  # 开启配置自动刷新（可选）
+  management:
+    endpoints:
+      web:
+        exposure:
+          include: "*"

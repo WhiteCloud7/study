@@ -9,7 +9,7 @@
      - 常用实现类：
        - ClassPathResource：用于加载类路径下的资源。
        - FileSystemResource：用于加载文件系统中的资源。
-       - UrlResource：用于加载通过 URL 访问的资源，例如 HTTP、FTP 等。
+       - UrlResource：用于加载通过 URL 访问的资源，例如 HTTP、FTP 等。，
        - ServletContextResource：用于加载 Servlet 上下文相关的资源。
      - 常用方法：
        - exists()：检查资源是否存在。
